@@ -29,7 +29,11 @@ abstract class AbstractSteps {
         }
     }
 
-
+    /**
+     * Initializes instance of PageObject and updates currentPage.
+     * @param clazz descendant of AbstractPage to initialize.
+     * @return Instance of clazz
+     */
     protected <T extends AbstractPage> T initPage(Class<T> clazz) {
         try {
             Constructor<T> constructor = clazz.getConstructor(WebDriver.class);
