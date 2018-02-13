@@ -12,7 +12,8 @@ public class Context {
             synchronized (ApplicationContext.class) {
                 localInstance = instance;
                 if (localInstance == null) {
-                    instance = localInstance = new ClassPathXmlApplicationContext();
+                    instance = localInstance =
+                            new ClassPathXmlApplicationContext("spring-config.xml");
                 }
             }
         }
