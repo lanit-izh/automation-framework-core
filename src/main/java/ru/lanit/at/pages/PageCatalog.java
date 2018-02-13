@@ -1,7 +1,6 @@
 package ru.lanit.at.pages;
 
 import org.openqa.selenium.WebDriver;
-import org.yaml.snakeyaml.constructor.Construct;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.lang.reflect.Constructor;
@@ -26,18 +25,18 @@ public class PageCatalog {
                 throw new FrameworkRuntimeException(e);
             }
         }
-}
+    }
 
     private <T extends AbstractPage> T getPageFromSet(Class<T> clazz) {
-        for(AbstractPage abstractPage: pageSet){
-            if(abstractPage.getClass() == clazz) return (T) abstractPage;
+        for (AbstractPage abstractPage : pageSet) {
+            if (abstractPage.getClass() == clazz) return (T) abstractPage;
         }
         throw new FrameworkRuntimeException("There is no " + clazz.getSimpleName() + " in page catalog.");
     }
 
     private <T extends AbstractPage> boolean setContains(Class<T> clazz) {
-        for(AbstractPage abstractPage: pageSet){
-            if(abstractPage.getClass() == clazz) return true;
+        for (AbstractPage abstractPage : pageSet) {
+            if (abstractPage.getClass() == clazz) return true;
         }
         return false;
     }

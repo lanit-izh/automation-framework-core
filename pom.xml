@@ -6,7 +6,7 @@
 
     <groupId>ru.lanit.at</groupId>
     <artifactId>automation_framework_core</artifactId>
-    <version>1.1</version>
+    <version>1.22</version>
 
     <properties>
         <compiler.version>1.8</compiler.version>
@@ -15,6 +15,7 @@
         <selenium.firefoxdriver.version>3.4.0</selenium.firefoxdriver.version>
         <selenium.java.version>3.8.1</selenium.java.version>
         <spring.version>5.0.3.RELEASE</spring.version>
+        <log4j.version>2.10.0</log4j.version>
     </properties>
 
     <build>
@@ -32,6 +33,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>

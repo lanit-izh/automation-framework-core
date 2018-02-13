@@ -14,7 +14,7 @@ public class DriverManager {
     private Logger log = Logger.getLogger(DriverManager.class);
     private ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     private final String DEFAULT_BROWSER = "chrome";
-    private  final String DEFAULT_HUB_URL = "http://localhost:4444/wd/hub";
+    private final String DEFAULT_HUB_URL = "http://localhost:4444/wd/hub";
 
     static {
         System.setProperty("webdriver.gecko.driver", "src/main/resources/drivers/geckodriver.exe");

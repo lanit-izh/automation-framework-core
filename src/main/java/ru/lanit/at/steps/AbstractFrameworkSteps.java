@@ -1,5 +1,6 @@
 package ru.lanit.at.steps;
 
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import ru.lanit.at.context.Context;
@@ -9,13 +10,13 @@ import ru.lanit.at.pages.PageCatalog;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-abstract class AbstractSteps {
+public abstract class AbstractFrameworkSteps {
 
-    protected Logger log = Logger.getLogger(this.getClass());
+    protected Logger log = LogManager.getLogger(this.getClass());
     private PageCatalog pageCatalog;
     private WebDriver driver;
 
-    public AbstractSteps() {
+    public AbstractFrameworkSteps() {
         pageCatalog = (PageCatalog) Context.getInstance().getBean("pageCatalog");
     }
 

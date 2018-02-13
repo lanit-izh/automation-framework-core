@@ -7,12 +7,9 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.lanit.at.context.Context;
-import ru.lanit.at.driver.DriverManager;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementDecorator;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementLocatorFactory;
-
-import java.lang.reflect.Constructor;
 
 public abstract class AbstractPage implements Openable {
     public static ThreadLocal<AbstractPage> currentPage = new ThreadLocal<>();
