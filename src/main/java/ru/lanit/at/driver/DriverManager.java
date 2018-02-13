@@ -11,10 +11,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class DriverManager {
-    private static Logger log = Logger.getLogger(DriverManager.class);
-    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
-    private static final String DEFAULT_BROWSER = "chrome";
-    private static final String DEFAULT_HUB_URL = "http://localhost:4444/wd/hub";
+    private Logger log = Logger.getLogger(DriverManager.class);
+    private ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    private final String DEFAULT_BROWSER = "chrome";
+    private  final String DEFAULT_HUB_URL = "http://localhost:4444/wd/hub";
 
     static {
         System.setProperty("webdriver.gecko.driver", "src/main/resources/drivers/geckodriver.exe");
@@ -23,7 +23,7 @@ public class DriverManager {
 
 // todo создать выбор браузера по версии и т.п.
 
-    public static WebDriver getDriver(String browserName) {
+    public WebDriver getDriver(String browserName) {
         if (driver.get() == null) {
             driver.set(getNewDriverInstance(browserName));
         } else {
@@ -32,7 +32,7 @@ public class DriverManager {
         return driver.get();
     }
 
-    private static WebDriver getNewDriverInstance(String browserName) {
+    private WebDriver getNewDriverInstance(String browserName) {
         if ("true".equalsIgnoreCase(System.getProperty("remote"))) {
             DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
             desiredCapabilities.setBrowserName(browserName);
@@ -48,24 +48,24 @@ public class DriverManager {
         }
     }
 
-    public static boolean isActive() {
+    public boolean isActive() {
         return driver.get() != null;
     }
 
-    public static void shutdown() {
+    public void shutdown() {
         driver.get().quit();
         driver.remove();
         log.info("Закрываем драйвер");
     }
 
-    public static WebDriver getDriver() {
+    public WebDriver getDriver() {
         if (driver.get() == null) {
             driver.set(getNewDriverInstance(DEFAULT_BROWSER));
         }
         return driver.get();
     }
 
-    public static JavascriptExecutor getJSExecutor() {
+    public JavascriptExecutor getJSExecutor() {
         if (driver.get() != null) {
             return (JavascriptExecutor) driver.get();
         } else {
@@ -74,20 +74,20 @@ public class DriverManager {
         }
     }
 
-    public static String executeScript(String jsCommand, Object... args) {
+    public String executeScript(String jsCommand, Object... args) {
         return (String) getJSExecutor().executeScript(jsCommand, args);
     }
 
-    public static boolean isJSActive() {
+    public boolean isJSActive() {
         return !executeScript("return jQuery.active").equals("0");
     }
 
-    public static boolean isPageLoaded() {
+    public boolean isPageLoaded() {
         return executeScript("return document.readyState").equals("complete");
     }
 
     // страница загрузилась достаточно, чтобы с ней можно было взаимодействовать
-    public static boolean isPageInterable() {
+    public boolean isPageInterable() {
         return isPageLoaded() || executeScript("return document.readyState").equals("interactive");
     }
 }

@@ -6,6 +6,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import ru.lanit.at.context.Context;
+import ru.lanit.at.driver.DriverManager;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementDecorator;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementLocatorFactory;
@@ -17,11 +19,14 @@ public abstract class AbstractPage implements Openable {
     protected final int DEFAULT_TIMEOUT = 10;
     protected Logger log = Logger.getLogger(getClass());
     private WebDriver driver;
+    private PageCatalog pageCatalog;
 
     public AbstractPage(WebDriver driver) {
         this.driver = driver;
         log.info("Инициализируем элементы " + this);
         PageFactory.initElements(new HtmlElementDecorator(new HtmlElementLocatorFactory(driver)), this);
+
+        pageCatalog = (PageCatalog) Context.getInstance().getBean("pageCatalog");
     }
 
     public static void setCurrentPage(AbstractPage abstractPage) {
@@ -34,22 +39,8 @@ public abstract class AbstractPage implements Openable {
         return driver;
     }
 
-    protected <T extends AbstractPage> T initPage(Class<T> clazz) {
-        try {
-            try {
-                Constructor<T> constructor = clazz.getConstructor(WebDriver.class);
-                T page = constructor.newInstance(driver);
-                setCurrentPage(page);
-                return page;
-            } catch (NoSuchMethodException e) {
-                T page = clazz.newInstance();
-                log.warn("Некоторые элементы не были найдены. Инициализация дефолтным конструктором ");
-                setCurrentPage(page);
-                return page;
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    protected <T extends AbstractPage> T getPage(Class<T> clazz) {
+        return pageCatalog.getPage(clazz);
     }
 
     protected void waitForElementVisible(WebElement htmlElement, int timeout) {

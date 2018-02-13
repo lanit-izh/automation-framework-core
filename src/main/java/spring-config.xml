@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="driverManager" class="ru.lanit.at.driver.DriverManager"/>
+    <bean id="webDriver" class="org.openqa.selenium.WebDriver" factory-bean="driverManager" factory-method="getDriver"/>
+    <bean id="pageCatalog" class="ru.lanit.at.pages.PageCatalog">
+        <property name="driver" ref="webDriver"/>
+    </bean>
+</beans>

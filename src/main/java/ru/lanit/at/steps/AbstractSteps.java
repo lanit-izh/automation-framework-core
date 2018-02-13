@@ -2,22 +2,26 @@ package ru.lanit.at.steps;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
-import ru.lanit.at.driver.DriverManager;
-import ru.lanit.at.exceptions.FrameworkRuntimeException;
+import ru.lanit.at.context.Context;
 import ru.lanit.at.pages.AbstractPage;
+import ru.lanit.at.pages.PageCatalog;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 abstract class AbstractSteps {
 
     protected Logger log = Logger.getLogger(this.getClass());
+    private PageCatalog pageCatalog;
     private WebDriver driver;
+
+    public AbstractSteps() {
+        pageCatalog = (PageCatalog) Context.getInstance().getBean("pageCatalog");
+    }
 
     protected WebDriver getDriver() {
         if (driver == null) {
-            driver = DriverManager.getDriver();
+            driver = (WebDriver) Context.getInstance().getBean("webDriver");
         }
         return driver;
     }
@@ -29,21 +33,8 @@ abstract class AbstractSteps {
         }
     }
 
-    /**
-     * Initializes instance of PageObject and updates currentPage.
-     * @param clazz descendant of AbstractPage to initialize.
-     * @return Instance of clazz
-     */
-    protected <T extends AbstractPage> T initPage(Class<T> clazz) {
-        try {
-            Constructor<T> constructor = clazz.getConstructor(WebDriver.class);
-            T page = constructor.newInstance(getDriver());
-            AbstractPage.setCurrentPage(page);
-            log.info("Установлена страница " + page.getClass().getSimpleName());
-            return page;
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            throw new FrameworkRuntimeException(e);
-        }
+    protected <T extends AbstractPage> T getPage(Class<T> clazz) {
+        return pageCatalog.getPage(clazz);
     }
 
     protected <T extends AbstractPage> T openPage(Class<T> clazz) {
