@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.lanit.at</groupId>
-    <artifactId>automation_framework_core</artifactId>
+    <artifactId>automation-framework-core</artifactId>
     <version>1.24</version>
 
     <properties>
