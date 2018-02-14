@@ -94,4 +94,9 @@ public abstract class AbstractPage implements Openable {
         element.click();
         waitForJSandJQueryToLoad();
     }
+
+    @Deprecated
+    protected <T extends AbstractPage> T initPage(Class<T> clazz){
+        return getPage(clazz);
+    }
 }

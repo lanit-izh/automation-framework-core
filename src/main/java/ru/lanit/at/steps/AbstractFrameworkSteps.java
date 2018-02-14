@@ -72,4 +72,8 @@ public abstract class AbstractFrameworkSteps {
 
     protected abstract <T extends AbstractPage> T openPageByFullPath(Class<T> clazz);
 
+    @Deprecated
+    protected <T extends AbstractPage> T initPage(Class<T> clazz){
+        return getPage(clazz);
+    }
 }
