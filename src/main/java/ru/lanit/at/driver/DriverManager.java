@@ -5,6 +5,8 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.yecht.Data;
+import ru.lanit.at.FrameworkConstants;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.net.MalformedURLException;
@@ -60,9 +62,15 @@ public class DriverManager {
 
     public WebDriver getDriver() {
         if (driver.get() == null) {
-            driver.set(getNewDriverInstance(DEFAULT_BROWSER));
+            driver.set(getNewDriverInstance(getBrowserName()));
         }
         return driver.get();
+    }
+
+    private String getBrowserName(){
+        String browserSystemVariableStr = System.getProperty(FrameworkConstants.BROWSER_VARIABLE_NAME);
+        if( browserSystemVariableStr == null || browserSystemVariableStr.isEmpty()) return DEFAULT_BROWSER;
+        return browserSystemVariableStr;
     }
 
     public JavascriptExecutor getJSExecutor() {
