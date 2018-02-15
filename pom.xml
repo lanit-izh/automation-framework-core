@@ -6,7 +6,7 @@
 
     <groupId>ru.lanit.at</groupId>
     <artifactId>automation-framework-core</artifactId>
-    <version>1.26</version>
+    <version>1.27</version>
 
     <properties>
         <compiler.version>1.8</compiler.version>
