@@ -5,18 +5,27 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.yecht.Data;
+import org.openqa.selenium.winium.DesktopOptions;
+import org.openqa.selenium.winium.WiniumDriver;
+import org.testng.Assert;
 import ru.lanit.at.FrameworkConstants;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * Для запуска WINIUM используются следующие переменные окружения:
+ * winium (true/false)
+ * winium.app.path (path to executable)
+ * winium.hub.url (http://localhost:9999 as default)
+ */
 public class DriverManager {
     private Logger log = Logger.getLogger(DriverManager.class);
     private ThreadLocal<WebDriver> driver = new ThreadLocal<>();
-    private final String DEFAULT_BROWSER = "chrome";
-    private final String DEFAULT_HUB_URL = "http://localhost:4444/wd/hub";
+    private static final String DEFAULT_BROWSER = "chrome";
+    private static final String DEFAULT_HUB_URL = "http://localhost:4444/wd/hub";
+    private static final String DEFAULT_WINIUM_HUB_URL = "http://localhost:9999";
 
     static {
         System.setProperty("webdriver.gecko.driver", "src/main/resources/drivers/geckodriver.exe");
@@ -35,6 +44,21 @@ public class DriverManager {
     }
 
     private WebDriver getNewDriverInstance(String browserName) {
+        if ("true".equalsIgnoreCase(System.getProperty("winium"))) {
+            String appPath = System.getProperty("winium.app.path");
+            DesktopOptions option = new DesktopOptions();
+            option.setApplicationPath(appPath);
+            // TODO: пока фабрика настраивается дефолтными значениями, возможности сконфигурять DesiredCapabilities нет.
+            option.setDebugConnectToRunningApp(false);
+            option.setLaunchDelay(2);
+            String hubUrl = System.getProperty("winium.hub.url");
+            if (hubUrl == null || hubUrl.isEmpty()) hubUrl = DEFAULT_WINIUM_HUB_URL;
+            try {
+                return new WiniumDriver(new URL(hubUrl), option);
+            } catch (MalformedURLException e) {
+                Assert.fail("Could not connect to driver!");
+            }
+        }
         if ("true".equalsIgnoreCase(System.getProperty("remote"))) {
             DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
             desiredCapabilities.setBrowserName(browserName);

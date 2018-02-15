@@ -55,6 +55,19 @@
             <artifactId>selenium-firefox-driver</artifactId>
             <version>${selenium.firefoxdriver.version}</version>
         </dependency>
+        <!-- WINIUM -->
+        <dependency>
+            <groupId>com.github.2gis.winium</groupId>
+            <artifactId>winium-webdriver</artifactId>
+            <version>0.1.0-1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.2gis.winium</groupId>
+            <artifactId>winium-elements-desktop</artifactId>
+            <version>0.2.0-1</version>
+        </dependency>
+
+
         <dependency>
             <groupId>ru.yandex.qatools.htmlelements</groupId>
             <artifactId>htmlelements-all</artifactId>
