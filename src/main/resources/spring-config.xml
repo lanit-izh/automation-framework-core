@@ -7,4 +7,13 @@
     <bean id="pageCatalog" class="ru.lanit.at.pages.PageCatalog">
         <property name="driver" ref="webDriver"/>
     </bean>
+
+    <bean id="wait" class="ru.lanit.at.make.Wait">
+        <property name="driver" ref="webDriver"/>
+    </bean>
+
+    <bean id="make" class="ru.lanit.at.make.Make">
+        <property name="wait" ref="wait"/>
+    </bean>
+
 </beans>

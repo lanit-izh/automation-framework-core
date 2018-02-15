@@ -6,7 +6,7 @@
 
     <groupId>ru.lanit.at</groupId>
     <artifactId>automation-framework-core</artifactId>
-    <version>1.25</version>
+    <version>1.26</version>
 
     <properties>
         <compiler.version>1.8</compiler.version>
@@ -16,6 +16,7 @@
         <selenium.java.version>3.8.1</selenium.java.version>
         <spring.version>5.0.3.RELEASE</spring.version>
         <log4j.version>2.10.0</log4j.version>
+        <testng.version>6.14.2</testng.version>
     </properties>
 
     <build>
@@ -69,6 +70,12 @@
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+        </dependency>
+
 
     </dependencies>
 

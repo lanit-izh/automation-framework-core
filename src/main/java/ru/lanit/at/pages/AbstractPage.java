@@ -7,6 +7,8 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.lanit.at.context.Context;
+import ru.lanit.at.make.Make;
+import ru.lanit.at.make.Wait;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementDecorator;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementLocatorFactory;
@@ -16,7 +18,10 @@ public abstract class AbstractPage implements Openable {
     protected final int DEFAULT_TIMEOUT = 10;
     protected Logger log = Logger.getLogger(getClass());
     private WebDriver driver;
+
     private PageCatalog pageCatalog;
+    protected Wait wait;
+    protected Make make;
 
     public AbstractPage(WebDriver driver) {
         this.driver = driver;
@@ -24,6 +29,8 @@ public abstract class AbstractPage implements Openable {
         PageFactory.initElements(new HtmlElementDecorator(new HtmlElementLocatorFactory(driver)), this);
 
         pageCatalog = (PageCatalog) Context.getInstance().getBean("pageCatalog");
+        wait = (Wait) Context.getInstance().getBean("wait");
+        make = (Make) Context.getInstance().getBean("make");
     }
 
     public static void setCurrentPage(AbstractPage abstractPage) {
