@@ -1,6 +1,7 @@
 package ru.lanit.at.pages;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -16,7 +17,7 @@ import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementLocatorFactory
 public abstract class AbstractPage implements Openable {
     public static ThreadLocal<AbstractPage> currentPage = new ThreadLocal<>();
     protected final int DEFAULT_TIMEOUT = 10;
-    protected Logger log = Logger.getLogger(getClass());
+    protected Logger log = LogManager.getLogger(getClass());
     private WebDriver driver;
 
     private PageCatalog pageCatalog;
@@ -25,7 +26,7 @@ public abstract class AbstractPage implements Openable {
 
     public AbstractPage(WebDriver driver) {
         this.driver = driver;
-        log.info("Инициализируем элементы " + this);
+        log.info("Инициализируем элементы {}",this);
         PageFactory.initElements(new HtmlElementDecorator(new HtmlElementLocatorFactory(driver)), this);
 
         pageCatalog = (PageCatalog) Context.getInstance().getBean("pageCatalog");

@@ -1,7 +1,7 @@
 package ru.lanit.at.steps;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import ru.lanit.at.context.Context;
 import ru.lanit.at.pages.AbstractPage;
