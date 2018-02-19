@@ -22,7 +22,7 @@ import java.net.URL;
  */
 public class DriverManager {
     private Logger log = Logger.getLogger(DriverManager.class);
-    private ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    private WebDriver driver;
     private static final String DEFAULT_BROWSER = "chrome";
     private static final String DEFAULT_HUB_URL = "http://localhost:4444/wd/hub";
     private static final String DEFAULT_WINIUM_HUB_URL = "http://localhost:9999";
@@ -35,12 +35,12 @@ public class DriverManager {
 // todo создать выбор браузера по версии и т.п.
 
     public WebDriver getDriver(String browserName) {
-        if (driver.get() == null) {
-            driver.set(getNewDriverInstance(browserName));
+        if (driver == null) {
+            driver = getNewDriverInstance(browserName);
         } else {
-            log.error("Уже запущен драйвер " + driver.get().getClass().getSimpleName() + "!");
+            log.error("Уже запущен драйвер " + driver.getClass().getSimpleName() + "!");
         }
-        return driver.get();
+        return driver;
     }
 
     private WebDriver getNewDriverInstance(String browserName) {
@@ -75,20 +75,19 @@ public class DriverManager {
     }
 
     public boolean isActive() {
-        return driver.get() != null;
+        return driver != null;
     }
 
     public void shutdown() {
-        driver.get().quit();
-        driver.remove();
+        driver.quit();
         log.info("Закрываем драйвер");
     }
 
     public WebDriver getDriver() {
-        if (driver.get() == null) {
-            driver.set(getNewDriverInstance(getBrowserName()));
+        if (driver == null) {
+            driver = getNewDriverInstance(getBrowserName());
         }
-        return driver.get();
+        return driver;
     }
 
     private String getBrowserName(){
@@ -98,8 +97,8 @@ public class DriverManager {
     }
 
     public JavascriptExecutor getJSExecutor() {
-        if (driver.get() != null) {
-            return (JavascriptExecutor) driver.get();
+        if (driver != null) {
+            return (JavascriptExecutor) driver;
         } else {
             log.error("Драйвер не запущен! Сначала инициализируйте драйвер");
             return null;

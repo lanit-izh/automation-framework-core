@@ -13,7 +13,11 @@ public class PageCatalog {
     private WebDriver driver;
 
     public <T extends AbstractPage> T getPage(Class<T> clazz) {
-        if (setContains(clazz)) return getPageFromSet(clazz);
+        if (setContains(clazz)){
+            T requestedPage = getPageFromSet(clazz);
+            AbstractPage.setCurrentPage(requestedPage);
+            return requestedPage;
+        }
         else {
             try {
                 Constructor<T> constructor = clazz.getConstructor(WebDriver.class);
