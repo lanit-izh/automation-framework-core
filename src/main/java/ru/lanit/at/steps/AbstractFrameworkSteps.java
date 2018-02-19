@@ -14,24 +14,13 @@ public abstract class AbstractFrameworkSteps {
 
     protected Logger log = LogManager.getLogger(this.getClass());
     private PageCatalog pageCatalog;
-    private WebDriver driver;
 
     public AbstractFrameworkSteps() {
         pageCatalog = (PageCatalog) Context.getInstance().getBean("pageCatalog");
     }
 
     protected WebDriver getDriver() {
-        if (driver == null) {
-            driver = (WebDriver) Context.getInstance().getBean("webDriver");
-        }
-        return driver;
-    }
-
-    protected void quitDriver() {
-        if (driver != null) {
-            driver.quit();
-            driver = null;
-        }
+        return (WebDriver) Context.getInstance().getBean("webDriver");
     }
 
     protected <T extends AbstractPage> T getPage(Class<T> clazz) {
