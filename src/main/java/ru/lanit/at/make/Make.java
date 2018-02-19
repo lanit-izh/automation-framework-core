@@ -11,7 +11,7 @@ public class Make {
     }
 
     public void clickTo(WebElement elem) {
-        wait.untilJSComplete();
+        wait.untilElementVisible(elem);
         elem.click();
         wait.untilPageLoaded();
         wait.untilJSComplete();

@@ -29,7 +29,7 @@ public abstract class AbstractFrameworkSteps {
 
     protected <T extends AbstractPage> T openPage(Class<T> clazz) {
 
-        System.out.println("--openPage (" + clazz + ")");
+        log.trace("Открываем страницу (" + clazz + ")");
         if (AbstractPage.currentPage.get() != null
                 && AbstractPage.currentPage.get().getClass() == clazz) return (T) AbstractPage.currentPage.get();
         try {

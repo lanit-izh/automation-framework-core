@@ -3,19 +3,23 @@ package ru.lanit.at.make;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
+
+import java.util.Date;
 
 public class Wait {
 
-    private final int DEFAULT_TIMEOUT = 5;
-    private final int CHECK_JS_STATE_PERIOD = 200;
-    private static final int CHECK_PAGE_STATE_PERIOD = 300;
-
+    private static final int CHECK_PAGE_STATE_PERIOD_MSEC = 300;
+    private static final int PAGE_MIN_WAIT_TIMEOUT_SEC = 30;
+    private static final int ELEMENT_WAIT_TIMEOUT_SEC = 20;
+    private static final int PAGE_WAIT_TIMEOUT_SEC = 60;
+    private static final int DEFAULT_TIMEOUT_SEC = 5;
+    private static final int CHECK_JS_STATE_PERIOD_MSEC = 200;
     private Logger log = LogManager.getLogger(Wait.class.getSimpleName());
 
     private WebDriver driver;
@@ -27,6 +31,32 @@ public class Wait {
         } catch (InterruptedException e) {
             e.printStackTrace();
             Thread.currentThread().interrupt();
+        }
+    }
+
+    public void sec(int sec) {
+        sleep(sec * 1000);
+    }
+
+    public void untilElementInvisible(WebElement element) {
+        Timeout time = new Timeout(ELEMENT_WAIT_TIMEOUT_SEC);
+        try {
+            while (element.isDisplayed() && time.notOver()) {
+                sleep(CHECK_PAGE_STATE_PERIOD_MSEC);
+            }
+        } catch (NoSuchElementException ignore) {
+        }
+    }
+
+    public void untilElementVisible(WebElement element) {
+        boolean elementVisible = false;
+        Timeout time = new Timeout(ELEMENT_WAIT_TIMEOUT_SEC);
+        while (!elementVisible && time.notOver()) {
+            try {
+                elementVisible = element.isDisplayed();
+            } catch (NoSuchElementException nse) {
+                sleep(CHECK_PAGE_STATE_PERIOD_MSEC);
+            }
         }
     }
 
@@ -46,7 +76,7 @@ public class Wait {
     }
 
     public void untilElementClickable(WebElement... htmlElements) {
-        untilElementClickable(DEFAULT_TIMEOUT, htmlElements);
+        untilElementClickable(DEFAULT_TIMEOUT_SEC, htmlElements);
     }
 
     private JavascriptExecutor getJSExecutor() {
@@ -76,34 +106,51 @@ public class Wait {
     }
 
     public void untilJSComplete() {
-        int timer = 0;
+        Timeout time = new Timeout(ELEMENT_WAIT_TIMEOUT_SEC);
         while (isJSActive()) {
-            sleep(CHECK_JS_STATE_PERIOD);
-            if (++timer > 100) {
-                log.warn("Анимация происходила слишком долго, " + timer * CHECK_JS_STATE_PERIOD / 1000 + " сек");
-                break;
-            }
+
+            if (time.over())
+                throw new FrameworkRuntimeException("Анимация происходила слишком долго, " + ELEMENT_WAIT_TIMEOUT_SEC + " сек");
+
+            sleep(CHECK_JS_STATE_PERIOD_MSEC);
         }
     }
 
     public void untilPageLoaded() {
-        int timer = 0;
+        Timeout waitFullLoad = new Timeout(PAGE_WAIT_TIMEOUT_SEC);
+        Timeout waitMinLoad = new Timeout(PAGE_MIN_WAIT_TIMEOUT_SEC);
         log.debug("Ожидаем загрузки страницы... \t");
-        while (!isPageLoaded()) {
-            sleep(CHECK_PAGE_STATE_PERIOD);
 
-            if (++timer > 20 && isPageInterable()) {
-                log.warn("Страница не была полностью загружена, превышено время ожидания. ({} сек)", CHECK_PAGE_STATE_PERIOD * timer / 1000);
+        while (!isPageLoaded()) {
+            sleep(CHECK_PAGE_STATE_PERIOD_MSEC);
+
+            if (waitMinLoad.over() && isPageInterable()) {
+                log.warn("Страница не была полностью загружена, превышено время ожидания. ({} сек)", PAGE_MIN_WAIT_TIMEOUT_SEC);
                 break;
             }
 
-            if (timer > 100) {
-                String errorMessage = "Не удалось загрузить страницу в течение " + CHECK_PAGE_STATE_PERIOD * timer / 1000 + " сек";
+            if (waitFullLoad.over()) {
+                String errorMessage = "Не удалось загрузить страницу в течение " + PAGE_WAIT_TIMEOUT_SEC + " сек";
                 log.error(errorMessage);
-                Assert.fail(errorMessage);
-                break;
+                throw new FrameworkRuntimeException(errorMessage);
             }
         }
     }
 
+    class Timeout {
+        private long endTime;
+
+        public Timeout(int timeoutInSec) {
+            endTime = new Date().getTime() + timeoutInSec * 1000;
+        }
+
+        public boolean notOver() {
+            return (new Date().getTime()) < endTime;
+        }
+
+        public boolean over() {
+            return !notOver();
+        }
+    }
 }
+
