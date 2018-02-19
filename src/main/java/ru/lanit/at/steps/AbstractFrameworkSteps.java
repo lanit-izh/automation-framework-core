@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import ru.lanit.at.context.Context;
+import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.pages.AbstractPage;
 import ru.lanit.at.pages.PageCatalog;
 
@@ -20,7 +21,7 @@ public abstract class AbstractFrameworkSteps {
     }
 
     protected WebDriver getDriver() {
-        return (WebDriver) Context.getInstance().getBean("webDriver");
+        return (WebDriver) ((DriverManager) Context.getInstance().getBean("driverManager")).getDriver(System.getProperty("browser","Chrome"));
     }
 
     protected <T extends AbstractPage> T getPage(Class<T> clazz) {
