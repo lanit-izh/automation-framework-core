@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.util.Date;
@@ -22,7 +23,11 @@ public class Wait {
     private static final int CHECK_JS_STATE_PERIOD_MSEC = 200;
     private Logger log = LogManager.getLogger(Wait.class.getSimpleName());
 
-    private WebDriver driver;
+    private DriverManager driverManager;
+
+    public Wait(DriverManager driverManager) {
+        this.driverManager = driverManager;
+    }
 
     private void sleep(int msec) {
         try {
@@ -61,15 +66,15 @@ public class Wait {
     }
 
     public WebDriver getDriver() {
-        return driver;
+        return driverManager.getDriver();
     }
 
-    public void setDriver(WebDriver driver) {
-        this.driver = driver;
+    public void setDriver(DriverManager driverManager) {
+        this.driverManager = driverManager;
     }
 
     public void untilElementClickable(int timeout, WebElement... htmlElements) {
-        WebDriverWait wait = new WebDriverWait(driver, timeout);
+        WebDriverWait wait = new WebDriverWait(driverManager.getDriver(), timeout);
         for (WebElement webElement : htmlElements) {
             wait.until(ExpectedConditions.elementToBeClickable(webElement));
         }
@@ -80,8 +85,8 @@ public class Wait {
     }
 
     private JavascriptExecutor getJSExecutor() {
-        if (driver != null) {
-            return (JavascriptExecutor) driver;
+        if (driverManager.getDriver() != null) {
+            return (JavascriptExecutor) driverManager.getDriver();
         } else {
             throw new FrameworkRuntimeException("Драйвер не запущен! Сначала инициализируйте драйвер");
         }

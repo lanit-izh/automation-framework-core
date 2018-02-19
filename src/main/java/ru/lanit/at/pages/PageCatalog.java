@@ -1,6 +1,7 @@
 package ru.lanit.at.pages;
 
 import org.openqa.selenium.WebDriver;
+import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.lang.reflect.Constructor;
@@ -10,9 +11,17 @@ import java.util.Set;
 
 public class PageCatalog {
     private Set<AbstractPage> pageSet = new HashSet<>();
-    private WebDriver driver;
+    private DriverManager driverManager;
+    private WebDriver previousDriver;
+
+    public PageCatalog(DriverManager driverManager) {
+        this.driverManager = driverManager;
+    }
 
     public <T extends AbstractPage> T getPage(Class<T> clazz) {
+
+        if(previousDriver != driverManager.getDriver()) pageSet.clear();
+
         if (setContains(clazz)){
             T requestedPage = getPageFromSet(clazz);
             AbstractPage.setCurrentPage(requestedPage);
@@ -21,7 +30,7 @@ public class PageCatalog {
         else {
             try {
                 Constructor<T> constructor = clazz.getConstructor(WebDriver.class);
-                T page = constructor.newInstance(driver);
+                T page = constructor.newInstance(driverManager.getDriver());
                 AbstractPage.setCurrentPage(page);
                 pageSet.add(page);
                 return page;
@@ -46,10 +55,10 @@ public class PageCatalog {
     }
 
     public WebDriver getDriver() {
-        return driver;
+        return driverManager.getDriver();
     }
 
-    public void setDriver(WebDriver driver) {
-        this.driver = driver;
+    public void setDriver(DriverManager driverManager) {
+        this.driverManager = driverManager;
     }
 }

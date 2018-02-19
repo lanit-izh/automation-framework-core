@@ -80,6 +80,7 @@ public class DriverManager {
 
     public void shutdown() {
         driver.quit();
+        driver = null;
         log.info("Закрываем драйвер");
     }
 

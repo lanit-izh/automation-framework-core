@@ -21,7 +21,7 @@ public abstract class AbstractFrameworkSteps {
     }
 
     protected WebDriver getDriver() {
-        return (WebDriver) Context.getInstance().getBean("webDriver");
+        return Context.getInstance().getBean(DriverManager.class).getDriver();
     }
 
     protected <T extends AbstractPage> T getPage(Class<T> clazz) {
