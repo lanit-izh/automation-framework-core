@@ -58,7 +58,7 @@ public class PageCatalog {
         return driverManager.getDriver();
     }
 
-    public void setDriver(DriverManager driverManager) {
+    public void setDriverManager(DriverManager driverManager) {
         this.driverManager = driverManager;
     }
 }
