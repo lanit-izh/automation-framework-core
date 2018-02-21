@@ -10,6 +10,7 @@ import ru.lanit.at.pages.PageCatalog;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 public abstract class AbstractFrameworkSteps {
 
@@ -61,6 +62,22 @@ public abstract class AbstractFrameworkSteps {
     }
 
     protected abstract <T extends AbstractPage> T openPageByFullPath(Class<T> clazz);
+
+    protected Map<String, String> getDataKeeper(){
+        return (Map<String, String>) Context.getInstance().getBean("dataKeeper");
+    }
+
+    protected void saveTestData(String key, String value){
+        getDataKeeper().put(key, value);
+    }
+
+    protected String getTestData(String key){
+        return getDataKeeper().get(key);
+    }
+
+    protected void clearTestData(){
+        getDataKeeper().clear();
+    }
 
     @Deprecated
     protected <T extends AbstractPage> T initPage(Class<T> clazz){
