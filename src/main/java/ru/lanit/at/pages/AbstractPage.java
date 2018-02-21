@@ -10,7 +10,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.lanit.at.context.Context;
 import ru.lanit.at.make.Make;
 import ru.lanit.at.make.Wait;
-import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementDecorator;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementLocatorFactory;
 
@@ -52,7 +51,7 @@ public abstract class AbstractPage implements Openable {
         new WebDriverWait(driver, timeout).until(ExpectedConditions.visibilityOf(htmlElement));
     }
 
-    protected void waitForElementVisible(HtmlElement htmlElement) {
+    protected void waitForElementVisible(WebElement htmlElement) {
         waitForElementVisible(htmlElement, DEFAULT_TIMEOUT);
     }
 
