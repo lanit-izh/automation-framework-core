@@ -20,7 +20,11 @@ public class PageCatalog {
 
     public <T extends AbstractPage> T getPage(Class<T> clazz) {
 
-        if(previousDriver != driverManager.getDriver()) pageSet.clear();
+        WebDriver actualDriver = driverManager.getDriver();
+        if(previousDriver != actualDriver){
+            previousDriver = actualDriver;
+            pageSet.clear();
+        }
 
         if (setContains(clazz)){
             T requestedPage = getPageFromSet(clazz);
@@ -30,7 +34,7 @@ public class PageCatalog {
         else {
             try {
                 Constructor<T> constructor = clazz.getConstructor(WebDriver.class);
-                T page = constructor.newInstance(driverManager.getDriver());
+                T page = constructor.newInstance(actualDriver);
                 AbstractPage.setCurrentPage(page);
                 pageSet.add(page);
                 return page;
