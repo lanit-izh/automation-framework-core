@@ -15,7 +15,7 @@ import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementLocatorFactory
 
 public abstract class AbstractPage implements Openable {
     public static ThreadLocal<AbstractPage> currentPage = new ThreadLocal<>();
-    protected final int DEFAULT_TIMEOUT = 10;
+    protected final int DEFAULT_TIMEOUT = 10; //The timeout in seconds
     protected Logger log = LogManager.getLogger(getClass());
     private WebDriver driver;
 
@@ -53,6 +53,14 @@ public abstract class AbstractPage implements Openable {
 
     protected void waitForElementVisible(WebElement htmlElement) {
         waitForElementVisible(htmlElement, DEFAULT_TIMEOUT);
+    }
+
+    protected void waitForElementInvisible(WebElement htmlElement, int timeout) {
+        new WebDriverWait(driver, timeout).until(ExpectedConditions.invisibilityOf(htmlElement));
+    }
+
+    protected void waitForElementInvisible(WebElement htmlElement) {
+        new WebDriverWait(driver, DEFAULT_TIMEOUT).until(ExpectedConditions.invisibilityOf(htmlElement));
     }
 
     protected void waitForElementClickable(int timeout, WebElement... htmlElements) {
@@ -100,6 +108,13 @@ public abstract class AbstractPage implements Openable {
         waitForElementClickable(element);
         element.click();
         waitForJSandJQueryToLoad();
+    }
+
+    /** Default timeout in seconds
+     * @return Default timeout in seconds
+     */
+    protected int getDefaultTimeout(){
+        return DEFAULT_TIMEOUT;
     }
 
     @Deprecated
