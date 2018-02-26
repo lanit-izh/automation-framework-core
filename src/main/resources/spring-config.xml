@@ -4,11 +4,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     <bean id="driverManager" class="ru.lanit.at.driver.DriverManager" destroy-method="shutdown"/>
     <bean id="pageCatalog" class="ru.lanit.at.pages.PageCatalog">
-        <constructor-arg name="driverManager" ref="driverManager"/>
+        <property name="driverManager" ref="driverManager"/>
     </bean>
 
     <bean id="wait" class="ru.lanit.at.make.Wait">
-        <constructor-arg name="driverManager" ref="driverManager"/>
+        <property name="driverManager" ref="driverManager"/>
     </bean>
 
     <bean id="make" class="ru.lanit.at.make.Make">

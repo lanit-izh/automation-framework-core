@@ -6,6 +6,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Context {
     private static volatile ApplicationContext instance;
 
+    /**
+     * Method to get double check locked, thread safe Spring classpath application context.
+     * @return instance of Spring context.
+     */
     public static ApplicationContext getInstance() {
         ApplicationContext localInstance = instance;
         if (localInstance == null) {

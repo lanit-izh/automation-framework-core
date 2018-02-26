@@ -14,10 +14,6 @@ public class PageCatalog {
     private DriverManager driverManager;
     private WebDriver previousDriver;
 
-    public PageCatalog(DriverManager driverManager) {
-        this.driverManager = driverManager;
-    }
-
     public <T extends AbstractPage> T getPage(Class<T> clazz) {
 
         WebDriver actualDriver = driverManager.getDriver();

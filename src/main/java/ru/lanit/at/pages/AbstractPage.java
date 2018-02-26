@@ -13,15 +13,16 @@ import ru.lanit.at.make.Wait;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementDecorator;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementLocatorFactory;
 
+import java.util.List;
+
 public abstract class AbstractPage implements Openable {
     public static ThreadLocal<AbstractPage> currentPage = new ThreadLocal<>();
     protected final int DEFAULT_TIMEOUT = 10; //The timeout in seconds
     protected Logger log = LogManager.getLogger(getClass());
-    private WebDriver driver;
-
-    private PageCatalog pageCatalog;
     protected Wait wait;
     protected Make make;
+    private WebDriver driver;
+    private PageCatalog pageCatalog;
 
     public AbstractPage(WebDriver driver) {
         this.driver = driver;
@@ -110,15 +111,34 @@ public abstract class AbstractPage implements Openable {
         waitForJSandJQueryToLoad();
     }
 
-    /** Default timeout in seconds
+    /**
+     * Default timeout in seconds
+     *
      * @return Default timeout in seconds
      */
-    protected int getDefaultTimeout(){
+    protected int getDefaultTimeout() {
         return DEFAULT_TIMEOUT;
     }
 
+    /**
+     * Method that tries to find element of page with given text. Searching occurs by xpath = {@code "//*[text()='" + text + "']"}
+     * @param text key text that should be found on the page.
+     * @return WebElement that contains given text.
+     */
+    protected WebElement getElementByText(String text) {
+        String xPath = "//*[text()='" + text + "']";
+        List<WebElement> foundElements = getDriver().findElements(By.xpath(xPath));
+        if (foundElements.size() == 1) return foundElements.get(0);
+        if (foundElements.size() > 1) {
+            log.warn(foundElements.size() + " elements with text '" + text + "' were found on " + this.getClass().getSimpleName()
+            + ". Returning first element of list.");
+            return foundElements.get(0);
+        }
+        throw new NoSuchElementException("No elements with text '" + text + "' were found on " + this.getClass().getSimpleName());
+    }
+
     @Deprecated
-    protected <T extends AbstractPage> T initPage(Class<T> clazz){
+    protected <T extends AbstractPage> T initPage(Class<T> clazz) {
         return getPage(clazz);
     }
 }

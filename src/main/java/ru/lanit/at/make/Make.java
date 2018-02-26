@@ -17,7 +17,7 @@ public class Make {
         wait.untilJSComplete();
     }
 
-    public void keysSendTo(WebElement webElement, String message) {
+    public void sendKeysTo(WebElement webElement, String message) {
         webElement.clear();
         webElement.sendKeys(message);
     }

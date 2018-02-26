@@ -25,10 +25,6 @@ public class Wait {
 
     private DriverManager driverManager;
 
-    public Wait(DriverManager driverManager) {
-        this.driverManager = driverManager;
-    }
-
     private void sleep(int msec) {
         try {
             log.trace("Ждём {} миллисекунд...", msec);
@@ -69,7 +65,7 @@ public class Wait {
         return driverManager.getDriver();
     }
 
-    public void setDriver(DriverManager driverManager) {
+    public void setDriverManager(DriverManager driverManager) {
         this.driverManager = driverManager;
     }
 
