@@ -21,4 +21,6 @@
         </constructor-arg>
     </bean>
 
+    <bean id="assertsManager" class="ru.lanit.at.assertion.AssertsManager"/>
+
 </beans>

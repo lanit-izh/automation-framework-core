@@ -13,6 +13,7 @@ public class PageCatalog {
     private Set<AbstractPage> pageSet = new HashSet<>();
     private DriverManager driverManager;
     private WebDriver previousDriver;
+    private AbstractPage currentPage;
 
     public <T extends AbstractPage> T getPage(Class<T> clazz) {
 
@@ -24,14 +25,14 @@ public class PageCatalog {
 
         if (setContains(clazz)){
             T requestedPage = getPageFromSet(clazz);
-            AbstractPage.setCurrentPage(requestedPage);
+            setCurrentPage(requestedPage);
             return requestedPage;
         }
         else {
             try {
                 Constructor<T> constructor = clazz.getConstructor(WebDriver.class);
                 T page = constructor.newInstance(actualDriver);
-                AbstractPage.setCurrentPage(page);
+                setCurrentPage(page);
                 pageSet.add(page);
                 return page;
             } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -42,16 +43,26 @@ public class PageCatalog {
 
     private <T extends AbstractPage> T getPageFromSet(Class<T> clazz) {
         for (AbstractPage abstractPage : pageSet) {
-            if (abstractPage.getClass() == clazz) return (T) abstractPage;
+            if (clazz.isAssignableFrom(abstractPage.getClass())) return (T) abstractPage;
         }
         throw new FrameworkRuntimeException("There is no " + clazz.getSimpleName() + " in page catalog.");
     }
 
     private <T extends AbstractPage> boolean setContains(Class<T> clazz) {
         for (AbstractPage abstractPage : pageSet) {
-            if (abstractPage.getClass() == clazz) return true;
+            if (clazz.isAssignableFrom(abstractPage.getClass())) return true;
         }
         return false;
+    }
+
+    public void setCurrentPage(AbstractPage abstractPage) {
+        if (currentPage == null || currentPage != abstractPage) {
+            currentPage = abstractPage;
+        }
+    }
+
+    public AbstractPage getCurrentPage() {
+        return currentPage;
     }
 
     public WebDriver getDriver() {

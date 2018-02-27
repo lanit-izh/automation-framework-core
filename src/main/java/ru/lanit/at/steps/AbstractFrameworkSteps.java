@@ -3,6 +3,8 @@ package ru.lanit.at.steps;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
+import ru.lanit.at.assertion.AssertsManager;
+import ru.lanit.at.assertion.ExtendedAssert;
 import ru.lanit.at.context.Context;
 import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.pages.AbstractPage;
@@ -15,6 +17,8 @@ import java.util.Map;
 public abstract class AbstractFrameworkSteps {
 
     protected Logger log = LogManager.getLogger(this.getClass());
+    protected AssertsManager assertsManager = Context.getInstance().getBean(AssertsManager.class);
+
     private PageCatalog pageCatalog;
 
     public AbstractFrameworkSteps() {
@@ -32,8 +36,8 @@ public abstract class AbstractFrameworkSteps {
     protected <T extends AbstractPage> T openPage(Class<T> clazz) {
 
         log.trace("Открываем страницу (" + clazz + ")");
-        if (AbstractPage.currentPage.get() != null
-                && AbstractPage.currentPage.get().getClass() == clazz) return (T) AbstractPage.currentPage.get();
+        if (pageCatalog.getCurrentPage() != null
+                && pageCatalog.getCurrentPage().getClass() == clazz) return (T) pageCatalog.getCurrentPage();
         try {
             log.info("Переходим на страницу " + clazz.getSimpleName());
             return openPageFromCurrentPage(clazz);
@@ -44,14 +48,14 @@ public abstract class AbstractFrameworkSteps {
     }
 
     private <T extends AbstractPage> T openPageFromCurrentPage(Class<T> clazz) {
-        if (AbstractPage.currentPage.get() != null) {
-            for (Method method : AbstractPage.currentPage.get().getClass().getDeclaredMethods()) {
+        if (pageCatalog.getCurrentPage() != null) {
+            for (Method method : pageCatalog.getCurrentPage().getClass().getDeclaredMethods()) {
                 if (clazz.equals(method.getGenericReturnType())
                         && method.getName().matches("(?i)open.+page")) {
                     try {
                         method.setAccessible(true);
                         log.info("Выполняем " + method.getName() + " из " + clazz.getSimpleName());
-                        return (T) method.invoke(AbstractPage.currentPage.get());
+                        return (T) method.invoke(pageCatalog.getCurrentPage());
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
@@ -62,6 +66,14 @@ public abstract class AbstractFrameworkSteps {
     }
 
     protected abstract <T extends AbstractPage> T openPageByFullPath(Class<T> clazz);
+
+    protected AbstractPage getCurrentPage(){
+        return pageCatalog.getCurrentPage();
+    }
+
+    protected void setCurrentPage(AbstractPage abstractPage){
+        pageCatalog.setCurrentPage(abstractPage);
+    }
 
     protected Map<String, String> getDataKeeper(){
         return (Map<String, String>) Context.getInstance().getBean("dataKeeper");

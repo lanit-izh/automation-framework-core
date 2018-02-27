@@ -10,13 +10,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.lanit.at.context.Context;
 import ru.lanit.at.make.Make;
 import ru.lanit.at.make.Wait;
+import ru.lanit.at.pages.optionals.Openable;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementDecorator;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementLocatorFactory;
 
 import java.util.List;
 
 public abstract class AbstractPage implements Openable {
-    public static ThreadLocal<AbstractPage> currentPage = new ThreadLocal<>();
     protected final int DEFAULT_TIMEOUT = 10; //The timeout in seconds
     protected Logger log = LogManager.getLogger(getClass());
     protected Wait wait;
@@ -32,12 +32,6 @@ public abstract class AbstractPage implements Openable {
         pageCatalog = (PageCatalog) Context.getInstance().getBean("pageCatalog");
         wait = (Wait) Context.getInstance().getBean("wait");
         make = (Make) Context.getInstance().getBean("make");
-    }
-
-    public static void setCurrentPage(AbstractPage abstractPage) {
-        if (currentPage.get() == null || currentPage.get() != abstractPage) {
-            currentPage.set(abstractPage);
-        }
     }
 
     public WebDriver getDriver() {

@@ -1,4 +1,4 @@
-package ru.lanit.at.pages;
+package ru.lanit.at.pages.optionals;
 
 public interface Openable {
     boolean isOpened();
