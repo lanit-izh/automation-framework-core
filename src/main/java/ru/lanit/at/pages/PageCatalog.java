@@ -6,11 +6,10 @@ import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class PageCatalog {
-    private Set<AbstractPage> pageSet = new HashSet<>();
+    private List<AbstractPage> pageList = new LinkedList<>();
     private DriverManager driverManager;
     private WebDriver previousDriver;
     private AbstractPage currentPage;
@@ -20,20 +19,20 @@ public class PageCatalog {
         WebDriver actualDriver = driverManager.getDriver();
         if(previousDriver != actualDriver){
             previousDriver = actualDriver;
-            pageSet.clear();
+            pageList.clear();
         }
 
-        if (setContains(clazz)){
-            T requestedPage = getPageFromSet(clazz);
+        T requestedPage = getPageFromList(clazz);
+
+        if (requestedPage != null){
             setCurrentPage(requestedPage);
             return requestedPage;
-        }
-        else {
+        } else {
             try {
                 Constructor<T> constructor = clazz.getConstructor(WebDriver.class);
                 T page = constructor.newInstance(actualDriver);
                 setCurrentPage(page);
-                pageSet.add(page);
+                pageList.add(page);
                 return page;
             } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
                 throw new FrameworkRuntimeException(e);
@@ -41,18 +40,13 @@ public class PageCatalog {
         }
     }
 
-    private <T extends AbstractPage> T getPageFromSet(Class<T> clazz) {
-        for (AbstractPage abstractPage : pageSet) {
-            if (clazz.isAssignableFrom(abstractPage.getClass())) return (T) abstractPage;
+    private <T extends AbstractPage> T getPageFromList(Class<T> clazz) {
+        ListIterator<AbstractPage> litr = pageList.listIterator(pageList.size());
+        while (litr.hasPrevious()){
+            AbstractPage abstractPage = litr.previous();
+            if(clazz.isAssignableFrom(abstractPage.getClass())) return (T) abstractPage;
         }
-        throw new FrameworkRuntimeException("There is no " + clazz.getSimpleName() + " in page catalog.");
-    }
-
-    private <T extends AbstractPage> boolean setContains(Class<T> clazz) {
-        for (AbstractPage abstractPage : pageSet) {
-            if (clazz.isAssignableFrom(abstractPage.getClass())) return true;
-        }
-        return false;
+        return null;
     }
 
     public void setCurrentPage(AbstractPage abstractPage) {
