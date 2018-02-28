@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import ru.lanit.at.assertion.AssertsManager;
-import ru.lanit.at.assertion.ExtendedAssert;
 import ru.lanit.at.context.Context;
 import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.pages.AbstractPage;
@@ -17,12 +16,12 @@ import java.util.Map;
 public abstract class AbstractFrameworkSteps {
 
     protected Logger log = LogManager.getLogger(this.getClass());
-    protected AssertsManager assertsManager = Context.getInstance().getBean(AssertsManager.class);
-
+    protected AssertsManager assertsManager;
     private PageCatalog pageCatalog;
 
     public AbstractFrameworkSteps() {
-        pageCatalog = (PageCatalog) Context.getInstance().getBean("pageCatalog");
+        pageCatalog = Context.getInstance().getBean(PageCatalog.class);
+        assertsManager = Context.getInstance().getBean(AssertsManager.class);
     }
 
     protected WebDriver getDriver() {
@@ -67,32 +66,34 @@ public abstract class AbstractFrameworkSteps {
 
     protected abstract <T extends AbstractPage> T openPageByFullPath(Class<T> clazz);
 
-    protected AbstractPage getCurrentPage(){
+    protected AbstractPage getCurrentPage() {
         return pageCatalog.getCurrentPage();
     }
 
-    protected void setCurrentPage(AbstractPage abstractPage){
+    protected void setCurrentPage(AbstractPage abstractPage) {
         pageCatalog.setCurrentPage(abstractPage);
     }
 
-    protected Map<String, String> getDataKeeper(){
-        return (Map<String, String>) Context.getInstance().getBean("dataKeeper");
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getDataKeeper() {
+        return (Map<String, Object>) Context.getInstance().getBean("dataKeeper");
     }
 
-    protected void saveTestData(String key, String value){
+    protected void saveTestData(String key, Object value) {
         getDataKeeper().put(key, value);
     }
 
-    protected String getTestData(String key){
-        return getDataKeeper().get(key);
+    @SuppressWarnings("unchecked")
+    protected <T> T getTestData(String key) {
+        return (T) getDataKeeper().get(key);
     }
 
-    protected void clearTestData(){
+    protected void clearTestData() {
         getDataKeeper().clear();
     }
 
     @Deprecated
-    protected <T extends AbstractPage> T initPage(Class<T> clazz){
+    protected <T extends AbstractPage> T initPage(Class<T> clazz) {
         return getPage(clazz);
     }
 }

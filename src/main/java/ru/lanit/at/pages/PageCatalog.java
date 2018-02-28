@@ -40,6 +40,7 @@ public class PageCatalog {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends AbstractPage> T getPageFromList(Class<T> clazz) {
         ListIterator<AbstractPage> litr = pageList.listIterator(pageList.size());
         while (litr.hasPrevious()){
