@@ -8,6 +8,7 @@ import ru.lanit.at.context.Context;
 import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.pages.AbstractPage;
 import ru.lanit.at.pages.PageCatalog;
+import ru.lanit.at.pages.optionals.OptionalPageInterface;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -90,6 +91,11 @@ public abstract class AbstractFrameworkSteps {
 
     protected void clearTestData() {
         getDataKeeper().clear();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <I extends OptionalPageInterface> I transformCurrentPageTo(Class<I> iClass){
+        return (I) getCurrentPage();
     }
 
     @Deprecated
