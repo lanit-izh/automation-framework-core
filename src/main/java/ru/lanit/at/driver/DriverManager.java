@@ -34,6 +34,11 @@ public class DriverManager {
 
 // todo создать выбор браузера по версии и т.п.
 
+    /**
+     * Returns lazy-initialized {@link WebDriver} instance by given browser name.
+     * @param browserName available browser names: 'winium', 'remote', 'chrome', 'firefox' and other browser names, supported by {@link DesiredCapabilities}
+     * @return Instance of {@link WebDriver}
+     */
     public WebDriver getDriver(String browserName) {
         if (driver == null) {
             driver = getNewDriverInstance(browserName);
@@ -74,16 +79,27 @@ public class DriverManager {
         }
     }
 
+    /**
+     * Determines weather current {@link WebDriver} is null or not.
+     * @return true if driver is not null.
+     */
     public boolean isActive() {
         return driver != null;
     }
 
+    /**
+     * Closes all driver windows and destroys {@link WebDriver} instance.
+     */
     public void shutdown() {
         driver.quit();
         driver = null;
         log.info("Закрываем драйвер");
     }
 
+    /**
+     * Returns lazy-initialized {@link WebDriver} instance, using default browser name = {@value DEFAULT_BROWSER}
+     * @return Instance of {@link WebDriver}
+     */
     public WebDriver getDriver() {
         if (driver == null) {
             driver = getNewDriverInstance(getBrowserName());
@@ -97,6 +113,10 @@ public class DriverManager {
         return browserSystemVariableStr;
     }
 
+    /**
+     * Returns {@link JavascriptExecutor} that can execute JS in the context of the currently selected browser frame or window.
+     * @return Instance of {@link JavascriptExecutor} or {@code null} if {@link WebDriver} isn't initialized.
+     */
     public JavascriptExecutor getJSExecutor() {
         if (driver != null) {
             return (JavascriptExecutor) driver;
@@ -106,20 +126,37 @@ public class DriverManager {
         }
     }
 
+    /**
+     * Wrapper for {@link JavascriptExecutor#executeScript(String, Object...)}. Just casts output object into {@link String}.
+     * @return String output value of script executing.
+     */
     public String executeScript(String jsCommand, Object... args) {
         return (String) getJSExecutor().executeScript(jsCommand, args);
     }
 
+    /**
+     * Determines if JavaScript is active in selected frame or window. Executes JavaScript that shows if jQuery is active.
+     * @return {@code true} if {@code jQuery.active != 0}.
+     */
     public boolean isJSActive() {
         return !executeScript("return jQuery.active").equals("0");
     }
 
+    /**
+     * Executes JavaScript to determine if selected browser frame or window is loaded completely.
+     * @return {@code true} if {@code document.readyState = complete}
+     */
     public boolean isPageLoaded() {
         return executeScript("return document.readyState").equals("complete");
     }
 
     // страница загрузилась достаточно, чтобы с ней можно было взаимодействовать
-    public boolean isPageInterable() {
+
+    /**
+     * Determines if the selected browser frame or window is interactive or not by executing JavaScript.
+     * @return {@code true} if {@code document.readyState = interactive}
+     */
+    public boolean isPageInteractive() {
         return isPageLoaded() || executeScript("return document.readyState").equals("interactive");
     }
 }

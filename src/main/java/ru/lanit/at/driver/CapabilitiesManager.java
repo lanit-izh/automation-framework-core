@@ -31,7 +31,6 @@ public class CapabilitiesManager {
     }
 
     public static DesiredCapabilities getFirefoxCapabilities() {
-        DesiredCapabilities dc = DesiredCapabilities.firefox();
-        return dc;
+        return DesiredCapabilities.firefox();
     }
 }

@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,8 +18,8 @@ public class RemoteDriverFactory {
 
     static RemoteWebDriver createInstance(String browserName) {
 
-        DesiredCapabilities capability = null;
-        RemoteWebDriver driver = null;
+        DesiredCapabilities capability;
+        RemoteWebDriver driver;
 
         switch (browserName.toLowerCase()) {
             case "firefox":
@@ -53,7 +54,7 @@ public class RemoteDriverFactory {
         driver.manage().window().setSize(new Dimension(1920, 1080));
         log.info("Размер окна браузера установлен на 1920х1080");
 
-        ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
+        driver.setFileDetector(new LocalFileDetector());
 
         return driver;
     }
@@ -64,7 +65,7 @@ public class RemoteDriverFactory {
             return new URL(url);
         } catch (MalformedURLException e) {
             log.error("Неверно задан адрес хаба selenoid/selenium: " + url);
-            return null;
+            throw new FrameworkRuntimeException(e);
         }
     }
 

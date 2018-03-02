@@ -15,12 +15,12 @@ import java.util.Date;
 
 public class Wait {
 
-    private static final int CHECK_PAGE_STATE_PERIOD_MSEC = 300;
+    private static final int CHECK_PAGE_STATE_PERIOD_MS = 300;
     private static final int PAGE_MIN_WAIT_TIMEOUT_SEC = 30;
     private static final int ELEMENT_WAIT_TIMEOUT_SEC = 20;
     private static final int PAGE_WAIT_TIMEOUT_SEC = 60;
     private static final int DEFAULT_TIMEOUT_SEC = 5;
-    private static final int CHECK_JS_STATE_PERIOD_MSEC = 200;
+    private static final int CHECK_JS_STATE_PERIOD_MS = 200;
     private Logger log = LogManager.getLogger(Wait.class.getSimpleName());
 
     private DriverManager driverManager;
@@ -43,7 +43,7 @@ public class Wait {
         Timeout time = new Timeout(ELEMENT_WAIT_TIMEOUT_SEC);
         try {
             while (element.isDisplayed() && time.notOver()) {
-                sleep(CHECK_PAGE_STATE_PERIOD_MSEC);
+                sleep(CHECK_PAGE_STATE_PERIOD_MS);
             }
         } catch (NoSuchElementException ignore) {
         }
@@ -56,7 +56,7 @@ public class Wait {
             try {
                 elementVisible = element.isDisplayed();
             } catch (NoSuchElementException nse) {
-                sleep(CHECK_PAGE_STATE_PERIOD_MSEC);
+                sleep(CHECK_PAGE_STATE_PERIOD_MS);
             }
         }
     }
@@ -113,7 +113,7 @@ public class Wait {
             if (time.over())
                 throw new FrameworkRuntimeException("Анимация происходила слишком долго, " + ELEMENT_WAIT_TIMEOUT_SEC + " сек");
 
-            sleep(CHECK_JS_STATE_PERIOD_MSEC);
+            sleep(CHECK_JS_STATE_PERIOD_MS);
         }
     }
 
@@ -123,7 +123,7 @@ public class Wait {
         log.debug("Ожидаем загрузки страницы... \t");
 
         while (!isPageLoaded()) {
-            sleep(CHECK_PAGE_STATE_PERIOD_MSEC);
+            sleep(CHECK_PAGE_STATE_PERIOD_MS);
 
             if (waitMinLoad.over() && isPageInterable()) {
                 log.warn("Страница не была полностью загружена, превышено время ожидания. ({} сек)", PAGE_MIN_WAIT_TIMEOUT_SEC);

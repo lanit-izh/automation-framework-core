@@ -7,4 +7,5 @@ public class FrameworkConstants {
     public static final String HUB_URL = "hub_url";
     public static final String DEFAULT_HUB_URL = "http://localhost:4444/wd/hub";
     public static final String BROWSER_VARIABLE_NAME = "browser";
+    public static final int DEFAULT_TIMEOUT = 10; //The timeout in seconds
 }

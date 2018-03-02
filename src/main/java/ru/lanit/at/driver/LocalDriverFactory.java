@@ -11,7 +11,7 @@ public class LocalDriverFactory {
     private static Logger log = Logger.getLogger(LocalDriverFactory.class);
 
     static WebDriver createInstance(String browserName) {
-        WebDriver driver = null;
+        WebDriver driver;
 
         switch (browserName.toLowerCase()) {
             case "firefox":

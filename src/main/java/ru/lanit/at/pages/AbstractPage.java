@@ -16,8 +16,9 @@ import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementLocatorFactory
 
 import java.util.List;
 
+import static ru.lanit.at.FrameworkConstants.DEFAULT_TIMEOUT;
+
 public abstract class AbstractPage implements Openable {
-    protected final int DEFAULT_TIMEOUT = 10; //The timeout in seconds
     protected Logger log = LogManager.getLogger(getClass());
     protected Wait wait;
     protected Make make;
@@ -34,30 +35,61 @@ public abstract class AbstractPage implements Openable {
         make = (Make) Context.getInstance().getBean("make");
     }
 
+    /**
+     * @return Instance of {@link WebDriver} by which elements of current page object are initialized.
+     */
     public WebDriver getDriver() {
         return driver;
     }
 
+    /**
+     * Returns instance of page with given class from {@link PageCatalog}. If {@link PageCatalog} doesn't contain page with such page yet - it will be initialized and saved.
+     * @param clazz Class of page object that should be initialized and returned.
+     * @return Instance of page object from {@link PageCatalog}.
+     */
     protected <T extends AbstractPage> T getPage(Class<T> clazz) {
         return pageCatalog.getPage(clazz);
     }
 
+    /**
+     * Waits for the specified time for {@link WebElement} to be visible, using {@link WebDriverWait} and {@link ExpectedConditions#visibilityOf(WebElement)}.
+     * @param htmlElement The element that should be visible.
+     * @param timeout Timeout in seconds.
+     */
     protected void waitForElementVisible(WebElement htmlElement, int timeout) {
         new WebDriverWait(driver, timeout).until(ExpectedConditions.visibilityOf(htmlElement));
     }
 
+    /**
+     * Waits for default timeout for {@link WebElement} to be visible, using {@link WebDriverWait} and {@link ExpectedConditions#visibilityOf(WebElement)}.
+     * @param htmlElement The element that should be visible.
+     */
     protected void waitForElementVisible(WebElement htmlElement) {
         waitForElementVisible(htmlElement, DEFAULT_TIMEOUT);
     }
 
+    /**
+     * Waits for the specified time for {@link WebElement} to be invisible, using {@link WebDriverWait} and {@link ExpectedConditions#invisibilityOf(WebElement)}.
+     * @param htmlElement The element that should be invisible.
+     * @param timeout Timeout in seconds.
+     */
     protected void waitForElementInvisible(WebElement htmlElement, int timeout) {
         new WebDriverWait(driver, timeout).until(ExpectedConditions.invisibilityOf(htmlElement));
     }
 
+    /**
+     * Waits for default timeout for {@link WebElement} to be invisible, using {@link WebDriverWait} and {@link ExpectedConditions#visibilityOf(WebElement)}.
+     * @param htmlElement The element that should be invisible.
+     */
     protected void waitForElementInvisible(WebElement htmlElement) {
         new WebDriverWait(driver, DEFAULT_TIMEOUT).until(ExpectedConditions.invisibilityOf(htmlElement));
     }
 
+    /**
+     * Waits for the specified time for list of {@link WebElement} to be clickable, using {@link WebDriverWait} and {@link ExpectedConditions#elementToBeClickable(WebElement)}.
+     * @param timeout Timeout in seconds.
+     * @param htmlElements List of elements that should be clickable.
+     */
     protected void waitForElementClickable(int timeout, WebElement... htmlElements) {
         WebDriverWait wait = new WebDriverWait(driver, timeout);
         for (WebElement webElement : htmlElements) {
@@ -65,6 +97,10 @@ public abstract class AbstractPage implements Openable {
         }
     }
 
+    /**
+     * Waits for the default timeout for list of {@link WebElement} to be clickable, using {@link WebDriverWait} and {@link ExpectedConditions#elementToBeClickable(WebElement)}.
+     * @param htmlElements List of elements that should be clickable.
+     */
     protected void waitForElementClickable(WebElement... htmlElements) {
         waitForElementClickable(DEFAULT_TIMEOUT, htmlElements);
     }
@@ -106,8 +142,6 @@ public abstract class AbstractPage implements Openable {
     }
 
     /**
-     * Default timeout in seconds
-     *
      * @return Default timeout in seconds
      */
     protected int getDefaultTimeout() {
@@ -131,6 +165,12 @@ public abstract class AbstractPage implements Openable {
         throw new NoSuchElementException("No elements with text '" + text + "' were found on " + this.getClass().getSimpleName());
     }
 
+    /**
+     * Method to get instance of page.
+     * @param clazz class of page that should be instantiated.
+     * @return instance of clazz.
+     * @deprecated Use getPage(...) method.
+     */
     @Deprecated
     protected <T extends AbstractPage> T initPage(Class<T> clazz) {
         return getPage(clazz);
