@@ -35,8 +35,8 @@ public class Wait {
         }
     }
 
-    public void sec(int sec) {
-        sleep(sec * 1000);
+    public void sec(double sec) {
+        sleep((int) (sec * 1000));
     }
 
     public void untilElementInvisible(WebElement element) {
@@ -93,6 +93,7 @@ public class Wait {
         return o != null ? o.toString() : "";
     }
 
+    @Deprecated
     public boolean isJSActive() {
         return !executeScript("return jQuery.active").equals("0");
     }
@@ -106,6 +107,8 @@ public class Wait {
         return isPageLoaded() || executeScript("return document.readyState").equals("interactive");
     }
 
+    // jq почти не
+    @Deprecated
     public void untilJSComplete() {
         Timeout time = new Timeout(ELEMENT_WAIT_TIMEOUT_SEC);
         while (isJSActive()) {
