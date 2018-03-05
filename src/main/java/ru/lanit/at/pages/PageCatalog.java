@@ -6,25 +6,30 @@ import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 public class PageCatalog {
     private List<AbstractPage> pageList = new LinkedList<>();
     private DriverManager driverManager;
     private WebDriver previousDriver;
+    /**
+     * Variable for tracking which page object is currently opened and in use.
+     */
     private AbstractPage currentPage;
 
     public <T extends AbstractPage> T getPage(Class<T> clazz) {
 
         WebDriver actualDriver = driverManager.getDriver();
-        if(previousDriver != actualDriver){
+        if (previousDriver != actualDriver) {
             previousDriver = actualDriver;
             pageList.clear();
         }
 
         T requestedPage = getPageFromList(clazz);
 
-        if (requestedPage != null){
+        if (requestedPage != null) {
             setCurrentPage(requestedPage);
             return requestedPage;
         } else {
@@ -43,9 +48,9 @@ public class PageCatalog {
     @SuppressWarnings("unchecked")
     private <T extends AbstractPage> T getPageFromList(Class<T> clazz) {
         ListIterator<AbstractPage> litr = pageList.listIterator(pageList.size());
-        while (litr.hasPrevious()){
+        while (litr.hasPrevious()) {
             AbstractPage abstractPage = litr.previous();
-            if(clazz.isAssignableFrom(abstractPage.getClass())) return (T) abstractPage;
+            if (clazz.isAssignableFrom(abstractPage.getClass())) return (T) abstractPage;
         }
         return null;
     }

@@ -8,6 +8,7 @@ public class Context {
 
     /**
      * Method to get double check locked, thread safe Spring classpath application context.
+     *
      * @return Instance of Spring {@link ApplicationContext}.
      */
     public static ApplicationContext getInstance() {

@@ -1,3 +1,7 @@
 package ru.lanit.at.pages.optionals;
 
-public interface OptionalPageInterface {}
+/**
+ * Parent of optional interfaces. Optional page interfaces indicates that some page has specified option or capability.
+ */
+public interface OptionalPageInterface {
+}

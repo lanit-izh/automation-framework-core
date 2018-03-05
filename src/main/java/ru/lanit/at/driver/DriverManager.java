@@ -36,6 +36,7 @@ public class DriverManager {
 
     /**
      * Returns lazy-initialized {@link WebDriver} instance by given browser name.
+     *
      * @param browserName available browser names: 'winium', 'remote', 'chrome', 'firefox' and other browser names, supported by {@link DesiredCapabilities}
      * @return Instance of {@link WebDriver}
      */
@@ -81,6 +82,7 @@ public class DriverManager {
 
     /**
      * Determines weather current {@link WebDriver} is null or not.
+     *
      * @return true if driver is not null.
      */
     public boolean isActive() {
@@ -98,6 +100,7 @@ public class DriverManager {
 
     /**
      * Returns lazy-initialized {@link WebDriver} instance, using default browser name = {@value DEFAULT_BROWSER}
+     *
      * @return Instance of {@link WebDriver}
      */
     public WebDriver getDriver() {
@@ -107,14 +110,15 @@ public class DriverManager {
         return driver;
     }
 
-    private String getBrowserName(){
+    private String getBrowserName() {
         String browserSystemVariableStr = System.getProperty(FrameworkConstants.BROWSER_VARIABLE_NAME);
-        if( browserSystemVariableStr == null || browserSystemVariableStr.isEmpty()) return DEFAULT_BROWSER;
+        if (browserSystemVariableStr == null || browserSystemVariableStr.isEmpty()) return DEFAULT_BROWSER;
         return browserSystemVariableStr;
     }
 
     /**
      * Returns {@link JavascriptExecutor} that can execute JS in the context of the currently selected browser frame or window.
+     *
      * @return Instance of {@link JavascriptExecutor} or {@code null} if {@link WebDriver} isn't initialized.
      */
     public JavascriptExecutor getJSExecutor() {
@@ -128,6 +132,7 @@ public class DriverManager {
 
     /**
      * Wrapper for {@link JavascriptExecutor#executeScript(String, Object...)}. Just casts output object into {@link String}.
+     *
      * @return String output value of script executing.
      */
     public String executeScript(String jsCommand, Object... args) {
@@ -136,6 +141,7 @@ public class DriverManager {
 
     /**
      * Determines if JavaScript is active in selected frame or window. Executes JavaScript that shows if jQuery is active.
+     *
      * @return {@code true} if {@code jQuery.active != 0}.
      */
     public boolean isJSActive() {
@@ -144,6 +150,7 @@ public class DriverManager {
 
     /**
      * Executes JavaScript to determine if selected browser frame or window is loaded completely.
+     *
      * @return {@code true} if {@code document.readyState = complete}
      */
     public boolean isPageLoaded() {
@@ -154,6 +161,7 @@ public class DriverManager {
 
     /**
      * Determines if the selected browser frame or window is interactive or not by executing JavaScript.
+     *
      * @return {@code true} if {@code document.readyState = interactive}
      */
     public boolean isPageInteractive() {
