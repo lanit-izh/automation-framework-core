@@ -1,7 +1,9 @@
 package ru.lanit.at.driver;
 
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -31,6 +33,19 @@ public class CapabilitiesManager {
     }
 
     public static DesiredCapabilities getFirefoxCapabilities() {
-        return DesiredCapabilities.firefox();
+        FirefoxProfile profile = new FirefoxProfile();
+        profile.setPreference("plugin.default.state", 2);
+        profile.setPreference("focusmanager.testmode", false);
+        profile.setPreference("browser.tabs.remote.autostart.2", false);
+        profile.setPreference("layout.spellcheckDefault", 0);
+        profile.setPreference("dom.webnotifications.enabled", false);
+        DesiredCapabilities dc = DesiredCapabilities.firefox();
+        dc.setCapability("marionette", true);
+        dc.setCapability("gecko", true);
+        profile.setPreference("devtools.selfxss.count", 1500);
+        profile.setPreference("dom.webnotifications.enabled", false);
+        dc.setCapability(FirefoxDriver.PROFILE, profile);
+        return dc;
+
     }
 }

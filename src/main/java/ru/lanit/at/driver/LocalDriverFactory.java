@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 
 public class LocalDriverFactory {
     private static Logger log = Logger.getLogger(LocalDriverFactory.class);
@@ -16,7 +17,10 @@ public class LocalDriverFactory {
         switch (browserName.toLowerCase()) {
             case "firefox":
                 FirefoxOptions ffo = CapabilitiesManager.getFirefoxOptions();
-                driver = new FirefoxDriver(ffo);
+                FirefoxProfile profile = new FirefoxProfile();
+                profile.setPreference("devtools.selfxss.count", 1500);
+                profile.setPreference("dom.webnotifications.enabled", false);
+                driver = new FirefoxDriver(profile);
                 break;
 
             case "chrome":
