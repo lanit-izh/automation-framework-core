@@ -18,6 +18,10 @@ public class LocalDriverFactory {
             case "firefox":
                 FirefoxOptions ffo = CapabilitiesManager.getFirefoxOptions();
                 FirefoxProfile profile = new FirefoxProfile();
+                profile.setPreference("plugin.default.state", 2);
+                profile.setPreference("focusmanager.testmode", false);
+                profile.setPreference("browser.tabs.remote.autostart.2", false);
+                profile.setPreference("layout.spellcheckDefault", 0);
                 profile.setPreference("devtools.selfxss.count", 1500);
                 profile.setPreference("dom.webnotifications.enabled", false);
                 driver = new FirefoxDriver(profile);

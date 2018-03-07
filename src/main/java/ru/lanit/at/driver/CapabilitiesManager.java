@@ -38,7 +38,6 @@ public class CapabilitiesManager {
         profile.setPreference("focusmanager.testmode", false);
         profile.setPreference("browser.tabs.remote.autostart.2", false);
         profile.setPreference("layout.spellcheckDefault", 0);
-        profile.setPreference("dom.webnotifications.enabled", false);
         DesiredCapabilities dc = DesiredCapabilities.firefox();
         dc.setCapability("marionette", true);
         dc.setCapability("gecko", true);

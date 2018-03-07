@@ -1,7 +1,6 @@
 package ru.lanit.at.driver;
 
 import org.apache.log4j.Logger;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.LocalFileDetector;
@@ -51,7 +50,8 @@ public class RemoteDriverFactory {
         driver = new RemoteWebDriver(hubUrl, capability);
         log.info("Создан Remote драйвер " + browserName + " для " + hubUrl.toString());
 
-        driver.manage().window().setSize(new Dimension(1920, 1080));
+//        driver.manage().window().setSize(new Dimension(1920, 1080));
+        driver.manage().window().maximize();
         log.info("Размер окна браузера установлен на 1920х1080");
 
         driver.setFileDetector(new LocalFileDetector());
