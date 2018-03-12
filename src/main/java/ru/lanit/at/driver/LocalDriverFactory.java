@@ -1,6 +1,8 @@
 package ru.lanit.at.driver;
 
-import net.lightbody.bmp.proxy.ProxyServer;
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.client.ClientUtil;
+import net.lightbody.bmp.proxy.auth.AuthType;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
@@ -9,14 +11,23 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class LocalDriverFactory {
     private static Logger log = Logger.getLogger(LocalDriverFactory.class);
 
+    public static BrowserMobProxyServer server;
+
     static WebDriver createInstance(String browserName) {
         WebDriver driver;
-        startProxy(7878);
+
+        server = new BrowserMobProxyServer();
+        server.autoAuthorization("newmos.mos.ru","mos","mos", AuthType.BASIC);
+        server.setTrustAllServers(true);
+        server.start(0);
+        int port = server.getPort();
+        Proxy proxy = ClientUtil.createSeleniumProxy(server);
 
         switch (browserName.toLowerCase()) {
             case "firefox":
@@ -28,15 +39,22 @@ public class LocalDriverFactory {
                 profile.setPreference("layout.spellcheckDefault", 0);
                 profile.setPreference("devtools.selfxss.count", 1500);
                 profile.setPreference("dom.webnotifications.enabled", false);
-                profile.setPreference("network.proxy.socks", "127.0.0.1");
-                profile.setPreference("network.proxy.socks_port", 7878);
-                driver = new FirefoxDriver(profile);
+                DesiredCapabilities seleniumCapabilities = new DesiredCapabilities();
+                seleniumCapabilities.setCapability(CapabilityType.PROXY, proxy);
+                seleniumCapabilities.setCapability(FirefoxDriver.PROFILE,profile);
+                seleniumCapabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+                seleniumCapabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
+                driver = new FirefoxDriver(seleniumCapabilities);
                 break;
 
             case "chrome":
                 ChromeOptions chromeOptions = CapabilitiesManager.getChromeOptions();
-                chromeOptions.addArguments("--proxy-server=http://127.0.0.1:7878");
-                driver = new ChromeDriver(chromeOptions);
+                DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+                capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+                capabilities.setCapability (CapabilityType.ACCEPT_SSL_CERTS, true);
+                capabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
+                capabilities.setCapability("proxy", proxy);
+                driver = new ChromeDriver(capabilities);
                 break;
 
             default:
@@ -47,15 +65,5 @@ public class LocalDriverFactory {
         log.info("Создан драйвер для " + browserName);
         return driver;
 
-    }
-
-    private static void startProxy(int port) {
-        ProxyServer bmp = new ProxyServer(port);
-        try {
-            bmp.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        bmp.autoBasicAuthorization("", "mos", "mos");
     }
 }

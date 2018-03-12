@@ -14,6 +14,7 @@ public class CapabilitiesManager {
     public static ChromeOptions getChromeOptions() {
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--always-authorize-plugins=true");
+        chromeOptions.addArguments("--ignore-certificate-errors");
         chromeOptions.addExtensions(new File("src/main/resources/drivers/1.2.1_0.crx"));
         chromeOptions.addArguments("--disable-blink-features=BlockCredentialedSubresources");
         return chromeOptions;
