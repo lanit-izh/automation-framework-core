@@ -1,8 +1,16 @@
 package ru.lanit.at.driver;
 
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.client.ClientUtil;
+import net.lightbody.bmp.proxy.auth.AuthType;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.winium.DesktopOptions;
@@ -11,6 +19,7 @@ import org.testng.Assert;
 import ru.lanit.at.FrameworkConstants;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -21,6 +30,8 @@ import java.net.URL;
  * winium.hub.url (http://localhost:9999 as default)
  */
 public class DriverManager {
+    public static BrowserMobProxyServer server;
+
     private Logger log = Logger.getLogger(DriverManager.class);
     private WebDriver driver;
     private static final String DEFAULT_BROWSER = "chrome";
@@ -66,15 +77,49 @@ public class DriverManager {
             }
         }
         if ("true".equalsIgnoreCase(System.getProperty("remote"))) {
+            server = new BrowserMobProxyServer();
+            server.autoAuthorization("newmos.mos.ru","mos","mos", AuthType.BASIC);
+            server.setTrustAllServers(true);
+            server.start(0);
+            int port = server.getPort();
+            Proxy proxy = ClientUtil.createSeleniumProxy(server);
             DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+            if(browserName.equalsIgnoreCase("chrome")) {
+                ChromeOptions options = new ChromeOptions();
+                options.addArguments("--always-authorize-plugins=true");
+                options.addArguments("--ignore-certificate-errors");
+                options.addExtensions(new File("src/main/resources/drivers/1.2.1_0.crx"));
+                options.addArguments("--disable-blink-features=BlockCredentialedSubresources");
+                options.addArguments("--start-maximized");
+                desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, options);
+            }
+            if(browserName.equalsIgnoreCase("firefox")) {
+                FirefoxProfile profile = new FirefoxProfile();
+                profile.setPreference("plugin.default.state", 2);
+                profile.setPreference("focusmanager.testmode", false);
+                profile.setPreference("browser.tabs.remote.autostart.2", false);
+                profile.setPreference("layout.spellcheckDefault", 0);
+                desiredCapabilities.setCapability("marionette", true);
+                desiredCapabilities.setCapability("gecko", true);
+                profile.setPreference("devtools.selfxss.count", 1500);
+                profile.setPreference("dom.webnotifications.enabled", false);
+                desiredCapabilities.setCapability(FirefoxDriver.PROFILE, profile);
+            }
+            desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);
+            desiredCapabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+            desiredCapabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
             desiredCapabilities.setBrowserName(browserName);
             String hubUrl = System.getProperty("selenium.hub.url");
             if (hubUrl == null || hubUrl.isEmpty()) hubUrl = DEFAULT_HUB_URL;
             try {
-                return new RemoteWebDriver(new URL(hubUrl), desiredCapabilities);
+                driver = new RemoteWebDriver(new URL(hubUrl), desiredCapabilities);
             } catch (MalformedURLException e) {
                 throw new FrameworkRuntimeException("Exception on remote web driver initialization", e);
             }
+            if(!browserName.equalsIgnoreCase("chrome")) {
+                driver.manage().window().maximize();
+            }
+            return driver;
         } else {
             return LocalDriverFactory.createInstance(browserName);
         }
