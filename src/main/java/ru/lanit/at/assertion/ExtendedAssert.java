@@ -46,6 +46,7 @@ public class ExtendedAssert extends SoftAssert {
                 }
                 sb.append("\n\t");
                 sb.append(ae.getKey().getMessage());
+                ae.getKey().printStackTrace();
             }
             m_errors.clear();
             throw new AssertionError(sb.toString());

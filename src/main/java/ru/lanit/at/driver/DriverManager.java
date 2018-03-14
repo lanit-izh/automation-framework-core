@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -94,7 +95,8 @@ public class DriverManager {
                 desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, options);
             }
             if(browserName.equalsIgnoreCase("firefox")) {
-                FirefoxProfile profile = new FirefoxProfile();
+                ProfilesIni profileIni = new ProfilesIni();
+                FirefoxProfile profile = profileIni.getProfile("qa");
                 profile.setPreference("plugin.default.state", 2);
                 profile.setPreference("focusmanager.testmode", false);
                 profile.setPreference("browser.tabs.remote.autostart.2", false);

@@ -20,9 +20,9 @@ public class Make {
         wait.untilElementVisible(webElement);
         Boolean iFrameFlag = (Boolean) ((JavascriptExecutor) wait.getDriver()).executeScript("return(window == top)");
         if (iFrameFlag) {
-            ((JavascriptExecutor) wait.getDriver()).executeScript("arguments[0].scrollIntoView({block: 'center'});", webElement);
+            ((JavascriptExecutor) wait.getDriver()).executeScript("arguments[0].scrollIntoView(true);window.scrollBy(0, -400);", webElement);
         } else {
-            ((JavascriptExecutor) wait.getDriver()).executeScript("window.scrollTo(0," + (webElement.getLocation().getY() - wait.getDriver().manage().window().getSize().height / 3) + ")");
+            ((JavascriptExecutor) wait.getDriver()).executeScript("arguments[0].scrollIntoView(true);window.scrollBy(0, -400);",webElement);
         }
 
         webElement.click();
