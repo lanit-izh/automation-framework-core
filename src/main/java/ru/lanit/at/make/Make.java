@@ -37,7 +37,7 @@ public class Make {
         if (iFrameFlag) {
             scrollIntoView(webElement);
         } else {
-            jsExecutor.executeScript("window.scrollTo(0," + (webElement.getLocation().getY() - getDriver().manage().window().getSize().height / 3) + ")");
+            jsExecutor.executeScript("arguments[0].scrollIntoView(true);window.scrollBy(0, -400);", webElement);
         }
 
         webElement.click();
@@ -68,7 +68,7 @@ public class Make {
 
     private void scrollIntoView(WebElement webElement){
         jsExecutor.executeScript(
-                "arguments[0].scrollIntoView({block: 'center'});",
+                "arguments[0].scrollIntoView(true);window.scrollBy(0, -400);",
                 webElement);
     }
 }

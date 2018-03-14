@@ -25,6 +25,8 @@ public class LocalDriverFactory {
         server = new BrowserMobProxyServer();
         server.autoAuthorization("newmos.mos.ru","mos","mos", AuthType.BASIC);
         server.setTrustAllServers(true);
+        server.blacklistRequests("mc\\.yandex\\.ru", 200);
+        server.blacklistRequests("stat\\.sputnik\\.ru", 200);
         server.start(0);
         int port = server.getPort();
         Proxy proxy = ClientUtil.createSeleniumProxy(server);
