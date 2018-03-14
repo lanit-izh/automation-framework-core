@@ -1,14 +1,29 @@
 package ru.lanit.at.make;
 
 
-import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import ru.lanit.at.driver.DriverManager;
 
 public class Make {
+
     private Wait wait;
+
+    private DriverManager driverManager;
+
+    private JSExecutor jsExecutor;
 
     public void setWait(Wait wait) {
         this.wait = wait;
+    }
+
+    public void setJsExecutor(JSExecutor jsExecutor) {
+        this.jsExecutor = jsExecutor;
+    }
+
+    public void setDriverManager(DriverManager driverManager) {
+        this.driverManager = driverManager;
     }
 
     /**
@@ -18,11 +33,11 @@ public class Make {
      */
     public void clickTo(WebElement webElement) {
         wait.untilElementVisible(webElement);
-        Boolean iFrameFlag = (Boolean) ((JavascriptExecutor) wait.getDriver()).executeScript("return(window == top)");
+        Boolean iFrameFlag = (Boolean) jsExecutor.executeScript("return(window == top)");
         if (iFrameFlag) {
-            ((JavascriptExecutor) wait.getDriver()).executeScript("arguments[0].scrollIntoView(false);window.scrollBy(0, -" + wait.getDriver().manage().window().getSize().height / 3 + ")", webElement);
+            scrollIntoView(webElement);
         } else {
-            ((JavascriptExecutor) wait.getDriver()).executeScript("window.scrollTo(0," + (webElement.getLocation().getY() - wait.getDriver().manage().window().getSize().height / 3) + ")");
+            jsExecutor.executeScript("window.scrollTo(0," + (webElement.getLocation().getY() - getDriver().manage().window().getSize().height / 3) + ")");
         }
 
         webElement.click();
@@ -39,5 +54,21 @@ public class Make {
     public void sendKeysTo(WebElement webElement, String message) {
         webElement.clear();
         webElement.sendKeys(message);
+    }
+
+    public void jsClickOn(WebElement webElement){
+        scrollIntoView(webElement);
+        jsExecutor.executeScript("arguments[0].click();", webElement);
+    }
+
+    public WebDriver getDriver() {
+        return driverManager.getDriver();
+    }
+
+
+    private void scrollIntoView(WebElement webElement){
+        jsExecutor.executeScript(
+                "arguments[0].scrollIntoView({block: 'center'});",
+                webElement);
     }
 }

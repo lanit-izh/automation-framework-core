@@ -2,7 +2,6 @@ package ru.lanit.at.make;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -24,6 +23,7 @@ public class Wait {
     private Logger log = LogManager.getLogger(Wait.class.getSimpleName());
 
     private DriverManager driverManager;
+    private JSExecutor jsExecutor;
 
     private void sleep(int ms) {
         try {
@@ -111,19 +111,6 @@ public class Wait {
         untilElementClickable(DEFAULT_TIMEOUT_SEC, htmlElements);
     }
 
-    private JavascriptExecutor getJSExecutor() {
-        if (driverManager.getDriver() != null) {
-            return (JavascriptExecutor) driverManager.getDriver();
-        } else {
-            throw new FrameworkRuntimeException("Драйвер не запущен! Сначала инициализируйте драйвер");
-        }
-    }
-
-    private String executeScript(String jsCommand, Object... args) {
-        Object o = getJSExecutor().executeScript(jsCommand, args);
-        return o != null ? o.toString() : "";
-    }
-
     /**
      * Determines if JavaScript is active on currently selected browser window or frame.
      *
@@ -131,7 +118,7 @@ public class Wait {
      */
     public boolean isJSActive() {
         try {
-            return !executeScript("return jQuery.active").equals("0");
+            return !jsExecutor.executeScript("return jQuery.active").toString().equals("0");
         } catch (Exception ignore) {
             return false;
         }
@@ -143,12 +130,12 @@ public class Wait {
      * @return true if document.readyState = complete.
      */
     public boolean isPageLoaded() {
-        return executeScript("return document.readyState").equals("complete");
+        return jsExecutor.executeScript("return document.readyState").equals("complete");
     }
 
     // страница загрузилась достаточно, чтобы с ней можно было взаимодействовать
     public boolean isPageInteractive() {
-        return isPageLoaded() || executeScript("return document.readyState").equals("interactive");
+        return isPageLoaded() || jsExecutor.executeScript("return document.readyState").equals("interactive");
     }
 
     /**
@@ -187,6 +174,10 @@ public class Wait {
                 throw new FrameworkRuntimeException(errorMessage);
             }
         }
+    }
+
+    public void setJsExecutor(JSExecutor jsExecutor) {
+        this.jsExecutor = jsExecutor;
     }
 
     class Timeout {

@@ -3,16 +3,24 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     <bean id="driverManager" class="ru.lanit.at.driver.DriverManager" destroy-method="shutdown"/>
+
     <bean id="pageCatalog" class="ru.lanit.at.pages.PageCatalog">
+        <property name="driverManager" ref="driverManager"/>
+    </bean>
+
+    <bean id="jsExecutor" class="ru.lanit.at.make.JSExecutor">
         <property name="driverManager" ref="driverManager"/>
     </bean>
 
     <bean id="wait" class="ru.lanit.at.make.Wait">
         <property name="driverManager" ref="driverManager"/>
+        <property name="jsExecutor" ref="jsExecutor"/>
     </bean>
 
     <bean id="make" class="ru.lanit.at.make.Make">
         <property name="wait" ref="wait"/>
+        <property name="jsExecutor" ref="jsExecutor"/>
+        <property name="driverManager" ref="driverManager"/>
     </bean>
 
     <util:map id="dataKeeper" map-class="java.util.HashMap" key-type="java.lang.String" value-type="java.lang.Object"/>
