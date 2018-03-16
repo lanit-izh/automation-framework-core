@@ -3,7 +3,6 @@ package ru.lanit.at.make;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import ru.lanit.at.driver.DriverManager;
 
 public class Make {
@@ -61,10 +60,14 @@ public class Make {
         jsExecutor.executeScript("arguments[0].click();", webElement);
     }
 
+    public void focusOnElement(WebElement webElement) {
+        scrollIntoView(webElement);
+        jsExecutor.executeScript("arguments[0].focus()", webElement);
+    }
+
     public WebDriver getDriver() {
         return driverManager.getDriver();
     }
-
 
     private void scrollIntoView(WebElement webElement){
         jsExecutor.executeScript(
