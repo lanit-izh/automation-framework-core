@@ -27,7 +27,7 @@ public abstract class AbstractPage implements Openable {
 
     public AbstractPage(WebDriver driver) {
         this.driver = driver;
-        log.info("Инициализируем элементы {}", this.getClass().getSimpleName());
+        log.info("Initializing elements of {}", this.getClass().getSimpleName());
         PageFactory.initElements(new HtmlElementDecorator(new HtmlElementLocatorFactory(driver)), this);
 
         pageCatalog = (PageCatalog) Context.getInstance().getBean("pageCatalog");

@@ -45,14 +45,14 @@ public abstract class AbstractFrameworkSteps {
 
     @SuppressWarnings("unchecked")
     protected <T extends AbstractPage> T openPage(Class<T> clazz) {
-        log.trace("Открываем страницу (" + clazz + ")");
+        log.trace("Open page (" + clazz + ")");
         if (pageCatalog.getCurrentPage() != null
                 && pageCatalog.getCurrentPage().getClass() == clazz) return (T) pageCatalog.getCurrentPage();
         try {
-            log.info("Переходим на страницу " + clazz.getSimpleName());
+            log.info("Going to page " + clazz.getSimpleName());
             return openPageFromCurrentPage(clazz);
         } catch (RuntimeException ignore) {
-            log.warn("Относительный переход не удался. Идём через главную страницу.");
+            log.warn("Relative transition to page failed. Going through the main page.");
             return openPageByFullPath(clazz);
         }
     }
