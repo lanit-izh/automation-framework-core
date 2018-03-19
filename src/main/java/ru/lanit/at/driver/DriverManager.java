@@ -33,18 +33,18 @@ import java.net.UnknownHostException;
  * winium.hub.url (http://localhost:9999 as default)
  */
 public class DriverManager {
-    public static BrowserMobProxyServer server;
-
-    private Logger log = Logger.getLogger(DriverManager.class);
-    private WebDriver driver;
     private static final String DEFAULT_BROWSER = "chrome";
     private static final String DEFAULT_HUB_URL = "http://localhost:4444/wd/hub";
     private static final String DEFAULT_WINIUM_HUB_URL = "http://localhost:9999";
+    public static BrowserMobProxyServer server;
 
     static {
         System.setProperty("webdriver.gecko.driver", "src/main/resources/drivers/geckodriver.exe");
         System.setProperty("webdriver.chrome.driver", "src/main/resources/drivers/chromedriver.exe");
     }
+
+    private Logger log = Logger.getLogger(DriverManager.class);
+    private WebDriver driver;
 
 // todo создать выбор браузера по версии и т.п.
 
@@ -81,7 +81,7 @@ public class DriverManager {
         }
         if ("true".equalsIgnoreCase(System.getProperty("remote"))) {
             server = new BrowserMobProxyServer();
-            server.autoAuthorization("newmos.mos.ru","mos","mos", AuthType.BASIC);
+            server.autoAuthorization("newmos.mos.ru", "mos", "mos", AuthType.BASIC);
             server.setTrustAllServers(true);
             server.start(0);
             int port = server.getPort();
@@ -95,16 +95,15 @@ public class DriverManager {
                 throw new FrameworkRuntimeException("Can't set proxy host for driver.", e);
             }
             DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-            if(browserName.equalsIgnoreCase("chrome")) {
+            if (browserName.equalsIgnoreCase("chrome")) {
                 ChromeOptions options = new ChromeOptions();
                 options.addArguments("--always-authorize-plugins=true");
                 options.addArguments("--ignore-certificate-errors");
                 options.addExtensions(new File("src/main/resources/drivers/1.2.1_0.crx"));
                 options.addArguments("--disable-blink-features=BlockCredentialedSubresources");
-                options.addArguments("--start-maximized");
                 desiredCapabilities.setCapability(ChromeOptions.CAPABILITY, options);
             }
-            if(browserName.equalsIgnoreCase("firefox")) {
+            if (browserName.equalsIgnoreCase("firefox")) {
                 ProfilesIni profileIni = new ProfilesIni();
                 FirefoxProfile profile = profileIni.getProfile("qa");
                 profile.setPreference("plugin.default.state", 2);
@@ -128,9 +127,7 @@ public class DriverManager {
             } catch (MalformedURLException e) {
                 throw new FrameworkRuntimeException("Exception on remote web driver initialization", e);
             }
-            if(!browserName.equalsIgnoreCase("chrome")) {
-                driver.manage().window().maximize();
-            }
+            driver.manage().window().maximize();
             return driver;
         } else {
             return LocalDriverFactory.createInstance(browserName);
