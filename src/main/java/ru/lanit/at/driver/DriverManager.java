@@ -87,7 +87,10 @@ public class DriverManager {
             int port = server.getPort();
             Proxy proxy = ClientUtil.createSeleniumProxy(server);
             try {
-                proxy.setHttpProxy(InetAddress.getLocalHost().getHostAddress() + ":" + port);
+                String localSocket = InetAddress.getLocalHost().getHostAddress() + ":" + port;
+                proxy.setHttpProxy(localSocket);
+                proxy.setSslProxy(localSocket);
+
             } catch (UnknownHostException e) {
                 throw new FrameworkRuntimeException("Can't set proxy host for driver.", e);
             }
