@@ -116,7 +116,9 @@ public class DriverManager {
                 profile.setPreference("dom.webnotifications.enabled", false);
                 desiredCapabilities.setCapability(FirefoxDriver.PROFILE, profile);
             }
-            desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);
+            if(System.getProperty("proxy","true").equalsIgnoreCase("true")) {
+                desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);
+            }
             desiredCapabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
             desiredCapabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
             desiredCapabilities.setBrowserName(browserName);
