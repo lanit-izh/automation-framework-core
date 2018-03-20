@@ -105,7 +105,7 @@ public class DriverManager {
             }
             if (browserName.equalsIgnoreCase("firefox")) {
                 ProfilesIni profileIni = new ProfilesIni();
-                FirefoxProfile profile = profileIni.getProfile("default");
+                FirefoxProfile profile = profileIni.getProfile("qa");
                 profile.setPreference("plugin.default.state", 2);
                 profile.setPreference("focusmanager.testmode", false);
                 profile.setPreference("browser.tabs.remote.autostart.2", false);
