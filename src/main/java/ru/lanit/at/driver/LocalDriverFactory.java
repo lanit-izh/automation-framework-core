@@ -42,7 +42,9 @@ public class LocalDriverFactory {
                 profile.setPreference("devtools.selfxss.count", 1500);
                 profile.setPreference("dom.webnotifications.enabled", false);
                 DesiredCapabilities seleniumCapabilities = new DesiredCapabilities();
-                seleniumCapabilities.setCapability(CapabilityType.PROXY, proxy);
+                if(System.getProperty("proxy","true").equalsIgnoreCase("true")) {
+                    seleniumCapabilities.setCapability(CapabilityType.PROXY, proxy);
+                }
                 seleniumCapabilities.setCapability(FirefoxDriver.PROFILE,profile);
                 seleniumCapabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
                 seleniumCapabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
