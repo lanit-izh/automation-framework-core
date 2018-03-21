@@ -13,6 +13,10 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import ru.lanit.at.exceptions.FrameworkRuntimeException;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class LocalDriverFactory {
     private static Logger log = Logger.getLogger(LocalDriverFactory.class);
@@ -30,6 +34,7 @@ public class LocalDriverFactory {
         server.start(0);
         int port = server.getPort();
         Proxy proxy = ClientUtil.createSeleniumProxy(server);
+        settingProxy(port, proxy);
 
         switch (browserName.toLowerCase()) {
             case "firefox":
@@ -69,5 +74,18 @@ public class LocalDriverFactory {
         log.info("Создан драйвер для " + browserName);
         return driver;
 
+    }
+
+    static void settingProxy(int port, Proxy proxy) {
+        try {
+            String hostAddress = InetAddress.getLocalHost().getHostAddress();
+            String localSocket = hostAddress + ":" + port;
+            System.setProperty("proxyHost",hostAddress);
+            System.setProperty("proxyPort", String.valueOf(port));
+            proxy.setHttpProxy(localSocket);
+            proxy.setSslProxy(localSocket);
+        } catch (UnknownHostException e) {
+            throw new FrameworkRuntimeException("Can't set proxy host for driver.", e);
+        }
     }
 }

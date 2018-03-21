@@ -21,10 +21,8 @@ import ru.lanit.at.FrameworkConstants;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.io.File;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 /**
  * Для запуска WINIUM используются следующие переменные окружения:
@@ -86,14 +84,7 @@ public class DriverManager {
             server.start(0);
             int port = server.getPort();
             Proxy proxy = ClientUtil.createSeleniumProxy(server);
-            try {
-                String localSocket = InetAddress.getLocalHost().getHostAddress() + ":" + port;
-                proxy.setHttpProxy(localSocket);
-                proxy.setSslProxy(localSocket);
-
-            } catch (UnknownHostException e) {
-                throw new FrameworkRuntimeException("Can't set proxy host for driver.", e);
-            }
+            LocalDriverFactory.settingProxy(port, proxy);
             DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
             if (browserName.equalsIgnoreCase("chrome")) {
                 ChromeOptions options = new ChromeOptions();
