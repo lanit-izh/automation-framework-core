@@ -105,6 +105,7 @@ public class DriverManager {
                 desiredCapabilities.setCapability("gecko", true);
                 profile.setPreference("devtools.selfxss.count", 1500);
                 profile.setPreference("dom.webnotifications.enabled", false);
+                profile.setAcceptUntrustedCertificates(true);
                 desiredCapabilities.setCapability(FirefoxDriver.PROFILE, profile);
             }
             if(System.getProperty("proxy","true").equalsIgnoreCase("true")) {
