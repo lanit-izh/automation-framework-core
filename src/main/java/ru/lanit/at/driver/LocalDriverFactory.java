@@ -19,6 +19,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class LocalDriverFactory {
+    public static final String LOCALHOST = "127.0.0.1";
     private static Logger log = Logger.getLogger(LocalDriverFactory.class);
 
     public static BrowserMobProxyServer server;
@@ -34,7 +35,7 @@ public class LocalDriverFactory {
         server.start(0);
         int port = server.getPort();
         Proxy proxy = ClientUtil.createSeleniumProxy(server);
-        settingProxy(port, proxy);
+        settingProxy(port, proxy, true);
 
         switch (browserName.toLowerCase()) {
             case "firefox":
@@ -76,9 +77,14 @@ public class LocalDriverFactory {
 
     }
 
-    static void settingProxy(int port, Proxy proxy) {
+    static void settingProxy(int port, Proxy proxy, Boolean local) {
         try {
-            String hostAddress = InetAddress.getLocalHost().getHostAddress();
+            String hostAddress;
+            if(local) {
+                hostAddress = LOCALHOST;
+            } else {
+                hostAddress = InetAddress.getLocalHost().getHostAddress();
+            }
             String localSocket = hostAddress + ":" + port;
             System.setProperty("proxyHost",hostAddress);
             System.setProperty("proxyPort", String.valueOf(port));
