@@ -23,7 +23,7 @@ public class LocalDriverFactory {
 
     public static BrowserMobProxyServer server;
 
-    static WebDriver createInstance(String browserName) {
+    static public WebDriver createInstance(String browserName) {
         WebDriver driver;
 
         server = new BrowserMobProxyServer();
@@ -76,7 +76,7 @@ public class LocalDriverFactory {
 
     }
 
-    static void settingProxy(int port, Proxy proxy) {
+    static public void settingProxy(int port, Proxy proxy) {
         try {
             String hostAddress = InetAddress.getLocalHost().getHostAddress();
             String localSocket = hostAddress + ":" + port;

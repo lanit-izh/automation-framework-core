@@ -80,7 +80,7 @@ public class RemoteDriverFactory {
     }
 
     private static URL getHubUrl() {
-        String url = System.getProperty(HUB_URL, DEFAULT_HUB_URL);
+        String url = System.getProperty(HUB_URL_VARIABLE_NAME, DEFAULT_HUB_URL);
         try {
             return new URL(url);
         } catch (MalformedURLException e) {
