@@ -171,6 +171,7 @@ public class DriverManager {
             if (binaryPath != null && !binaryPath.isEmpty()) chromeOptions.setBinary(binaryPath);
         }
 
+        System.setProperty("webdriver.firefox.logfile","/dev/null");
         return chromeOptions;
     }
 
