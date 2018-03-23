@@ -87,7 +87,7 @@ public class DriverManager {
             server.start(0);
             int port = server.getPort();
             Proxy proxy = ClientUtil.createSeleniumProxy(server);
-            LocalDriverFactory.settingProxy(port, proxy);
+            LocalDriverFactory.settingProxy(port, proxy, false);
             DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
             if (browserName.equalsIgnoreCase("chrome")) {
                 ChromeOptions options = new ChromeOptions();
