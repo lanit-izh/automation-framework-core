@@ -19,7 +19,7 @@ public class FrameworkConstants {
     public static final String DEFAULT_CHROME_DRIVER_PATH = "src/main/resources/drivers/chromedriver.exe";
     public static final String DEFAULT_CHROME_CONFIG = "chromedriver.config.yaml";
     public static final String DEFAULT_GECKO_CONFIG = "geckodriver.config.yaml";
-
+    public static final String DEFAULT_PROXY_CONFIG = "proxy.config.yaml";
 
 
 }

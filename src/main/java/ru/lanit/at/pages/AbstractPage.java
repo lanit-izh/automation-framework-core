@@ -30,9 +30,9 @@ public abstract class AbstractPage implements Openable {
         log.info("Initializing elements of {}", this.getClass().getSimpleName());
         PageFactory.initElements(new HtmlElementDecorator(new HtmlElementLocatorFactory(driver)), this);
 
-        pageCatalog = (PageCatalog) Context.getInstance().getBean("pageCatalog");
-        wait = (Wait) Context.getInstance().getBean("wait");
-        make = (Make) Context.getInstance().getBean("make");
+        pageCatalog = Context.getInstance().getBean(PageCatalog.class);
+        wait = Context.getInstance().getBean(Wait.class);
+        make = Context.getInstance().getBean(Make.class);
     }
 
     /**
