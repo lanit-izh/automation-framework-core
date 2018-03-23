@@ -77,8 +77,8 @@ public class DriverManager {
     }
 
     private void loadProperties() {
-        chromeDriverProperties = readProperties("chromedriver.yaml");
-        geckoDriverProperties = readProperties("geckodriver.yaml");
+        chromeDriverProperties = readProperties(DEFAULT_CHROME_CONFIG);
+        geckoDriverProperties = readProperties(DEFAULT_GECKO_CONFIG);
     }
 
     private Map<String, Object> readProperties(String browserConfigName) {

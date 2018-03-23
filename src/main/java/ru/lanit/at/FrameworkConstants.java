@@ -17,6 +17,8 @@ public class FrameworkConstants {
     public static final String DEFAULT_WINIUM_HUB_URL = "http://localhost:9999";
     public static final String DEFAULT_GECKO_DRIVER_PATH = "src/main/resources/drivers/geckodriver.exe";
     public static final String DEFAULT_CHROME_DRIVER_PATH = "src/main/resources/drivers/chromedriver.exe";
+    public static final String DEFAULT_CHROME_CONFIG = "chromedriver.config.yaml";
+    public static final String DEFAULT_GECKO_CONFIG = "geckodriver.config.yaml";
 
 
 

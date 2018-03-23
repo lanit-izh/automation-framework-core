@@ -30,7 +30,9 @@ import java.net.URL;
  * winium (true/false)
  * winium.app.path (path to executable)
  * winium.hub.url (http://localhost:9999 as default)
+ * @deprecated remade. Use {@link ru.lanit.at.driver.DriverManager}.
  */
+@Deprecated
 public class DriverManager {
     private static final String DEFAULT_BROWSER = "chrome";
     private static final String DEFAULT_HUB_URL = "http://localhost:4444/wd/hub";
