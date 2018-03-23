@@ -171,7 +171,7 @@ public class DriverManager {
             if (binaryPath != null && !binaryPath.isEmpty()) chromeOptions.setBinary(binaryPath);
         }
 
-        System.setProperty("webdriver.firefox.logfile","/dev/null");
+        System.setProperty("webdriver.firefox.logfile", "/dev/null");
         return chromeOptions;
     }
 
@@ -275,11 +275,11 @@ public class DriverManager {
         server.autoAuthorization(domain, username, password, AuthType.valueOf(authType.toUpperCase().trim()));
         server.setTrustAllServers(trustAllServers);
         server.start(port);
-        if(port == 0) port = server.getPort();
+        if (port == 0) port = server.getPort();
         proxy = ClientUtil.createSeleniumProxy(server);
 
         try {
-            String hostAddress = InetAddress.getLocalHost().getHostAddress();
+            String hostAddress = REMOTE ? InetAddress.getLocalHost().getHostAddress() : "127.0.0.1";
             String localSocket = hostAddress + ":" + port;
             System.setProperty("proxyHost", hostAddress);
             System.setProperty("proxyPort", String.valueOf(port));
@@ -297,7 +297,7 @@ public class DriverManager {
             if (defaultValue == null) throw new FrameworkRuntimeException("Obligatory property is undefined.");
             return defaultValue;
         }
-         return property;
+        return property;
     }
 
     private RemoteWebDriver generateRemoteWebDriver(MutableCapabilities mutableCapabilities) {
