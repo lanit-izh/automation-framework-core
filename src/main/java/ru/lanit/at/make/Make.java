@@ -69,7 +69,7 @@ public class Make {
         return driverManager.getDriver();
     }
 
-    private void scrollIntoView(WebElement webElement){
+    public void scrollIntoView(WebElement webElement){
         jsExecutor.executeScript(
                 "arguments[0].scrollIntoView(true);window.scrollBy(0, -400);",
                 webElement);
