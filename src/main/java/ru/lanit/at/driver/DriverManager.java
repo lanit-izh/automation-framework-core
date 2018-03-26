@@ -17,11 +17,10 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.yaml.snakeyaml.Yaml;
+import ru.lanit.at.Config;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,9 +37,9 @@ public class DriverManager {
     private final String HUB_URL;
     private final boolean REMOTE;
 
-    private Map<String, Object> chromeDriverProperties;
-    private Map<String, Object> geckoDriverProperties;
-    private Map<String, Object> proxyProperties;
+    private Config chromeDriverProperties;
+    private Config geckoDriverProperties;
+    private Config proxyProperties;
 
     private Logger log = LogManager.getLogger(DriverManager.class);
 
@@ -79,22 +78,9 @@ public class DriverManager {
     }
 
     private void loadProperties() {
-        chromeDriverProperties = readProperties(DEFAULT_CHROME_CONFIG);
-        geckoDriverProperties = readProperties(DEFAULT_GECKO_CONFIG);
-        proxyProperties = readProperties(DEFAULT_PROXY_CONFIG);
-    }
-
-    private Map<String, Object> readProperties(String browserConfigName) {
-        InputStream input = getClass().getClassLoader().getResourceAsStream(browserConfigName);
-        if (input == null) {
-            log.warn("No " + browserConfigName + " config file detected." +
-                    " It's strongly recommended to create file '" + browserConfigName + "' with driver configuration in 'source' directory of your project." +
-                    " Creating driver with default properties.");
-            return null;
-        }
-        Yaml yaml = new Yaml();
-        return (Map<String, Object>) yaml.load(input);
-
+        chromeDriverProperties = new Config(DEFAULT_CHROME_CONFIG);
+        geckoDriverProperties = new Config(DEFAULT_GECKO_CONFIG);
+        proxyProperties = new Config(DEFAULT_PROXY_CONFIG);
     }
 
     private String getStringSystemProperty(String variableName, String defaultValue) {
@@ -150,14 +136,13 @@ public class DriverManager {
             chromeOptions.setProxy(getProxy());
         }
 
-        if (chromeDriverProperties != null && !chromeDriverProperties.isEmpty()) {
+        if (!chromeDriverProperties.isEmpty()) {
 
-
-            List<String> arguments = (List<String>) chromeDriverProperties.get("arguments");
-            List<String> extensions = (List<String>) chromeDriverProperties.get("extensions");
-            List<String> encodedExtensions = (List<String>) chromeDriverProperties.get("encodedExtensions");
-            String headless = (String) geckoDriverProperties.get("headless");
-            String binaryPath = (String) geckoDriverProperties.get("binary");
+            List<String> arguments = chromeDriverProperties.getProperty("arguments", false);
+            List<String> extensions = chromeDriverProperties.getProperty("extensions", false);
+            List<String> encodedExtensions = chromeDriverProperties.getProperty("encodedExtensions", false);
+            String headless = geckoDriverProperties.getProperty("headless", false);
+            String binaryPath = geckoDriverProperties.getProperty("binary", false);
 
 
             if (arguments != null && !arguments.isEmpty()) {
@@ -203,15 +188,15 @@ public class DriverManager {
             firefoxOptions.setProxy(getProxy());
         }
 
-        if (geckoDriverProperties != null && !geckoDriverProperties.isEmpty()) {
+        if (!geckoDriverProperties.isEmpty()) {
 
 //          Setting firefox binary if it's defined in config
-            String binaryPath = (String) geckoDriverProperties.get("binary");
-            String firefoxProfileName = (String) geckoDriverProperties.get("firefoxProfileName");
-            List<String> extensions = (List<String>) geckoDriverProperties.get("extensions");
-            Map<String, Object> preferences = (Map<String, Object>) geckoDriverProperties.get("preferences");
-            List<String> arguments = (List<String>) geckoDriverProperties.get("arguments");
-            String headless = (String) geckoDriverProperties.get("headless");
+            String binaryPath = geckoDriverProperties.getProperty("binary", false);
+            String firefoxProfileName = geckoDriverProperties.getProperty("firefoxProfileName", false);
+            List<String> extensions = geckoDriverProperties.getProperty("extensions", false);
+            Map<String, Object> preferences = geckoDriverProperties.getProperty("preferences", false);
+            List<String> arguments = geckoDriverProperties.getProperty("arguments", false);
+            String headless = geckoDriverProperties.getProperty("headless", false);
 
 
             if (binaryPath != null && !binaryPath.isEmpty()) firefoxOptions.setBinary(binaryPath);
@@ -264,12 +249,12 @@ public class DriverManager {
             throw new FrameworkRuntimeException("Proxy properties are not defined. Please initialize properties in "
                     + DEFAULT_PROXY_CONFIG + " file.");
 
-        String domain = defineObligatoryProperty((String) proxyProperties.get("domain"), null);
-        String username = defineObligatoryProperty((String) proxyProperties.get("username"), null);
-        String password = defineObligatoryProperty((String) proxyProperties.get("password"), null);
-        String authType = defineObligatoryProperty((String) proxyProperties.get("authType"), "BASIC");
-        boolean trustAllServers = defineObligatoryProperty((Boolean) proxyProperties.get("trustAllServers"), false);
-        int port = defineObligatoryProperty((Integer) proxyProperties.get("port"), 0);
+        String domain = proxyProperties.getProperty("domain", true);
+        String username = proxyProperties.getProperty("username", true);
+        String password = proxyProperties.getProperty("password", true);
+        String authType = proxyProperties.getProperty("authType", "BASIC");
+        boolean trustAllServers = proxyProperties.getProperty("trustAllServers", Boolean.FALSE);
+        int port = proxyProperties.getProperty("port", 0);
 
         BrowserMobProxyServer server = new BrowserMobProxyServer();
         server.autoAuthorization(domain, username, password, AuthType.valueOf(authType.toUpperCase().trim()));
@@ -290,14 +275,6 @@ public class DriverManager {
         }
 
         return proxy;
-    }
-
-    private <T> T defineObligatoryProperty(T property, T defaultValue) {
-        if (property == null) {
-            if (defaultValue == null) throw new FrameworkRuntimeException("Obligatory property is undefined.");
-            return defaultValue;
-        }
-        return property;
     }
 
     private RemoteWebDriver generateRemoteWebDriver(MutableCapabilities mutableCapabilities) {
