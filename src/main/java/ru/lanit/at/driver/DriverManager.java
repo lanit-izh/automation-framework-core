@@ -141,7 +141,7 @@ public class DriverManager {
             List<String> arguments = chromeDriverProperties.getProperty("arguments", false);
             List<String> extensions = chromeDriverProperties.getProperty("extensions", false);
             List<String> encodedExtensions = chromeDriverProperties.getProperty("encodedExtensions", false);
-            String headless = chromeDriverProperties.getProperty("headless", false);
+            boolean headless = chromeDriverProperties.getProperty("headless", Boolean.FALSE);
             String binaryPath = chromeDriverProperties.getProperty("binary", false);
 
 
@@ -152,7 +152,7 @@ public class DriverManager {
             addExtensions(extensions, chromeOptions);
             addExtensions(encodedExtensions, chromeOptions);
 
-            chromeOptions.setHeadless(headless != null && "true".equalsIgnoreCase(headless));
+            chromeOptions.setHeadless(headless);
             if (binaryPath != null && !binaryPath.isEmpty()) chromeOptions.setBinary(binaryPath);
         }
 
@@ -196,7 +196,7 @@ public class DriverManager {
             List<String> extensions = geckoDriverProperties.getProperty("extensions", false);
             Map<String, Object> preferences = geckoDriverProperties.getProperty("preferences", false);
             List<String> arguments = geckoDriverProperties.getProperty("arguments", false);
-            String headless = geckoDriverProperties.getProperty("headless", false);
+            boolean headless = geckoDriverProperties.getProperty("headless", Boolean.FALSE);
 
 
             if (binaryPath != null && !binaryPath.isEmpty()) firefoxOptions.setBinary(binaryPath);
@@ -220,7 +220,7 @@ public class DriverManager {
                 firefoxOptions.addArguments(argument.trim());
             });
 
-            firefoxOptions.setHeadless(headless != null && "true".equalsIgnoreCase(headless.trim()));
+            firefoxOptions.setHeadless(headless);
         }
         return firefoxOptions;
     }
