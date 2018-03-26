@@ -141,8 +141,8 @@ public class DriverManager {
             List<String> arguments = chromeDriverProperties.getProperty("arguments", false);
             List<String> extensions = chromeDriverProperties.getProperty("extensions", false);
             List<String> encodedExtensions = chromeDriverProperties.getProperty("encodedExtensions", false);
-            String headless = geckoDriverProperties.getProperty("headless", false);
-            String binaryPath = geckoDriverProperties.getProperty("binary", false);
+            String headless = chromeDriverProperties.getProperty("headless", false);
+            String binaryPath = chromeDriverProperties.getProperty("binary", false);
 
 
             if (arguments != null && !arguments.isEmpty()) {
