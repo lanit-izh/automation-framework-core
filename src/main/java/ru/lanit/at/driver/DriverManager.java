@@ -301,7 +301,6 @@ public class DriverManager {
      */
     public void shutdown() {
         log.info("Закрываем драйвер");
-        driver.close();
         driver.quit();
         driver = null;
     }
