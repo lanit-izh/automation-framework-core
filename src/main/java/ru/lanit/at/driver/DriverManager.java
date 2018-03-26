@@ -156,7 +156,6 @@ public class DriverManager {
             if (binaryPath != null && !binaryPath.isEmpty()) chromeOptions.setBinary(binaryPath);
         }
 
-        System.setProperty("webdriver.firefox.logfile", "/dev/null");
         return chromeOptions;
     }
 
@@ -197,6 +196,7 @@ public class DriverManager {
             Map<String, Object> preferences = geckoDriverProperties.getProperty("preferences", false);
             List<String> arguments = geckoDriverProperties.getProperty("arguments", false);
             boolean headless = geckoDriverProperties.getProperty("headless", Boolean.FALSE);
+            boolean disableFirefoxLogging = geckoDriverProperties.getProperty("disableFirefoxLogging", Boolean.FALSE);
 
 
             if (binaryPath != null && !binaryPath.isEmpty()) firefoxOptions.setBinary(binaryPath);
@@ -221,6 +221,8 @@ public class DriverManager {
             });
 
             firefoxOptions.setHeadless(headless);
+
+            if(disableFirefoxLogging) System.setProperty("webdriver.firefox.logfile", "/dev/null");
         }
         return firefoxOptions;
     }
