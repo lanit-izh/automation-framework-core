@@ -16,6 +16,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.lanit.at.Config;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
@@ -111,19 +112,29 @@ public class DriverManager {
     }
 
     private WebDriver startBrowser(String browserName) {
-
+        WebDriver driver;
         switch (browserName.toLowerCase().trim()) {
             case "chrome":
                 ChromeOptions chromeOptions = generateChromeOptions();
-                if (REMOTE) return generateRemoteWebDriver(chromeOptions);
-                return new ChromeDriver(chromeOptions);
+                if (REMOTE){
+                    driver = generateRemoteWebDriver(chromeOptions);
+                    break;
+                }
+                driver = new ChromeDriver(chromeOptions);
+                break;
             case "firefox":
                 FirefoxOptions firefoxOptions = generateFirefoxOptions();
-                if (REMOTE) return generateRemoteWebDriver(firefoxOptions);
-                return new FirefoxDriver(firefoxOptions);
+                if (REMOTE){
+                    driver = generateRemoteWebDriver(firefoxOptions);
+                    break;
+                }
+                driver = new FirefoxDriver(firefoxOptions);
+                break;
             default:
                 throw new FrameworkRuntimeException("Unknown driver type: " + browserName);
         }
+        driver.manage().window().maximize();
+        return driver;
     }
 
     private ChromeOptions generateChromeOptions() {
@@ -197,7 +208,10 @@ public class DriverManager {
             List<String> arguments = geckoDriverProperties.getProperty("arguments", false);
             boolean headless = geckoDriverProperties.getProperty("headless", Boolean.FALSE);
             boolean disableFirefoxLogging = geckoDriverProperties.getProperty("disableFirefoxLogging", Boolean.FALSE);
+            boolean isVncEnabled = geckoDriverProperties.getProperty("enableVNC", Boolean.FALSE);
 
+
+            firefoxOptions.setCapability("enableVNC", isVncEnabled);
 
             if (binaryPath != null && !binaryPath.isEmpty()) firefoxOptions.setBinary(binaryPath);
 
@@ -281,7 +295,9 @@ public class DriverManager {
 
     private RemoteWebDriver generateRemoteWebDriver(MutableCapabilities mutableCapabilities) {
         try {
-            return new RemoteWebDriver(new URL(HUB_URL), mutableCapabilities);
+            RemoteWebDriver remoteWebDriver = new RemoteWebDriver(new URL(HUB_URL), mutableCapabilities);
+            remoteWebDriver.setFileDetector(new LocalFileDetector());
+            return remoteWebDriver;
         } catch (MalformedURLException e) {
             throw new FrameworkRuntimeException("Exception while creating remote webdriver. Check hub url: " + HUB_URL, e);
         }
