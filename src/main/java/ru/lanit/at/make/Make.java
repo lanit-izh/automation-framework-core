@@ -51,6 +51,7 @@ public class Make {
      * @param message    The message that should be send to an element.
      */
     public void sendKeysTo(WebElement webElement, String message) {
+        webElement.click();
         webElement.clear();
         webElement.sendKeys(message);
     }
