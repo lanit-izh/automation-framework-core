@@ -3,8 +3,8 @@ package ru.lanit.at.assertion;
 public class AssertsManager {
     private ExtendedAssert asserts;
 
-    public AssertsManager() {
-        this.asserts = new ExtendedAssert();
+    public void setAsserts(ExtendedAssert asserts) {
+        this.asserts = asserts;
     }
 
     /**
@@ -30,7 +30,7 @@ public class AssertsManager {
      * Recreates instance of {@link ExtendedAssert}.
      */
     public void flushAsserts() {
-        this.asserts = new ExtendedAssert();
+        asserts.flush();
     }
 
 }
