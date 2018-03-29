@@ -5,12 +5,9 @@ import org.openqa.selenium.TakesScreenshot;
 import org.testng.asserts.IAssert;
 import org.testng.asserts.SoftAssert;
 import org.testng.collections.Maps;
-import ru.lanit.at.context.Context;
 import ru.lanit.at.driver.DriverManager;
 import ru.yandex.qatools.allure.annotations.Attachment;
-import ru.yandex.qatools.allure.annotations.Title;
 
-import java.io.File;
 import java.util.Map;
 
 public class ExtendedAssert extends SoftAssert {
