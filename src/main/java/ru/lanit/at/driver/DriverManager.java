@@ -265,29 +265,50 @@ public class DriverManager {
             throw new FrameworkRuntimeException("Proxy properties are not defined. Please initialize properties in "
                     + DEFAULT_PROXY_CONFIG + " file.");
 
-        String domain = proxyProperties.getProperty("domain", true);
-        String username = proxyProperties.getProperty("username", true);
-        String password = proxyProperties.getProperty("password", true);
-        String authType = proxyProperties.getProperty("authType", "BASIC");
-        boolean trustAllServers = proxyProperties.getProperty("trustAllServers", Boolean.FALSE);
+        Proxy proxy;
+
+        boolean startLocal = proxyProperties.getProperty("startLocal", Boolean.FALSE);
         int port = proxyProperties.getProperty("port", 0);
 
-        BrowserMobProxyServer server = new BrowserMobProxyServer();
-        server.autoAuthorization(domain, username, password, AuthType.valueOf(authType.toUpperCase().trim()));
-        server.setTrustAllServers(trustAllServers);
-        server.start(port);
-        if (port == 0) port = server.getPort();
-        proxy = ClientUtil.createSeleniumProxy(server);
+        if(startLocal){
+            String domainForAutoAuthorization = proxyProperties.getProperty("domainForAutoAuthorization", false);
+            String authUsername = proxyProperties.getProperty("authUsername", false);
+            String authPassword = proxyProperties.getProperty("authPassword", false);
+            String authType = proxyProperties.getProperty("authType", "BASIC");
+            boolean trustAllServers = proxyProperties.getProperty("trustAllServers", Boolean.FALSE);
 
-        try {
-            String hostAddress = REMOTE ? InetAddress.getLocalHost().getHostAddress() : "127.0.0.1";
-            String localSocket = hostAddress + ":" + port;
-            System.setProperty("proxyHost", hostAddress);
-            System.setProperty("proxyPort", String.valueOf(port));
-            proxy.setHttpProxy(localSocket);
-            proxy.setSslProxy(localSocket);
-        } catch (UnknownHostException e) {
-            throw new FrameworkRuntimeException("Can't set proxy host for driver.", e);
+
+            BrowserMobProxyServer server = new BrowserMobProxyServer();
+            if(domainForAutoAuthorization != null) server.autoAuthorization(domainForAutoAuthorization, authUsername, authPassword, AuthType.valueOf(authType.toUpperCase().trim()));
+            server.setTrustAllServers(trustAllServers);
+            server.start(port);
+            if (port == 0) port = server.getPort();
+            proxy = ClientUtil.createSeleniumProxy(server);
+
+            try {
+                String localHostAddress = REMOTE ? InetAddress.getLocalHost().getHostAddress() : "127.0.0.1";
+                String localSocket = localHostAddress + ":" + port;
+                System.setProperty("proxyHost", localHostAddress);
+                System.setProperty("proxyPort", String.valueOf(port));
+                proxy.setHttpProxy(localSocket);
+                proxy.setSslProxy(localSocket);
+            } catch (UnknownHostException e) {
+                throw new FrameworkRuntimeException("Can't set proxy host for driver.", e);
+            }
+
+        } else {
+            String host = proxyProperties.getProperty("host", true);
+            String socksProxy = proxyProperties.getProperty("socksProxy", false);
+            String socksUsername = proxyProperties.getProperty("socksUsername", false);
+            String socksPassword = proxyProperties.getProperty("socksPassword", false);
+
+            String socket = host + ":" + port;
+            proxy = new Proxy();
+            proxy.setSslProxy(socket);
+            proxy.setHttpProxy(socket);
+            proxy.setSocksProxy(socksProxy);
+            proxy.setSocksUsername(socksUsername);
+            proxy.setSocksPassword(socksPassword);
         }
 
         return proxy;

@@ -47,6 +47,6 @@ public class Config {
     }
 
     public boolean isEmpty() {
-        return propertyMap.isEmpty();
+        return propertyMap == null || propertyMap.isEmpty();
     }
 }
