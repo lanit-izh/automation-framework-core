@@ -6,12 +6,13 @@
 
     <groupId>ru.lanit.at</groupId>
     <artifactId>automation-framework-core</artifactId>
-    <version>2.25</version>
+    <version>2.26</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <compiler.version>1.8</compiler.version>
         <yandex.htmlelements.version>1.18</yandex.htmlelements.version>
+        <yandex.allure.version>1.5.4</yandex.allure.version>
         <selenium.chromedriver.version>3.11.0</selenium.chromedriver.version>
         <selenium.firefoxdriver.version>3.11.0</selenium.firefoxdriver.version>
         <selenium.java.version>3.11.0</selenium.java.version>
@@ -107,7 +108,12 @@
         <dependency>
             <groupId>ru.yandex.qatools.allure</groupId>
             <artifactId>allure-java-annotations</artifactId>
-            <version>1.5.4</version>
+            <version>${yandex.allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.yandex.qatools.ashot</groupId>
+            <artifactId>ashot</artifactId>
+            <version>${yandex.allure.version}</version>
         </dependency>
 
         <dependency>

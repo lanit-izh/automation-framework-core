@@ -1,13 +1,18 @@
 package ru.lanit.at.assertion;
 
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.testng.asserts.IAssert;
 import org.testng.asserts.SoftAssert;
 import org.testng.collections.Maps;
 import ru.lanit.at.driver.DriverManager;
+import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.yandex.qatools.allure.annotations.Attachment;
+import ru.yandex.qatools.ashot.AShot;
+import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Map;
 
 public class ExtendedAssert extends SoftAssert {
@@ -46,7 +51,18 @@ public class ExtendedAssert extends SoftAssert {
 
     @Attachment(value = "Page screenshot", type = "image/png")
     private byte[] takeScreenshot() {
-        return ((TakesScreenshot) driverManager.getDriver()).getScreenshotAs(OutputType.BYTES);
+        AShot aShot = new AShot();
+        BufferedImage bufferedImage = aShot.shootingStrategy(ShootingStrategies.viewportPasting(500)).takeScreenshot(driverManager.getDriver()).getImage();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+            byteArrayOutputStream.flush();
+            byte[] imageBytes = byteArrayOutputStream.toByteArray();
+            byteArrayOutputStream.close();
+            return imageBytes;
+        } catch (IOException e) {
+            throw new FrameworkRuntimeException("Exception while taking screenshot.", e);
+        }
     }
 
     @Attachment(value = "Error message")

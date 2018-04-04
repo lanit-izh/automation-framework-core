@@ -116,7 +116,7 @@ public class DriverManager {
         switch (browserName.toLowerCase().trim()) {
             case "chrome":
                 ChromeOptions chromeOptions = generateChromeOptions();
-                if (REMOTE){
+                if (REMOTE) {
                     driver = generateRemoteWebDriver(chromeOptions);
                     break;
                 }
@@ -124,7 +124,7 @@ public class DriverManager {
                 break;
             case "firefox":
                 FirefoxOptions firefoxOptions = generateFirefoxOptions();
-                if (REMOTE){
+                if (REMOTE) {
                     driver = generateRemoteWebDriver(firefoxOptions);
                     break;
                 }
@@ -225,18 +225,14 @@ public class DriverManager {
             }
 
 //          Setting preferences if they are defined in config
-            if (preferences != null && !preferences.isEmpty()) preferences.forEach((key, value) -> {
-                firefoxOptions.addPreference(key, value.toString().trim());
-            });
+            if (preferences != null && !preferences.isEmpty()) preferences.forEach((key, value) -> firefoxOptions.addPreference(key, value.toString().trim()));
 
 //          Setting arguments if they are defined in config
-            if (arguments != null && !arguments.isEmpty()) arguments.forEach(argument -> {
-                firefoxOptions.addArguments(argument.trim());
-            });
+            if (arguments != null && !arguments.isEmpty()) arguments.forEach(argument -> firefoxOptions.addArguments(argument.trim()));
 
             firefoxOptions.setHeadless(headless);
 
-            if(disableFirefoxLogging) System.setProperty("webdriver.firefox.logfile", "/dev/null");
+            if (disableFirefoxLogging) System.setProperty("webdriver.firefox.logfile", "/dev/null");
         }
         return firefoxOptions;
     }
@@ -270,7 +266,7 @@ public class DriverManager {
         boolean startLocal = proxyProperties.getProperty("startLocal", Boolean.FALSE);
         int port = proxyProperties.getProperty("port", 0);
 
-        if(startLocal){
+        if (startLocal) {
             String domainForAutoAuthorization = proxyProperties.getProperty("domainForAutoAuthorization", false);
             String authUsername = proxyProperties.getProperty("authUsername", false);
             String authPassword = proxyProperties.getProperty("authPassword", false);
@@ -279,7 +275,8 @@ public class DriverManager {
 
 
             BrowserMobProxyServer server = new BrowserMobProxyServer();
-            if(domainForAutoAuthorization != null) server.autoAuthorization(domainForAutoAuthorization, authUsername, authPassword, AuthType.valueOf(authType.toUpperCase().trim()));
+            if (domainForAutoAuthorization != null)
+                server.autoAuthorization(domainForAutoAuthorization, authUsername, authPassword, AuthType.valueOf(authType.toUpperCase().trim()));
             server.setTrustAllServers(trustAllServers);
             server.start(port);
             if (port == 0) port = server.getPort();
@@ -347,9 +344,8 @@ public class DriverManager {
      * Returns {@link JavascriptExecutor} that can execute JS in the context of the currently selected browser frame or window.
      *
      * @return Instance of {@link JavascriptExecutor} or {@code null} if {@link WebDriver} isn't initialized.
-     * @deprecated Use {@link ru.lanit.at.make.JSExecutor}
      */
-    @Deprecated
+
     public JavascriptExecutor getJSExecutor() {
         if (driver != null) {
             return (JavascriptExecutor) driver;
