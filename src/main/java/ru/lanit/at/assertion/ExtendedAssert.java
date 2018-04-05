@@ -1,11 +1,11 @@
 package ru.lanit.at.assertion;
 
+import io.qameta.allure.Attachment;
 import org.testng.asserts.IAssert;
 import org.testng.asserts.SoftAssert;
 import org.testng.collections.Maps;
 import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
-import ru.yandex.qatools.allure.annotations.Attachment;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
