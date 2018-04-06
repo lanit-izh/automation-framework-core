@@ -10,6 +10,23 @@ import java.util.Map;
 
 public class Config {
 
+    public static String getStringSystemProperty(String variableName, String defaultValue) {
+        String variable = System.getProperty(variableName);
+        if (variable == null || variable.isEmpty()) return defaultValue;
+        return variable.trim();
+    }
+
+    /**
+     * Tries to read system variable. By default returns false.
+     *
+     * @param variableName name of system variable.
+     * @return {@code false} by default. True if system variable is set and {@code = true}
+     */
+    public static boolean getBooleanSystemProperty(String variableName) {
+        String variable = System.getProperty(variableName);
+        return variable != null && !variable.isEmpty() && Boolean.parseBoolean(variable.trim());
+    }
+
     private final Logger log = LogManager.getLogger(this.getClass());
     private final Map<String, Object> propertyMap;
     private String configName;

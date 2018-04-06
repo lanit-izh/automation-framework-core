@@ -48,13 +48,13 @@ public class DriverManager {
     private Proxy proxy;
 
     public DriverManager() {
-        this.BROWSER_NAME = getStringSystemProperty(BROWSER_VARIABLE_NAME, DEFAULT_BROWSER);
-        this.PROXY_ENABLED = getBooleanSystemProperty(PROXY_VARIABLE_NAME);
-        this.REMOTE = getBooleanSystemProperty(REMOTE_DRIVER_VARIABLE_NAME);
+        this.BROWSER_NAME = Config.getStringSystemProperty(BROWSER_VARIABLE_NAME, DEFAULT_BROWSER);
+        this.PROXY_ENABLED = Config.getBooleanSystemProperty(PROXY_VARIABLE_NAME);
+        this.REMOTE = Config.getBooleanSystemProperty(REMOTE_DRIVER_VARIABLE_NAME);
 
         if ("winium".equalsIgnoreCase(BROWSER_NAME))
-            this.HUB_URL = getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_WINIUM_HUB_URL);
-        else this.HUB_URL = getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_HUB_URL);
+            this.HUB_URL = Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_WINIUM_HUB_URL);
+        else this.HUB_URL = Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_HUB_URL);
 
         loadProperties();
         defineWebDriversPath();
@@ -83,24 +83,6 @@ public class DriverManager {
         geckoDriverProperties = new Config(DEFAULT_GECKO_CONFIG);
         proxyProperties = new Config(DEFAULT_PROXY_CONFIG);
     }
-
-    private String getStringSystemProperty(String variableName, String defaultValue) {
-        String variable = System.getProperty(variableName);
-        if (variable == null || variable.isEmpty()) return defaultValue;
-        return variable.trim();
-    }
-
-    /**
-     * Tries to read system variable. By default returns false.
-     *
-     * @param variableName name of system variable.
-     * @return {@code false} by default. True if system variable is set and {@code = true}
-     */
-    private boolean getBooleanSystemProperty(String variableName) {
-        String variable = System.getProperty(variableName);
-        return variable != null && !variable.isEmpty() && Boolean.parseBoolean(variable.trim());
-    }
-
 
     public WebDriver getDriver() {
         return getDriver(BROWSER_NAME);
