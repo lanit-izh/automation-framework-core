@@ -316,9 +316,12 @@ public class DriverManager {
      * Closes all driver windows and destroys {@link WebDriver} instance.
      */
     public void shutdown() {
-        log.info("Закрываем драйвер");
+        log.info("Clearing all cookies.");
+        driver.manage().deleteAllCookies();
+        log.info("Shutting down driver.");
         driver.quit();
         driver = null;
+        log.info("Driver is closed.");
     }
 
 
