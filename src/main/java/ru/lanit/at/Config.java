@@ -1,7 +1,7 @@
 package ru.lanit.at;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
