@@ -1,13 +1,12 @@
 package ru.lanit.at.driver;
 
+import com.google.gson.JsonObject;
 import net.lightbody.bmp.BrowserMobProxyServer;
-import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.proxy.auth.AuthType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -45,7 +44,7 @@ public class DriverManager {
     private Logger log = LogManager.getLogger(DriverManager.class);
 
     private WebDriver driver;
-    private Proxy proxy;
+    private JsonObject jsonProxy;
 
     public DriverManager() {
         this.BROWSER_NAME = Config.getStringSystemProperty(BROWSER_VARIABLE_NAME, DEFAULT_BROWSER);
@@ -126,7 +125,7 @@ public class DriverManager {
         chromeOptions.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
 
         if (PROXY_ENABLED) {
-            chromeOptions.setProxy(getProxy());
+            chromeOptions.setCapability(CapabilityType.PROXY, getJsonProxy());
         }
 
         if (!chromeDriverProperties.isEmpty()) {
@@ -171,13 +170,11 @@ public class DriverManager {
     private FirefoxOptions generateFirefoxOptions() {
         FirefoxOptions firefoxOptions = new FirefoxOptions();
 
-        firefoxOptions.setCapability("marionette", true);
-        firefoxOptions.setCapability("gecko", true);
         firefoxOptions.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         firefoxOptions.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
 
         if (PROXY_ENABLED) {
-            firefoxOptions.setProxy(getProxy());
+            firefoxOptions.setCapability(CapabilityType.PROXY, getJsonProxy());
         }
 
         if (!geckoDriverProperties.isEmpty()) {
@@ -187,13 +184,10 @@ public class DriverManager {
             String firefoxProfileName = geckoDriverProperties.getProperty("firefoxProfileName", false);
             List<String> extensions = geckoDriverProperties.getProperty("extensions", false);
             Map<String, Object> preferences = geckoDriverProperties.getProperty("preferences", false);
+            Map<String, Object> capabilities = geckoDriverProperties.getProperty("capabilities", false);
             List<String> arguments = geckoDriverProperties.getProperty("arguments", false);
             boolean headless = geckoDriverProperties.getProperty("headless", Boolean.FALSE);
             boolean disableFirefoxLogging = geckoDriverProperties.getProperty("disableFirefoxLogging", Boolean.FALSE);
-            boolean isVncEnabled = geckoDriverProperties.getProperty("enableVNC", Boolean.FALSE);
-
-
-            firefoxOptions.setCapability("enableVNC", isVncEnabled);
 
             if (binaryPath != null && !binaryPath.isEmpty()) firefoxOptions.setBinary(binaryPath);
 
@@ -207,10 +201,15 @@ public class DriverManager {
             }
 
 //          Setting preferences if they are defined in config
-            if (preferences != null && !preferences.isEmpty()) preferences.forEach((key, value) -> firefoxOptions.addPreference(key, value.toString().trim()));
+            if (preferences != null && !preferences.isEmpty())
+                preferences.forEach((key, value) -> firefoxOptions.addPreference(key, value.toString().trim()));
+
+//          Setting capabilities
+            if (capabilities != null && !capabilities.isEmpty()) capabilities.forEach(firefoxOptions::setCapability);
 
 //          Setting arguments if they are defined in config
-            if (arguments != null && !arguments.isEmpty()) arguments.forEach(argument -> firefoxOptions.addArguments(argument.trim()));
+            if (arguments != null && !arguments.isEmpty())
+                arguments.forEach(argument -> firefoxOptions.addArguments(argument.trim()));
 
             firefoxOptions.setHeadless(headless);
 
@@ -233,17 +232,17 @@ public class DriverManager {
         }
     }
 
-    private Proxy getProxy() {
-        if (proxy == null) proxy = startProxy();
-        return proxy;
+    private JsonObject getJsonProxy() {
+        if (jsonProxy == null) jsonProxy = startProxy();
+        return jsonProxy;
     }
 
-    private Proxy startProxy() {
+    private JsonObject startProxy() {
         if (proxyProperties == null || proxyProperties.isEmpty())
             throw new FrameworkRuntimeException("Proxy properties are not defined. Please initialize properties in "
                     + DEFAULT_PROXY_CONFIG + " file.");
 
-        Proxy proxy;
+        JsonObject jsonProxySettings = new JsonObject();
 
         boolean startLocal = proxyProperties.getProperty("startLocal", Boolean.FALSE);
         int port = proxyProperties.getProperty("port", 0);
@@ -262,17 +261,20 @@ public class DriverManager {
             server.setTrustAllServers(trustAllServers);
             server.start(port);
             if (port == 0) port = server.getPort();
-            proxy = ClientUtil.createSeleniumProxy(server);
+
+            jsonProxySettings.addProperty("proxyType", "manual");
 
             try {
                 String localHostAddress = REMOTE ? InetAddress.getLocalHost().getHostAddress() : "127.0.0.1";
                 String localSocket = localHostAddress + ":" + port;
                 System.setProperty("proxyHost", localHostAddress);
                 System.setProperty("proxyPort", String.valueOf(port));
-                proxy.setHttpProxy(localSocket);
-                proxy.setSslProxy(localSocket);
+
+                jsonProxySettings.addProperty("httpProxy", localSocket);
+                jsonProxySettings.addProperty("sslProxy", localSocket);
+
             } catch (UnknownHostException e) {
-                throw new FrameworkRuntimeException("Can't set proxy host for driver.", e);
+                throw new FrameworkRuntimeException("Can't set jsonProxy host for driver.", e);
             }
 
         } else {
@@ -282,15 +284,15 @@ public class DriverManager {
             String socksPassword = proxyProperties.getProperty("socksPassword", false);
 
             String socket = host + ":" + port;
-            proxy = new Proxy();
-            proxy.setSslProxy(socket);
-            proxy.setHttpProxy(socket);
-            proxy.setSocksProxy(socksProxy);
-            proxy.setSocksUsername(socksUsername);
-            proxy.setSocksPassword(socksPassword);
+
+            jsonProxySettings.addProperty("httpProxy", socket);
+            jsonProxySettings.addProperty("sslProxy", socket);
+            jsonProxySettings.addProperty("socksProxy", socksProxy);
+            jsonProxySettings.addProperty("socksUsername", socksUsername);
+            jsonProxySettings.addProperty("socksPassword", socksPassword);
         }
 
-        return proxy;
+        return jsonProxySettings;
     }
 
     private RemoteWebDriver generateRemoteWebDriver(MutableCapabilities mutableCapabilities) {
