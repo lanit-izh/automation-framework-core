@@ -9,8 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
-
-import java.util.Date;
+import ru.lanit.at.util.Timeout;
 
 public class Wait {
 
@@ -178,22 +177,6 @@ public class Wait {
 
     public void setJsExecutor(JSExecutor jsExecutor) {
         this.jsExecutor = jsExecutor;
-    }
-
-    class Timeout {
-        private long endTime;
-
-        public Timeout(int timeoutInSec) {
-            endTime = new Date().getTime() + timeoutInSec * 1000;
-        }
-
-        public boolean notOver() {
-            return (new Date().getTime()) < endTime;
-        }
-
-        public boolean over() {
-            return !notOver();
-        }
     }
 }
 
