@@ -20,6 +20,7 @@ public abstract class AbstractFrameworkSteps {
     protected Logger log = LogManager.getLogger(this.getClass());
     protected AssertsManager assertsManager;
     private PageCatalog pageCatalog;
+    private DriverManager driverManager = Context.getInstance().getBean(DriverManager.class);
 
     public AbstractFrameworkSteps() {
         pageCatalog = Context.getInstance().getBean(PageCatalog.class);
@@ -30,9 +31,12 @@ public abstract class AbstractFrameworkSteps {
      * @return Instance of {@link WebDriver} which is active in current thread.
      */
     protected WebDriver getDriver() {
-        return Context.getInstance().getBean(DriverManager.class).getDriver();
+        return driverManager.getDriver();
     }
 
+    protected boolean driverIsActive() {
+        return driverManager.isActive();
+    }
     /**
      * Returns instance of page with given class from {@link PageCatalog}. If {@link PageCatalog} doesn't contain page with such page yet - it will be initialized and saved.
      *
