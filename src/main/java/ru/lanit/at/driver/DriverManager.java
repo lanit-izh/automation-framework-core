@@ -1,8 +1,5 @@
 package ru.lanit.at.driver;
 
-import com.google.gson.JsonObject;
-import net.lightbody.bmp.BrowserMobProxyServer;
-import net.lightbody.bmp.proxy.auth.AuthType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
@@ -21,10 +18,8 @@ import ru.lanit.at.Config;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.io.File;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
@@ -39,12 +34,11 @@ public class DriverManager {
 
     private Config chromeDriverProperties;
     private Config geckoDriverProperties;
-    private Config proxyProperties;
 
     private Logger log = LogManager.getLogger(DriverManager.class);
 
     private WebDriver driver;
-    private JsonObject jsonProxy;
+    private ProxyHandler proxyHandler;
 
     public DriverManager() {
         this.BROWSER_NAME = Config.getStringSystemProperty(BROWSER_VARIABLE_NAME, DEFAULT_BROWSER);
@@ -80,7 +74,6 @@ public class DriverManager {
     private void loadProperties() {
         chromeDriverProperties = new Config(DEFAULT_CHROME_CONFIG);
         geckoDriverProperties = new Config(DEFAULT_GECKO_CONFIG);
-        proxyProperties = new Config(DEFAULT_PROXY_CONFIG);
     }
 
     public WebDriver getDriver() {
@@ -97,6 +90,7 @@ public class DriverManager {
         switch (browserName.toLowerCase().trim()) {
             case "chrome":
                 ChromeOptions chromeOptions = generateChromeOptions();
+                logBrowserOptions("Chrome", chromeOptions);
                 if (REMOTE) {
                     driver = generateRemoteWebDriver(chromeOptions);
                     break;
@@ -105,6 +99,7 @@ public class DriverManager {
                 break;
             case "firefox":
                 FirefoxOptions firefoxOptions = generateFirefoxOptions();
+                logBrowserOptions("Firefox", firefoxOptions);
                 if (REMOTE) {
                     driver = generateRemoteWebDriver(firefoxOptions);
                     break;
@@ -118,6 +113,16 @@ public class DriverManager {
         return driver;
     }
 
+    private void logBrowserOptions(String browserName, MutableCapabilities options) {
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        log.info("Starting {} browser with options:", browserName);
+        log.info(options);
+        log.info("Proxy: {}", Config.getBooleanSystemProperty(PROXY_VARIABLE_NAME));
+        log.info("Remote: {}", Config.getBooleanSystemProperty(REMOTE_DRIVER_VARIABLE_NAME));
+        log.info("Hub url: {}", Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, HUB_URL));
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    }
+
     private ChromeOptions generateChromeOptions() {
         ChromeOptions chromeOptions = new ChromeOptions();
 
@@ -125,7 +130,7 @@ public class DriverManager {
         chromeOptions.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
 
         if (PROXY_ENABLED) {
-            chromeOptions.setCapability(CapabilityType.PROXY, getJsonProxy());
+            chromeOptions.setCapability(CapabilityType.PROXY, proxyHandler.getJsonProxy());
         }
 
         if (!chromeDriverProperties.isEmpty()) {
@@ -174,7 +179,7 @@ public class DriverManager {
         firefoxOptions.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
 
         if (PROXY_ENABLED) {
-            firefoxOptions.setCapability(CapabilityType.PROXY, getJsonProxy());
+            firefoxOptions.setCapability(CapabilityType.PROXY, proxyHandler.getJsonProxy());
         }
 
         if (!geckoDriverProperties.isEmpty()) {
@@ -232,69 +237,6 @@ public class DriverManager {
         }
     }
 
-    private JsonObject getJsonProxy() {
-        if (jsonProxy == null) jsonProxy = startProxy();
-        return jsonProxy;
-    }
-
-    private JsonObject startProxy() {
-        if (proxyProperties == null || proxyProperties.isEmpty())
-            throw new FrameworkRuntimeException("Proxy properties are not defined. Please initialize properties in "
-                    + DEFAULT_PROXY_CONFIG + " file.");
-
-        JsonObject jsonProxySettings = new JsonObject();
-
-        boolean startLocal = proxyProperties.getProperty("startLocal", Boolean.FALSE);
-        int port = proxyProperties.getProperty("port", 0);
-
-        if (startLocal) {
-            String domainForAutoAuthorization = proxyProperties.getProperty("domainForAutoAuthorization", false);
-            String authUsername = proxyProperties.getProperty("authUsername", false);
-            String authPassword = proxyProperties.getProperty("authPassword", false);
-            String authType = proxyProperties.getProperty("authType", "BASIC");
-            boolean trustAllServers = proxyProperties.getProperty("trustAllServers", Boolean.FALSE);
-
-
-            BrowserMobProxyServer server = new BrowserMobProxyServer();
-            if (domainForAutoAuthorization != null)
-                server.autoAuthorization(domainForAutoAuthorization, authUsername, authPassword, AuthType.valueOf(authType.toUpperCase().trim()));
-            server.setTrustAllServers(trustAllServers);
-            server.start(port);
-            if (port == 0) port = server.getPort();
-
-            jsonProxySettings.addProperty("proxyType", "manual");
-
-            try {
-                String localHostAddress = REMOTE ? InetAddress.getLocalHost().getHostAddress() : "127.0.0.1";
-                String localSocket = localHostAddress + ":" + port;
-                System.setProperty("proxyHost", localHostAddress);
-                System.setProperty("proxyPort", String.valueOf(port));
-
-                jsonProxySettings.addProperty("httpProxy", localSocket);
-                jsonProxySettings.addProperty("sslProxy", localSocket);
-
-            } catch (UnknownHostException e) {
-                throw new FrameworkRuntimeException("Can't set jsonProxy host for driver.", e);
-            }
-
-        } else {
-            String host = proxyProperties.getProperty("host", true);
-            String socksProxy = proxyProperties.getProperty("socksProxy", false);
-            String socksUsername = proxyProperties.getProperty("socksUsername", false);
-            String socksPassword = proxyProperties.getProperty("socksPassword", false);
-
-            String socket = host + ":" + port;
-
-            jsonProxySettings.addProperty("httpProxy", socket);
-            jsonProxySettings.addProperty("sslProxy", socket);
-            jsonProxySettings.addProperty("socksProxy", socksProxy);
-            jsonProxySettings.addProperty("socksUsername", socksUsername);
-            jsonProxySettings.addProperty("socksPassword", socksPassword);
-        }
-
-        return jsonProxySettings;
-    }
-
     private RemoteWebDriver generateRemoteWebDriver(MutableCapabilities mutableCapabilities) {
         try {
             RemoteWebDriver remoteWebDriver = new RemoteWebDriver(new URL(HUB_URL), mutableCapabilities);
@@ -321,6 +263,7 @@ public class DriverManager {
         log.info("Clearing all cookies.");
         driver.manage().deleteAllCookies();
         log.info("Shutting down driver.");
+        proxyHandler.shutDownLocalServer();
         driver.quit();
         driver = null;
         log.info("Driver is closed.");
@@ -354,4 +297,7 @@ public class DriverManager {
     }
 
 
+    public void setProxyHandler(ProxyHandler proxyHandler) {
+        this.proxyHandler = proxyHandler;
+    }
 }

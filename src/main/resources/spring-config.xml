@@ -2,7 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-    <bean id="driverManager" class="ru.lanit.at.driver.DriverManager" destroy-method="shutdown"/>
+
+    <bean id="proxyHandler" class="ru.lanit.at.driver.ProxyHandler"/>
+
+    <bean id="driverManager" class="ru.lanit.at.driver.DriverManager" destroy-method="shutdown">
+        <property name="proxyHandler" ref="proxyHandler"/>
+    </bean>
 
     <bean id="pageCatalog" class="ru.lanit.at.pages.PageCatalog">
         <property name="driverManager" ref="driverManager"/>
@@ -32,5 +37,4 @@
     <bean id="assertsManager" class="ru.lanit.at.assertion.AssertsManager">
         <property name="asserts" ref="extendedAssert"/>
     </bean>
-
 </beans>
