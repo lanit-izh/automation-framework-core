@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static ru.lanit.at.FrameworkConstants.*;
 
@@ -34,6 +35,7 @@ public class DriverManager {
 
     private Config chromeDriverProperties;
     private Config geckoDriverProperties;
+    private Config driverTimeoutsProperties;
 
     private Logger log = LogManager.getLogger(DriverManager.class);
 
@@ -74,6 +76,7 @@ public class DriverManager {
     private void loadProperties() {
         chromeDriverProperties = new Config(DEFAULT_CHROME_CONFIG);
         geckoDriverProperties = new Config(DEFAULT_GECKO_CONFIG);
+        driverTimeoutsProperties = new Config(DEFAULT_TIMEOUTS_CONFIG);
     }
 
     public WebDriver getDriver() {
@@ -110,6 +113,9 @@ public class DriverManager {
                 throw new FrameworkRuntimeException("Unknown driver type: " + browserName);
         }
         driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(driverTimeoutsProperties.getProperty(IMPLICITLY_WAIT,30), TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(driverTimeoutsProperties.getProperty(PAGE_LOAD_TIMEOUT,60), TimeUnit.SECONDS);
+        driver.manage().timeouts().setScriptTimeout(driverTimeoutsProperties.getProperty(SCRIPT_TIMEOUT,30),TimeUnit.SECONDS);
         return driver;
     }
 

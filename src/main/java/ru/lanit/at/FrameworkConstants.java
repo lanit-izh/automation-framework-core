@@ -20,6 +20,11 @@ public class FrameworkConstants {
     public static final String DEFAULT_CHROME_CONFIG = "chromedriver.config.yaml";
     public static final String DEFAULT_GECKO_CONFIG = "geckodriver.config.yaml";
     public static final String DEFAULT_PROXY_CONFIG = "proxy.config.yaml";
+    public static final String DEFAULT_TIMEOUTS_CONFIG = "timeouts.config.yaml";
+
+    public static final String IMPLICITLY_WAIT = "implicitlyWait";
+    public static final String PAGE_LOAD_TIMEOUT = "pageLoadTimeout";
+    public static final String SCRIPT_TIMEOUT= "scriptTimeout";
 
 
 }
