@@ -2,23 +2,24 @@ package ru.lanit.at.make;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.lanit.at.util.Timeout;
 
-public class Wait {
+import java.util.function.Predicate;
 
+public class Wait {
     private static final int CHECK_PAGE_STATE_PERIOD_MS = 300;
     private static final int PAGE_MIN_WAIT_TIMEOUT_SEC = 30;
     private static final int ELEMENT_WAIT_TIMEOUT_SEC = 20;
     private static final int PAGE_WAIT_TIMEOUT_SEC = 60;
     private static final int DEFAULT_TIMEOUT_SEC = 5;
     private static final int CHECK_JS_STATE_PERIOD_MS = 200;
+
+
     private Logger log = LogManager.getLogger(Wait.class.getSimpleName());
 
     private DriverManager driverManager;
@@ -40,9 +41,10 @@ public class Wait {
      * @param sec Time to sleep in seconds.
      * @deprecated Use only in extreme need. Replacement methods: {@link #untilJSComplete()}, {@link #untilPageLoaded()}, {@link #untilElementVisible(WebElement)}, {@link #untilElementClickable(WebElement...)}, {@link #untilElementVisible(WebElement)}.
      */
-    @Deprecated
+
     public void sec(double sec) {
         sleep((int) (sec * 1000));
+
     }
 
     /**
@@ -120,6 +122,17 @@ public class Wait {
             return !jsExecutor.executeScript("return jQuery.active").toString().equals("0");
         } catch (Exception ignore) {
             return false;
+        }
+    }
+
+    public <T> void until(T obj, Predicate<T> predicate) {
+        until(obj, predicate, DEFAULT_TIMEOUT_SEC);
+    }
+
+    public <T> void until(T obj, Predicate<T> predicate, double timeout) {
+        long endTime = System.currentTimeMillis() + (long) (timeout * 1000);
+        while (!predicate.test(obj) && System.currentTimeMillis() < endTime) {
+            sleep(ELEMENT_WAIT_TIMEOUT_SEC);
         }
     }
 
