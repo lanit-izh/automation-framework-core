@@ -73,11 +73,12 @@ public class ProxyHandler {
 
             String socket = host + ":" + port;
 
+            jsonProxySettings.addProperty("proxyType", "manual");
             jsonProxySettings.addProperty("httpProxy", socket);
             jsonProxySettings.addProperty("sslProxy", socket);
-            jsonProxySettings.addProperty("socksProxy", socksProxy);
-            jsonProxySettings.addProperty("socksUsername", socksUsername);
-            jsonProxySettings.addProperty("socksPassword", socksPassword);
+//            jsonProxySettings.addProperty("socksProxy", socksProxy);
+//            jsonProxySettings.addProperty("socksUsername", socksUsername);
+//            jsonProxySettings.addProperty("socksPassword", socksPassword);
         }
 
         log.info("Proxy settings: {}", jsonProxySettings);
