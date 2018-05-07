@@ -19,20 +19,20 @@ public class ProxyHandler {
 
     private Logger log = LogManager.getLogger(DriverManager.class);
 
-    private JsonObject jsonProxy;
+    private ThreadLocal<JsonObject> jsonProxy = new ThreadLocal<>();
     private Config proxyProperties;
-    private BrowserMobProxyServer server;
-    private int port;
+    private ThreadLocal<BrowserMobProxyServer> server = new ThreadLocal<>();
+    private ThreadLocal<Integer> port = new ThreadLocal<>();
 
 
     public ProxyHandler() {
         proxyProperties = new Config(DEFAULT_PROXY_CONFIG);
-        port = proxyProperties.getProperty("port", 0);
+        port.set(proxyProperties.getProperty("port", 0));
     }
 
     public JsonObject getJsonProxy() {
-        if (jsonProxy == null) jsonProxy = startProxy();
-        return jsonProxy;
+        if (jsonProxy.get() == null) jsonProxy.set(startProxy());
+        return jsonProxy.get();
     }
 
     private JsonObject startProxy() {
@@ -46,17 +46,17 @@ public class ProxyHandler {
 
         if (startLocal) {
 
-            server = startLocalServer();
-            if (port == 0) port = server.getPort();
+            startLocalServer();
+            if (port.get() == 0) port.set(server.get().getPort());
 
             jsonProxySettings.addProperty("proxyType", "manual");
 
             try {
                 String localHostAddress = Config.getBooleanSystemProperty(REMOTE_DRIVER_VARIABLE_NAME) ?
                         InetAddress.getLocalHost().getHostAddress() : "127.0.0.1";
-                String localSocket = localHostAddress + ":" + port;
+                String localSocket = localHostAddress + ":" + port.get();
                 System.setProperty("proxyHost", localHostAddress);
-                System.setProperty("proxyPort", String.valueOf(port));
+                System.setProperty("proxyPort", String.valueOf(port.get()));
 
                 jsonProxySettings.addProperty("httpProxy", localSocket);
                 jsonProxySettings.addProperty("sslProxy", localSocket);
@@ -85,7 +85,7 @@ public class ProxyHandler {
         return jsonProxySettings;
     }
 
-    public BrowserMobProxyServer startLocalServer() {
+    public void startLocalServer() {
         log.info("Starting local proxy server.");
         String domainForAutoAuthorization = proxyProperties.getProperty("domainForAutoAuthorization", false);
         String authUsername = proxyProperties.getProperty("authUsername", false);
@@ -93,19 +93,23 @@ public class ProxyHandler {
         String authType = proxyProperties.getProperty("authType", "BASIC");
         boolean trustAllServers = proxyProperties.getProperty("trustAllServers", Boolean.FALSE);
 
-        BrowserMobProxyServer localServer = new BrowserMobProxyServer();
+        server.set(new BrowserMobProxyServer());
         if (domainForAutoAuthorization != null)
-            localServer.autoAuthorization(domainForAutoAuthorization, authUsername, authPassword, AuthType.valueOf(authType.toUpperCase().trim()));
-        localServer.setTrustAllServers(trustAllServers);
-        localServer.start(port);
+            server.get().autoAuthorization(domainForAutoAuthorization, authUsername, authPassword, AuthType.valueOf(authType.toUpperCase().trim()));
+        server.get().setTrustAllServers(trustAllServers);
+        if(port.get() == null)
+            port.set(proxyProperties.getProperty("port", 0));
+        server.get().start(port.get());
         log.info("Local proxy server started.");
-        return localServer;
     }
 
     public void shutDownLocalServer() {
-        if (server != null && server.isStarted()) {
+        if (server.get() != null && server.get().isStarted()) {
             log.info("Starting graceful proxy shutdown.");
-            server.stop();
+            server.get().stop();
+            server.remove();
+            port.remove();
+            jsonProxy.remove();
             log.info("Proxy server gracefully shut down.");
         }
     }

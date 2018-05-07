@@ -39,7 +39,7 @@ public class DriverManager {
 
     private Logger log = LogManager.getLogger(DriverManager.class);
 
-    private WebDriver driver;
+    private ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     private ProxyHandler proxyHandler;
 
     public DriverManager() {
@@ -84,39 +84,37 @@ public class DriverManager {
     }
 
     private WebDriver getDriver(String browserName) {
-        if (driver == null) driver = startBrowser(browserName);
-        return driver;
+        if (driver.get() == null) startBrowser(browserName);
+        return driver.get();
     }
 
-    private WebDriver startBrowser(String browserName) {
-        WebDriver driver;
+    private void startBrowser(String browserName) {
         switch (browserName.toLowerCase().trim()) {
             case "chrome":
                 ChromeOptions chromeOptions = generateChromeOptions();
                 logBrowserOptions("Chrome", chromeOptions);
                 if (REMOTE) {
-                    driver = generateRemoteWebDriver(chromeOptions);
+                    driver.set(generateRemoteWebDriver(chromeOptions));
                     break;
                 }
-                driver = new ChromeDriver(chromeOptions);
+                driver.set(new ChromeDriver(chromeOptions));
                 break;
             case "firefox":
                 FirefoxOptions firefoxOptions = generateFirefoxOptions();
                 logBrowserOptions("Firefox", firefoxOptions);
                 if (REMOTE) {
-                    driver = generateRemoteWebDriver(firefoxOptions);
+                    driver.set(generateRemoteWebDriver(firefoxOptions));
                     break;
                 }
-                driver = new FirefoxDriver(firefoxOptions);
+                driver.set(new FirefoxDriver(firefoxOptions));
                 break;
             default:
                 throw new FrameworkRuntimeException("Unknown driver type: " + browserName);
         }
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(driverTimeoutsProperties.getProperty(IMPLICITLY_WAIT,30), TimeUnit.SECONDS);
-        driver.manage().timeouts().pageLoadTimeout(driverTimeoutsProperties.getProperty(PAGE_LOAD_TIMEOUT,60), TimeUnit.SECONDS);
-        driver.manage().timeouts().setScriptTimeout(driverTimeoutsProperties.getProperty(SCRIPT_TIMEOUT,30),TimeUnit.SECONDS);
-        return driver;
+        driver.get().manage().window().maximize();
+        driver.get().manage().timeouts().implicitlyWait(driverTimeoutsProperties.getProperty(IMPLICITLY_WAIT,30), TimeUnit.SECONDS);
+        driver.get().manage().timeouts().pageLoadTimeout(driverTimeoutsProperties.getProperty(PAGE_LOAD_TIMEOUT,60), TimeUnit.SECONDS);
+        driver.get().manage().timeouts().setScriptTimeout(driverTimeoutsProperties.getProperty(SCRIPT_TIMEOUT,30),TimeUnit.SECONDS);
     }
 
     private void logBrowserOptions(String browserName, MutableCapabilities options) {
@@ -259,19 +257,20 @@ public class DriverManager {
      * @return true if driver is not null.
      */
     public boolean isActive() {
-        return driver != null;
+        return driver.get() != null;
     }
 
     /**
      * Closes all driver windows and destroys {@link WebDriver} instance.
      */
     public void shutdown() {
+        log.info("+++ Thread "+ Thread.currentThread().getName());
         log.info("Clearing all cookies.");
-        driver.manage().deleteAllCookies();
+        driver.get().manage().deleteAllCookies();
         log.info("Shutting down driver.");
         proxyHandler.shutDownLocalServer();
-        driver.quit();
-        driver = null;
+        driver.get().quit();
+        driver.remove();
         log.info("Driver is closed.");
     }
 
@@ -283,8 +282,8 @@ public class DriverManager {
      */
 
     public JavascriptExecutor getJSExecutor() {
-        if (driver != null) {
-            return (JavascriptExecutor) driver;
+        if (driver.get() != null) {
+            return (JavascriptExecutor) driver.get();
         } else {
             log.error("Драйвер не запущен! Сначала инициализируйте драйвер");
             return null;
