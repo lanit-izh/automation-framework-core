@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import ru.lanit.at.driver.DriverManager;
+import ru.yandex.qatools.htmlelements.element.Button;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.element.Named;
 
@@ -53,6 +54,11 @@ public class Make {
         wait.untilJSComplete();
     }
 
+    public void submit(Button button){
+        logAction(button, "Submit {}");
+        button.submit();
+    }
+
     /**
      * Cleans and sends keys to provided {@link WebElement}
      *
@@ -96,7 +102,7 @@ public class Make {
      * @param webElement pure WebElement.
      */
     public void focusOnElement(WebElement webElement) {
-        logAction(webElement, "Focus on {}");
+        logAction(webElement, "Focus on '{}'");
         try {
             scrollIntoView(webElement);
             new Actions(getDriver()).moveToElement(webElement).perform();
@@ -105,8 +111,12 @@ public class Make {
     }
 
     public void focusOnElement(HtmlElement htmlElement) {
-        logAction(htmlElement, "Focus on {}");
+        logAction(htmlElement, "Focus on '{}'");
         focusOnElement(htmlElement.getWrappedElement());
+    }
+
+    public void defocus(WebElement webElement){
+        new Actions(getDriver()).moveByOffset(webElement.getSize().width/2 + 5, webElement.getSize().height/2 + 5).perform();
     }
 
     public WebDriver getDriver() {
