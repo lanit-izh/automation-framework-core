@@ -264,7 +264,6 @@ public class DriverManager {
      * Closes all driver windows and destroys {@link WebDriver} instance.
      */
     public void shutdown() {
-        log.info("+++ Thread "+ Thread.currentThread().getName());
         log.info("Clearing all cookies.");
         driver.get().manage().deleteAllCookies();
         log.info("Shutting down driver.");

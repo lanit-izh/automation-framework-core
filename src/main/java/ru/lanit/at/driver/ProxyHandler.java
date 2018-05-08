@@ -27,7 +27,6 @@ public class ProxyHandler {
 
     public ProxyHandler() {
         proxyProperties = new Config(DEFAULT_PROXY_CONFIG);
-        port.set(proxyProperties.getProperty("port", 0));
     }
 
     public JsonObject getJsonProxy() {
@@ -67,11 +66,12 @@ public class ProxyHandler {
 
         } else {
             String host = proxyProperties.getProperty("host", true);
+            port.set(proxyProperties.getProperty("port", true));
             String socksProxy = proxyProperties.getProperty("socksProxy", false);
             String socksUsername = proxyProperties.getProperty("socksUsername", false);
             String socksPassword = proxyProperties.getProperty("socksPassword", false);
 
-            String socket = host + ":" + port;
+            String socket = host + ":" + port.get();
 
             jsonProxySettings.addProperty("proxyType", "manual");
             jsonProxySettings.addProperty("httpProxy", socket);
