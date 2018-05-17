@@ -67,7 +67,7 @@ public class Make {
      */
     public void sendKeysTo(WebElement webElement, String message) {
         logAction(webElement, "Sending keys '" + message + "' to {}");
-        webElement.click();
+        jsClickOn(webElement);
         webElement.clear();
         webElement.sendKeys(message);
     }
@@ -115,8 +115,20 @@ public class Make {
         focusOnElement(htmlElement.getWrappedElement());
     }
 
+    /**
+     * Moves mouse away from element.
+     * @param webElement element that should be not in focus.
+     */
     public void defocus(WebElement webElement){
         new Actions(getDriver()).moveByOffset(webElement.getSize().width/2 + 5, webElement.getSize().height/2 + 5).perform();
+    }
+
+    /**
+     * Moves mouse away and clicks to completely lose focus on element.
+     * @param webElement element that should be not in focus.
+     */
+    public void loseFocus(WebElement webElement){
+        new Actions(getDriver()).moveByOffset(webElement.getSize().width/2 + 5, webElement.getSize().height/2 + 5).click().build().perform();
     }
 
     public WebDriver getDriver() {
