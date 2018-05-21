@@ -128,7 +128,15 @@ public class Make {
      * @param webElement element that should be not in focus.
      */
     public void loseFocus(WebElement webElement){
-        new Actions(getDriver()).moveByOffset(webElement.getSize().width/2 + 5, webElement.getSize().height/2 + 5).click().build().perform();
+        new Actions(getDriver()).moveToElement(webElement, -3, -3).click().build().perform();
+    }
+
+    /**
+     * Moves mouse away and clicks to completely lose focus on element.
+     * @param htmlElement that should be not in focus.
+     */
+    public void loseFocus(HtmlElement htmlElement){
+        loseFocus(htmlElement.getWrappedElement());
     }
 
     public WebDriver getDriver() {
