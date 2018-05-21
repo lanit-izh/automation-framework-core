@@ -7,9 +7,9 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.internal.WrapsElement;
 import ru.lanit.at.driver.DriverManager;
 import ru.yandex.qatools.htmlelements.element.Button;
-import ru.yandex.qatools.htmlelements.element.HtmlElement;
 import ru.yandex.qatools.htmlelements.element.Named;
 
 public class Make {
@@ -96,6 +96,11 @@ public class Make {
         }
     }
 
+    private WebElement unwrapElement(WebElement webElement){
+        if(webElement instanceof WrapsElement) return ((WrapsElement) webElement).getWrappedElement();
+        return webElement;
+    }
+
     /**
      * Emulates mouse focus on element.
      *
@@ -105,14 +110,11 @@ public class Make {
         logAction(webElement, "Focus on '{}'");
         try {
             scrollIntoView(webElement);
-            new Actions(getDriver()).moveToElement(webElement).perform();
+            new Actions(getDriver())
+                    .moveToElement(unwrapElement(webElement))
+                    .perform();
         } catch (Exception ignore) {
         }
-    }
-
-    public void focusOnElement(HtmlElement htmlElement) {
-        logAction(htmlElement, "Focus on '{}'");
-        focusOnElement(htmlElement.getWrappedElement());
     }
 
     /**
@@ -120,7 +122,9 @@ public class Make {
      * @param webElement element that should be not in focus.
      */
     public void defocus(WebElement webElement){
-        new Actions(getDriver()).moveByOffset(webElement.getSize().width/2 + 5, webElement.getSize().height/2 + 5).perform();
+        logAction(webElement, "Losing focus from {} by moving mouse away.");
+        WebElement unwrappedElement = unwrapElement(webElement);
+        new Actions(getDriver()).moveByOffset(unwrappedElement.getSize().width/2 + 5, unwrappedElement.getSize().height/2 + 5).perform();
     }
 
     /**
@@ -128,15 +132,8 @@ public class Make {
      * @param webElement element that should be not in focus.
      */
     public void loseFocus(WebElement webElement){
-        new Actions(getDriver()).moveToElement(webElement, -3, -3).click().build().perform();
-    }
-
-    /**
-     * Moves mouse away and clicks to completely lose focus on element.
-     * @param htmlElement that should be not in focus.
-     */
-    public void loseFocus(HtmlElement htmlElement){
-        loseFocus(htmlElement.getWrappedElement());
+        logAction(webElement, "Losing focus from element {} by clicking");
+        new Actions(getDriver()).moveToElement(unwrapElement(webElement), -3, -3).click().build().perform();
     }
 
     public WebDriver getDriver() {
