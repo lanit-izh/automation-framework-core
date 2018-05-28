@@ -146,7 +146,7 @@ public class DriverManager {
             List<String> encodedExtensions = chromeDriverProperties.getProperty("encodedExtensions", false);
             boolean headless = chromeDriverProperties.getProperty("headless", Boolean.FALSE);
             String binaryPath = chromeDriverProperties.getProperty("binary", false);
-            String version = (chromeDriverProperties.getProperty("version", false)).toString();
+            String version = (chromeDriverProperties.getProperty("version", "")).toString();
 
 
             if (arguments != null && !arguments.isEmpty()) {
@@ -193,7 +193,7 @@ public class DriverManager {
 
 //          Setting firefox binary if it's defined in config
             String binaryPath = geckoDriverProperties.getProperty("binary", false);
-            String version = (geckoDriverProperties.getProperty("version", false)).toString();
+            String version = (geckoDriverProperties.getProperty("version", "")).toString();
             Boolean marionette = (geckoDriverProperties.getProperty("marionette", false));
             String firefoxProfileName = geckoDriverProperties.getProperty("firefoxProfileName", false);
             List<String> extensions = geckoDriverProperties.getProperty("extensions", false);
