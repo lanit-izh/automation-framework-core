@@ -194,7 +194,6 @@ public class DriverManager {
 //          Setting firefox binary if it's defined in config
             String binaryPath = geckoDriverProperties.getProperty("binary", false);
             String version = String.valueOf(geckoDriverProperties.getProperty("version", ""));
-            Boolean marionette = (geckoDriverProperties.getProperty("marionette", false));
             String firefoxProfileName = geckoDriverProperties.getProperty("firefoxProfileName", false);
             List<String> extensions = geckoDriverProperties.getProperty("extensions", false);
             Map<String, Object> preferences = geckoDriverProperties.getProperty("preferences", false);
@@ -205,7 +204,6 @@ public class DriverManager {
 
             if (binaryPath != null && !binaryPath.isEmpty()) firefoxOptions.setBinary(binaryPath);
             if (version != null && !version.isEmpty()) firefoxOptions.setCapability(CapabilityType.BROWSER_VERSION,version);
-            if (marionette != null) firefoxOptions.setCapability("marionette",marionette);
 
 //          Setting profile if it's defined in config
             if (firefoxProfileName != null && !firefoxProfileName.isEmpty()) {
