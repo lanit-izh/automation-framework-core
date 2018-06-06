@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.lanit.at.context.Context;
+import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.make.Make;
 import ru.lanit.at.make.Wait;
 import ru.lanit.at.pages.optionals.Openable;
@@ -25,9 +26,9 @@ public abstract class AbstractPage implements Openable {
     private WebDriver driver;
     private PageCatalog pageCatalog;
 
-    public AbstractPage(WebDriver driver) {
-        this.driver = driver;
-        log.info("Initializing elements of {}", this.getClass().getSimpleName());
+    public AbstractPage() {
+        this.driver = Context.getInstance().getBean(DriverManager.class).getDriver();
+        log.info("Initializing elements of {}", this.getClass().getSimpleName().split("_")[0]);
         PageFactory.initElements(new HtmlElementDecorator(new HtmlElementLocatorFactory(driver)), this);
 
         pageCatalog = Context.getInstance().getBean(PageCatalog.class);
@@ -127,19 +128,6 @@ public abstract class AbstractPage implements Openable {
 
         wait.until(jQueryLoad);
         wait.until(jsLoad);
-    }
-
-    public int getParentStepNum(WebElement element) {
-        WebElement parentStep;
-        try {
-            parentStep = element.findElement(By.xpath("./ancestor::fieldset[contains(@class, 'form-step')]"));
-            String stepId = parentStep.getAttribute("id");
-            String stepNum = stepId.substring(stepId.length() - 1);
-            return Integer.parseInt(stepNum);
-        } catch (WebDriverException wde) {
-            log.warn("Элемент " + element + " не имеет родительского шага");
-            return 0;
-        }
     }
 
     public void clickAndWait(WebElement element) {

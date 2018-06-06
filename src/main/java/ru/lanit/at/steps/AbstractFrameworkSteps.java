@@ -37,6 +37,7 @@ public abstract class AbstractFrameworkSteps {
     protected boolean driverIsActive() {
         return driverManager.isActive();
     }
+
     /**
      * Returns instance of page with given class from {@link PageCatalog}. If {@link PageCatalog} doesn't contain page with such page yet - it will be initialized and saved.
      *

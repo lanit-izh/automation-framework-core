@@ -54,7 +54,7 @@ public class Make {
         wait.untilJSComplete();
     }
 
-    public void submit(Button button){
+    public void submit(Button button) {
         logAction(button, "Submit {}");
         button.submit();
     }
@@ -83,12 +83,14 @@ public class Make {
 
         if (webElement instanceof Named) {
             String elementText = null;
-            try{
+            try {
                 elementText = webElement.getText();
-            } catch (NoSuchElementException ignore){}
+            } catch (NoSuchElementException ignore) {
+            }
 
-            if(elementText != null && !elementText.isEmpty()){
-                if(elementText.length() > stringCutLength) elementText = elementText.substring(0, stringCutLength) + "...";
+            if (elementText != null && !elementText.isEmpty()) {
+                if (elementText.length() > stringCutLength)
+                    elementText = elementText.substring(0, stringCutLength) + "...";
                 message += " (" + elementText + ")";
             }
 
@@ -96,8 +98,8 @@ public class Make {
         }
     }
 
-    private WebElement unwrapElement(WebElement webElement){
-        if(webElement instanceof WrapsElement) return ((WrapsElement) webElement).getWrappedElement();
+    private WebElement unwrapElement(WebElement webElement) {
+        if (webElement instanceof WrapsElement) return ((WrapsElement) webElement).getWrappedElement();
         return webElement;
     }
 
@@ -119,19 +121,21 @@ public class Make {
 
     /**
      * Moves mouse away from element.
+     *
      * @param webElement element that should be not in focus.
      */
-    public void defocus(WebElement webElement){
+    public void defocus(WebElement webElement) {
         logAction(webElement, "Losing focus from {} by moving mouse away.");
         WebElement unwrappedElement = unwrapElement(webElement);
-        new Actions(getDriver()).moveByOffset(unwrappedElement.getSize().width/2 + 5, unwrappedElement.getSize().height/2 + 5).perform();
+        new Actions(getDriver()).moveByOffset(unwrappedElement.getSize().width / 2 + 5, unwrappedElement.getSize().height / 2 + 5).perform();
     }
 
     /**
      * Moves mouse away and clicks to completely lose focus on element.
+     *
      * @param webElement element that should be not in focus.
      */
-    public void loseFocus(WebElement webElement){
+    public void loseFocus(WebElement webElement) {
         logAction(webElement, "Losing focus from element {} by clicking");
         new Actions(getDriver()).moveToElement(unwrapElement(webElement), -3, -3).click().build().perform();
     }

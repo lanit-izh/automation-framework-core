@@ -2,7 +2,6 @@ package ru.lanit.at.driver;
 
 import com.google.gson.JsonObject;
 import net.lightbody.bmp.BrowserMobProxyServer;
-import net.lightbody.bmp.mitm.TrustSource;
 import net.lightbody.bmp.proxy.auth.AuthType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -97,7 +96,7 @@ public class ProxyHandler {
         if (domainForAutoAuthorization != null)
             server.get().autoAuthorization(domainForAutoAuthorization, authUsername, authPassword, AuthType.valueOf(authType.toUpperCase().trim()));
         server.get().setTrustAllServers(trustAllServers);
-        if(port.get() == null)
+        if (port.get() == null)
             port.set(proxyProperties.getProperty("port", 0));
         server.get().start(port.get());
         log.info("Local proxy server started.");

@@ -17,7 +17,7 @@ public class ScreenshotUtils {
     public static byte[] takeScreenshot(WebDriver webDriver) {
         AShot aShot = new AShot();
         BufferedImage bufferedImage = aShot.shootingStrategy(
-                ShootingStrategies.viewportPasting(500)
+                ShootingStrategies.viewportPasting(200)
         ).takeScreenshot(webDriver).getImage();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {

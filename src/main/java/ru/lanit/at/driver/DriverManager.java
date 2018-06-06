@@ -112,10 +112,10 @@ public class DriverManager {
                 throw new FrameworkRuntimeException("Unknown driver type: " + browserName);
         }
         driver.get().manage().window().maximize();
-        if(!System.getProperty("timeouts","true").equalsIgnoreCase("false")) {
-            driver.get().manage().timeouts().implicitlyWait(driverTimeoutsProperties.getProperty(IMPLICITLY_WAIT,30), TimeUnit.SECONDS);
-            driver.get().manage().timeouts().pageLoadTimeout(driverTimeoutsProperties.getProperty(PAGE_LOAD_TIMEOUT,60), TimeUnit.SECONDS);
-            driver.get().manage().timeouts().setScriptTimeout(driverTimeoutsProperties.getProperty(SCRIPT_TIMEOUT,30),TimeUnit.SECONDS);
+        if (!System.getProperty("timeouts", "true").equalsIgnoreCase("false")) {
+            driver.get().manage().timeouts().implicitlyWait(driverTimeoutsProperties.getProperty(IMPLICITLY_WAIT, 30), TimeUnit.SECONDS);
+            driver.get().manage().timeouts().pageLoadTimeout(driverTimeoutsProperties.getProperty(PAGE_LOAD_TIMEOUT, 60), TimeUnit.SECONDS);
+            driver.get().manage().timeouts().setScriptTimeout(driverTimeoutsProperties.getProperty(SCRIPT_TIMEOUT, 30), TimeUnit.SECONDS);
         }
     }
 
@@ -158,7 +158,8 @@ public class DriverManager {
 
             chromeOptions.setHeadless(headless);
             if (binaryPath != null && !binaryPath.isEmpty()) chromeOptions.setBinary(binaryPath);
-            if (version != null && !version.isEmpty()) chromeOptions.setCapability(CapabilityType.BROWSER_VERSION,version);
+            if (version != null && !version.isEmpty())
+                chromeOptions.setCapability(CapabilityType.BROWSER_VERSION, version);
         }
         return chromeOptions;
     }
@@ -203,7 +204,8 @@ public class DriverManager {
             boolean disableFirefoxLogging = geckoDriverProperties.getProperty("disableFirefoxLogging", Boolean.FALSE);
 
             if (binaryPath != null && !binaryPath.isEmpty()) firefoxOptions.setBinary(binaryPath);
-            if (version != null && !version.isEmpty()) firefoxOptions.setCapability(CapabilityType.BROWSER_VERSION,version);
+            if (version != null && !version.isEmpty())
+                firefoxOptions.setCapability(CapabilityType.BROWSER_VERSION, version);
 
 //          Setting profile if it's defined in config
             if (firefoxProfileName != null && !firefoxProfileName.isEmpty()) {

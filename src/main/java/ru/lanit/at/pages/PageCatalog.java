@@ -43,8 +43,8 @@ public class PageCatalog {
             return requestedPage;
         } else {
             try {
-                Constructor<T> constructor = clazz.getConstructor(WebDriver.class);
-                T page = constructor.newInstance(actualDriver);
+                Constructor<T> constructor = clazz.getConstructor();
+                T page = constructor.newInstance();
                 setCurrentPage(page);
                 pageList.add(page);
                 return page;

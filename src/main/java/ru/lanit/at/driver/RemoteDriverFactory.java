@@ -28,7 +28,7 @@ public class RemoteDriverFactory {
         RemoteWebDriver driver;
 
         server = new BrowserMobProxyServer();
-        server.autoAuthorization("newmos.mos.ru","mos","mos", AuthType.BASIC);
+        server.autoAuthorization("newmos.mos.ru", "mos", "mos", AuthType.BASIC);
         server.setTrustAllServers(true);
         server.start(0);
         int port = server.getPort();
@@ -44,7 +44,7 @@ public class RemoteDriverFactory {
             case "chrome":
                 capability = CapabilitiesManager.getChromeCapabibilities();
                 capability.setCapability(CapabilityType.PROXY, proxy);
-                capability.setCapability (CapabilityType.ACCEPT_SSL_CERTS, true);
+                capability.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
                 capability.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
                 capability.setCapability(ChromeOptions.CAPABILITY, CapabilitiesManager.getChromeOptions());
                 break;

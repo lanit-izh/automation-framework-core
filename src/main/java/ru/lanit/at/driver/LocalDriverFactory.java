@@ -28,7 +28,7 @@ public class LocalDriverFactory {
         WebDriver driver;
 
         server = new BrowserMobProxyServer();
-        server.autoAuthorization("newmos.mos.ru","mos","mos", AuthType.BASIC);
+        server.autoAuthorization("newmos.mos.ru", "mos", "mos", AuthType.BASIC);
         server.setTrustAllServers(true);
         server.blacklistRequests("mc\\.yandex\\.ru", 200);
         server.blacklistRequests("stat\\.sputnik\\.ru", 200);
@@ -48,10 +48,10 @@ public class LocalDriverFactory {
                 profile.setPreference("devtools.selfxss.count", 1500);
                 profile.setPreference("dom.webnotifications.enabled", false);
                 DesiredCapabilities seleniumCapabilities = new DesiredCapabilities();
-                if(System.getProperty("proxy","true").equalsIgnoreCase("true")) {
+                if (System.getProperty("proxy", "true").equalsIgnoreCase("true")) {
                     seleniumCapabilities.setCapability(CapabilityType.PROXY, proxy);
                 }
-                seleniumCapabilities.setCapability(FirefoxDriver.PROFILE,profile);
+                seleniumCapabilities.setCapability(FirefoxDriver.PROFILE, profile);
                 seleniumCapabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
                 seleniumCapabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
                 driver = new FirefoxDriver(seleniumCapabilities);
@@ -61,7 +61,7 @@ public class LocalDriverFactory {
                 ChromeOptions chromeOptions = CapabilitiesManager.getChromeOptions();
                 DesiredCapabilities capabilities = DesiredCapabilities.chrome();
                 capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-                capabilities.setCapability (CapabilityType.ACCEPT_SSL_CERTS, true);
+                capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
                 capabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
                 capabilities.setCapability("proxy", proxy);
                 driver = new ChromeDriver(capabilities);
@@ -80,13 +80,13 @@ public class LocalDriverFactory {
     static public void settingProxy(int port, Proxy proxy, Boolean local) {
         try {
             String hostAddress;
-            if(local) {
+            if (local) {
                 hostAddress = LOCALHOST;
             } else {
                 hostAddress = InetAddress.getLocalHost().getHostAddress();
             }
             String localSocket = hostAddress + ":" + port;
-            System.setProperty("proxyHost",hostAddress);
+            System.setProperty("proxyHost", hostAddress);
             System.setProperty("proxyPort", String.valueOf(port));
             proxy.setHttpProxy(localSocket);
             proxy.setSslProxy(localSocket);
