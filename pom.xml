@@ -21,7 +21,6 @@
         <testng.version>6.10</testng.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
         <aspectj.version>1.9.1</aspectj.version>
-        <javassist.version>3.12.1.GA</javassist.version>
     </properties>
 
     <build>
@@ -117,16 +116,10 @@
             <artifactId>ashot</artifactId>
             <version>${yandex.allure.version}</version>
         </dependency>
-
         <dependency>
             <groupId>net.lightbody.bmp</groupId>
             <artifactId>browsermob-core</artifactId>
             <version>2.1.5</version>
-        </dependency>
-        <dependency>
-            <groupId>javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>${javassist.version}</version>
         </dependency>
     </dependencies>
 
