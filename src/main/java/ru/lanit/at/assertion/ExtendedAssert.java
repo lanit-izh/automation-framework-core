@@ -1,6 +1,8 @@
 package ru.lanit.at.assertion;
 
 import io.qameta.allure.Attachment;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.asserts.IAssert;
 import org.testng.asserts.SoftAssert;
 import org.testng.collections.Maps;
@@ -10,8 +12,8 @@ import ru.lanit.at.util.ScreenshotUtils;
 import java.util.Map;
 
 public class ExtendedAssert extends SoftAssert {
+    private static Logger log = LogManager.getLogger(ExtendedAssert.class.getSimpleName());
     private final Map<AssertionError, IAssert<?>> m_errors = Maps.newLinkedHashMap();
-
     private Boolean isCritical = false;
     private DriverManager driverManager;
 
@@ -29,7 +31,9 @@ public class ExtendedAssert extends SoftAssert {
         try {
             a.doAssert();
             onAssertSuccess(a);
+            log.debug("Успешно проверено: [{}]", a.getActual());
         } catch (AssertionError ex) {
+            log.error(ex.getMessage());
             onAssertFailure(a, ex);
             m_errors.put(ex, a);
             attachErrorMsg(ex);
