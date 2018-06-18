@@ -20,11 +20,12 @@ public abstract class AbstractFrameworkSteps {
     protected Logger log = LogManager.getLogger(this.getClass());
     protected AssertsManager assertsManager;
     private PageCatalog pageCatalog;
-    private DriverManager driverManager = Context.getInstance().getBean(DriverManager.class);
+    private DriverManager driverManager;
 
     public AbstractFrameworkSteps() {
         pageCatalog = Context.getInstance().getBean(PageCatalog.class);
         assertsManager = Context.getInstance().getBean(AssertsManager.class);
+        driverManager = Context.getInstance().getBean(DriverManager.class);
     }
 
     /**
@@ -32,6 +33,10 @@ public abstract class AbstractFrameworkSteps {
      */
     protected WebDriver getDriver() {
         return driverManager.getDriver();
+    }
+
+    protected void shutdownDriver(){
+        driverManager.shutdown();
     }
 
     protected boolean driverIsActive() {
