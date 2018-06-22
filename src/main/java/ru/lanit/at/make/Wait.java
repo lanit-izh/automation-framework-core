@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class Wait {
     private static final int PAGE_MIN_WAIT_TIMEOUT_SEC = 30;
-    private static final int ELEMENT_WAIT_TIMEOUT_SEC = 20;
+    private static final int ELEMENT_WAIT_TIMEOUT_SEC = 60;
     private static final int DEFAULT_TIMEOUT_SEC = 5;
     private static final int CHECK_STATE_PERIOD_MS = 200;
 
