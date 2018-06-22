@@ -10,6 +10,7 @@ import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class Wait {
     private static final int PAGE_MIN_WAIT_TIMEOUT_SEC = 30;
