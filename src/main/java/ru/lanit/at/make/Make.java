@@ -3,17 +3,22 @@ package ru.lanit.at.make;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
 import ru.lanit.at.driver.DriverManager;
 import ru.yandex.qatools.htmlelements.element.Button;
 import ru.yandex.qatools.htmlelements.element.Named;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Make {
 
+    public static final String SLOW_INPUT = "slow input";
+    public static final String LOSE_FOCUS = "lose focus";
+    public static final String NO_CLEAR_BEFORE = "no clear before";
+    private static final double SEND_KEY_DELAY = .01;
     private Wait wait;
 
     private DriverManager driverManager;
@@ -62,14 +67,37 @@ public class Make {
     /**
      * Cleans and sends keys to provided {@link WebElement}
      *
-     * @param webElement The element of page with any kind of input.
-     * @param message    The message that should be send to an element.
+     * @param input   The element of page with any kind of input.
+     * @param message The message that should be send to an element.
      */
-    public void sendKeysTo(WebElement webElement, String message) {
-        logAction(webElement, "Sending keys '" + message + "' to {}");
-        jsClickOn(webElement);
-        webElement.clear();
-        webElement.sendKeys(message);
+    public void sendKeysTo(WebElement input, String message, String... args) {
+        List<String> params = Arrays.asList(args);
+        if (params.isEmpty()) logAction(input, "Sending keys '" + message + "' to {}");
+        else logAction(input, "Sending keys '" + message + "' to {} with args {}", args);
+
+        clickToInput(input);
+
+        if (!params.contains(NO_CLEAR_BEFORE)) input.clear();
+
+        if (params.contains(SLOW_INPUT)) sendKeysSpelling(input, message);
+        else input.sendKeys(message);
+
+        if (params.contains(LOSE_FOCUS)) loseFocus(input);
+    }
+
+    private void sendKeysSpelling(WebElement webElement, String message) {
+        for (char c : message.toCharArray()) {
+            wait.sec(SEND_KEY_DELAY);
+            webElement.sendKeys(String.valueOf(c));
+        }
+    }
+
+    private void clickToInput(WebElement webElement) {
+        try {
+            if (webElement.isDisplayed()) clickTo(webElement);
+        } catch (WebDriverException ignore) {
+            jsClickOn(webElement);
+        }
     }
 
     public void jsClickOn(WebElement webElement) {
@@ -137,6 +165,7 @@ public class Make {
      */
     public void loseFocus(WebElement webElement) {
         logAction(webElement, "Losing focus from element {} by clicking");
+        jsExecutor.executeScript("arguments[0].blur();", webElement);
         new Actions(getDriver()).moveToElement(unwrapElement(webElement), -3, -3).click().build().perform();
     }
 

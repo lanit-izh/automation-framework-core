@@ -108,6 +108,32 @@ public class Wait {
         }
     }
 
+    public void until(Supplier<Boolean> waitingCondition) {
+        until(waitingCondition, DEFAULT_TIMEOUT_SEC);
+    }
+
+
+    public void until(Supplier<Boolean> waitingCondition, int timeout) {
+        long endTime = System.currentTimeMillis() + (long) (timeout * 1000);
+        while (!waitingCondition.get() && System.currentTimeMillis() < endTime) {
+            sleep(CHECK_STATE_PERIOD_MS);
+        }
+    }
+
+    public void untilOrException(Supplier<Boolean> waitingCondition, String exceptionMessage) {
+        untilOrException(waitingCondition, DEFAULT_TIMEOUT_SEC, exceptionMessage);
+    }
+
+
+    public void untilOrException(Supplier<Boolean> waitingCondition, int timeout, String exceptionMessage) {
+        long endTime = System.currentTimeMillis() + (long) (timeout * 1000);
+        while (!waitingCondition.get() && System.currentTimeMillis() < endTime) {
+            sleep(CHECK_STATE_PERIOD_MS);
+        }
+        if (!waitingCondition.get()) throw new FrameworkRuntimeException(exceptionMessage);
+
+    }
+
     /**
      * То же, что и {@link #until(Object, Predicate, double)}, но с таймаутом по-умолчанию {@link #DEFAULT_TIMEOUT_SEC}
      */
