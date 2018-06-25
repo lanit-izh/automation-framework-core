@@ -144,6 +144,7 @@ public class DriverManager {
             List<String> arguments = chromeDriverProperties.getProperty("arguments", false);
             List<String> extensions = chromeDriverProperties.getProperty("extensions", false);
             List<String> encodedExtensions = chromeDriverProperties.getProperty("encodedExtensions", false);
+            Map<String, Object> capabilities = chromeDriverProperties.getProperty("capabilities", false);
             boolean headless = chromeDriverProperties.getProperty("headless", Boolean.FALSE);
             String binaryPath = chromeDriverProperties.getProperty("binary", false);
             String version = String.valueOf(chromeDriverProperties.getProperty("version", ""));
@@ -152,7 +153,7 @@ public class DriverManager {
             if (arguments != null && !arguments.isEmpty()) {
                 chromeOptions.addArguments(arguments.stream().map(String::trim).toArray(String[]::new));
             }
-
+            if (capabilities != null && !capabilities.isEmpty()) capabilities.forEach(chromeOptions::setCapability);
             addExtensions(extensions, chromeOptions);
             addExtensions(encodedExtensions, chromeOptions);
 
