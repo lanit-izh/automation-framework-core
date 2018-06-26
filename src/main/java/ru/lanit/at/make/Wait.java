@@ -52,7 +52,7 @@ public class Wait {
      * @param element WebElement that should be visible.
      */
     public void untilElementInvisible(WebElement element) {
-        until(element, WebElement::isDisplayed);
+        until(element, e -> !isElementVisible(e));
     }
 
     /**
@@ -61,7 +61,15 @@ public class Wait {
      * @param element WebElement that should be visible.
      */
     public void untilElementVisible(WebElement element) {
-        until(element, WebElement::isDisplayed, ELEMENT_WAIT_TIMEOUT_SEC);
+        until(element, this::isElementVisible, ELEMENT_WAIT_TIMEOUT_SEC);
+    }
+
+    private boolean isElementVisible(WebElement e) {
+        try {
+            return e.isDisplayed();
+        } catch (Exception e1) {
+            return false;
+        }
     }
 
     /**
@@ -83,7 +91,7 @@ public class Wait {
      */
     public void untilElementClickable(int timeout, WebElement... htmlElements) {
         for (WebElement webElement : htmlElements) {
-            until(webElement, WebElement::isDisplayed, timeout);
+            untilElementVisible(webElement);
         }
     }
 
@@ -127,10 +135,7 @@ public class Wait {
 
 
     public void untilOrException(Supplier<Boolean> waitingCondition, int timeout, String exceptionMessage) {
-        long endTime = System.currentTimeMillis() + (long) (timeout * 1000);
-        while (!waitingCondition.get() && System.currentTimeMillis() < endTime) {
-            sleep(CHECK_STATE_PERIOD_MS);
-        }
+        until(waitingCondition, timeout);
         if (!waitingCondition.get()) throw new FrameworkRuntimeException(exceptionMessage);
 
     }
@@ -193,7 +198,8 @@ public class Wait {
      * Waits for {@value ELEMENT_WAIT_TIMEOUT_SEC} seconds for JavaScript to finish scripts execution.
      */
     public void untilJSComplete() {
-        untilOrException(this, w -> !w.isJSActive(), ELEMENT_WAIT_TIMEOUT_SEC, "JavaScript (jQuery) выполнялся слишком долго");
+        until(() -> !isJSActive(), ELEMENT_WAIT_TIMEOUT_SEC);
+        if (isJSActive()) log.error("JavaScript (jQuery) выполнялся слишком долго");
     }
 
     /**
@@ -201,7 +207,7 @@ public class Wait {
      */
     public void untilPageLoaded() {
         log.debug("Ожидаем загрузки страницы... \t");
-        untilOrException(this, Wait::isPageLoaded,
+        untilOrException(this::isPageLoaded,
                 PAGE_MIN_WAIT_TIMEOUT_SEC, "Страница загружалась слишком долго");
     }
 
