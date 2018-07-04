@@ -2,15 +2,13 @@ package ru.lanit.at.pages.block_elements;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.WebDriverException;
 import ru.lanit.at.context.Context;
 import ru.lanit.at.make.Make;
 import ru.lanit.at.make.Wait;
 import ru.lanit.at.pages.AbstractPage;
 import ru.lanit.at.pages.PageCatalog;
 import ru.yandex.qatools.htmlelements.element.HtmlElement;
-import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementDecorator;
-import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementLocatorFactory;
 
 public class AbstractBlockElement extends HtmlElement {
 
@@ -26,6 +24,16 @@ public class AbstractBlockElement extends HtmlElement {
         pageCatalog = Context.getInstance().getBean(PageCatalog.class);
     }
 
+    @Override
+    public boolean isDisplayed() {
+        wait.untilElementNotAnimating(this);
+        try {
+            return super.isDisplayed();
+        } catch (WebDriverException e) {
+            return false;
+        }
+    }
+
     /**
      * Returns instance of page with given class from {@link PageCatalog}. If {@link PageCatalog} doesn't contain page with such page yet - it will be initialized and saved.
      *
@@ -36,12 +44,4 @@ public class AbstractBlockElement extends HtmlElement {
         return pageCatalog.getPage(clazz);
     }
 
-    /**
-     * Initializes elements of block at the moment of invocation.
-     */
-    public void refreshElement() {
-        log.warn("Refreshing element {}", this.getClass().getSimpleName());
-        wait.sec(1);
-        PageFactory.initElements(new HtmlElementDecorator(new HtmlElementLocatorFactory(make.getDriver())), this);
-    }
 }

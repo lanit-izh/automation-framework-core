@@ -38,7 +38,6 @@ public class Wait {
      * Simple wrapper for {@link Thread#sleep(long)}.
      *
      * @param sec Time to sleep in seconds.
-     * @deprecated Use only in extreme need. Replacement methods: {@link #untilJSComplete()}, {@link #untilPageLoaded()}, {@link #untilElementVisible(WebElement)}, {@link #untilElementClickable(WebElement...)}, {@link #untilElementVisible(WebElement)}.
      */
 
     public void sec(double sec) {
@@ -70,6 +69,10 @@ public class Wait {
         } catch (Exception e1) {
             return false;
         }
+    }
+
+    public void untilElementNotAnimating(WebElement element) {
+        until(element, Conditions.notAnimating);
     }
 
     /**
