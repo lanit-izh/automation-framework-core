@@ -113,7 +113,9 @@ public class DriverManager {
         }
         driver.get().manage().window().maximize();
         if (!System.getProperty("timeouts", "true").equalsIgnoreCase("false")) {
-            driver.get().manage().timeouts().implicitlyWait(driverTimeoutsProperties.getProperty(IMPLICITLY_WAIT, 30), TimeUnit.SECONDS);
+            Integer implWait = driverTimeoutsProperties.getProperty(IMPLICITLY_WAIT, 30);
+            System.setProperty("webdriver.timeouts.implicitlywait", implWait.toString());
+            driver.get().manage().timeouts().implicitlyWait(implWait, TimeUnit.SECONDS);
             driver.get().manage().timeouts().pageLoadTimeout(driverTimeoutsProperties.getProperty(PAGE_LOAD_TIMEOUT, 60), TimeUnit.SECONDS);
             driver.get().manage().timeouts().setScriptTimeout(driverTimeoutsProperties.getProperty(SCRIPT_TIMEOUT, 30), TimeUnit.SECONDS);
         }
