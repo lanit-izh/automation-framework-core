@@ -210,8 +210,8 @@ public class Wait {
      */
     public void untilPageLoaded() {
         log.debug("Ожидаем загрузки страницы... \t");
-        untilOrException(this::isPageLoaded,
-                PAGE_MIN_WAIT_TIMEOUT_SEC, "Страница загружалась слишком долго");
+        until(this::isPageLoaded, PAGE_MIN_WAIT_TIMEOUT_SEC);
+        if (!isPageLoaded()) log.warn("Страница загружалась слишком долго, какие-то элементы могут быть недоступны");
     }
 
     public void setJsExecutor(JSExecutor jsExecutor) {
