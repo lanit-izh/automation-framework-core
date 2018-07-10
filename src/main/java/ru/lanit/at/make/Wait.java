@@ -46,21 +46,21 @@ public class Wait {
     }
 
     /**
-     * Waits for given {@link WebElement} to be invisible. Timeout = {@value ELEMENT_WAIT_TIMEOUT_SEC} seconds.
+     * Waits for given {@link WebElement} to be invisible. Timeout = {@value DEFAULT_TIMEOUT_SEC} seconds.
      *
-     * @param element WebElement that should be visible.
+     * @param element WebElement that should be invisible.
      */
     public void untilElementInvisible(WebElement element) {
         until(element, e -> !isElementVisible(e));
     }
 
     /**
-     * Waits for given {@link WebElement} to be visible. Timeout = {@value ELEMENT_WAIT_TIMEOUT_SEC} seconds.
+     * Waits for given {@link WebElement} to be visible. Timeout = {@value DEFAULT_TIMEOUT_SEC} seconds.
      *
      * @param element WebElement that should be visible.
      */
     public void untilElementVisible(WebElement element) {
-        until(element, this::isElementVisible, ELEMENT_WAIT_TIMEOUT_SEC);
+        until(element, this::isElementVisible);
     }
 
     private boolean isElementVisible(WebElement e) {
