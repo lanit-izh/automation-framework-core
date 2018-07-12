@@ -26,10 +26,11 @@ public class AbstractBlockElement extends HtmlElement {
 
     @Override
     public boolean isDisplayed() {
-        wait.untilElementNotAnimating(this);
         try {
+            boolean displayed = super.isDisplayed();
+            if (displayed) wait.untilElementNotAnimating(this); /// возможно актуально только для блоков!
             return super.isDisplayed();
-        } catch (WebDriverException e) {
+        } catch (Exception e) {
             return false;
         }
     }

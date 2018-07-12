@@ -3,7 +3,9 @@ package ru.lanit.at.make;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.*;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
 import ru.lanit.at.driver.DriverManager;
@@ -109,21 +111,23 @@ public class Make {
     private void logAction(WebElement webElement, String message, String... args) {
         int stringCutLength = 80;
 
+        String name = webElement.toString();
         if (webElement instanceof Named) {
-            String elementText = null;
-            try {
-                elementText = webElement.getText();
-            } catch (NoSuchElementException ignore) {
-            }
-
-            if (elementText != null && !elementText.isEmpty()) {
-                if (elementText.length() > stringCutLength)
-                    elementText = elementText.substring(0, stringCutLength) + "...";
-                message += " (" + elementText + ")";
-            }
-
-            log.info(message, ((Named) webElement).getName(), args);
+            name = ((Named) webElement).getName();
         }
+        String elementText = null;
+        try {
+            elementText = webElement.getText();
+        } catch (WebDriverException ignore) {
+        }
+
+        if (elementText != null && !elementText.isEmpty()) {
+            if (elementText.length() > stringCutLength)
+                elementText = elementText.substring(0, stringCutLength) + "...";
+            message += " (" + elementText + ")";
+        }
+
+        log.info(message, name, args);
     }
 
     private WebElement unwrapElement(WebElement webElement) {

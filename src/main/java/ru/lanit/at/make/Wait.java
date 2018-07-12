@@ -3,11 +3,13 @@ package ru.lanit.at.make;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
+import ru.yandex.qatools.htmlelements.element.Named;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -26,7 +28,6 @@ public class Wait {
 
     private void sleep(int ms) {
         try {
-            log.trace("Ждём {} миллисекунд...", ms);
             Thread.sleep(ms);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -42,7 +43,6 @@ public class Wait {
 
     public void sec(double sec) {
         sleep((int) (sec * 1000));
-
     }
 
     /**
@@ -51,6 +51,7 @@ public class Wait {
      * @param element WebElement that should be invisible.
      */
     public void untilElementInvisible(WebElement element) {
+        log.trace("Ожидаем исчезновения элемента '{}'", getName(element));
         until(element, e -> !isElementVisible(e));
     }
 
@@ -60,6 +61,7 @@ public class Wait {
      * @param element WebElement that should be visible.
      */
     public void untilElementVisible(WebElement element) {
+        log.trace("Ожидаем появления элемента '{}'", getName(element));
         until(element, this::isElementVisible);
     }
 
@@ -72,6 +74,7 @@ public class Wait {
     }
 
     public void untilElementNotAnimating(WebElement element) {
+        log.trace("Ожидаем окончания анимации элемента '{}'", getName(element));
         until(element, Conditions.notAnimating);
     }
 
@@ -126,10 +129,13 @@ public class Wait {
 
 
     public void until(Supplier<Boolean> waitingCondition, int timeout) {
-        long endTime = System.currentTimeMillis() + (long) (timeout * 1000);
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + (long) (timeout * 1000);
         while (!waitingCondition.get() && System.currentTimeMillis() < endTime) {
             sleep(CHECK_STATE_PERIOD_MS);
         }
+        long processTime = (System.currentTimeMillis() - startTime) / 1000;
+        if (processTime > 1) log.trace("Ожидание длилось {} сек", processTime);
     }
 
     public void untilOrException(Supplier<Boolean> waitingCondition, String exceptionMessage) {
@@ -159,10 +165,13 @@ public class Wait {
      * @param timeout   таймаут проверки в секундах
      */
     public <T> void until(T obj, Predicate<T> predicate, double timeout) {
-        long endTime = System.currentTimeMillis() + (long) (timeout * 1000);
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + (long) (timeout * 1000);
         while (!predicate.test(obj) && System.currentTimeMillis() < endTime) {
             sleep(CHECK_STATE_PERIOD_MS);
         }
+        long processTime = (System.currentTimeMillis() - startTime) / 1000;
+        if (processTime > 1) log.trace("Ожидание длилось {} сек", processTime);
     }
 
     /**
@@ -216,6 +225,17 @@ public class Wait {
 
     public void setJsExecutor(JSExecutor jsExecutor) {
         this.jsExecutor = jsExecutor;
+    }
+
+
+    private String getName(WebElement element) {
+        String name = element.toString();
+        try {
+            if (element instanceof Named) name = ((Named) element).getName();
+        } catch (WebDriverException ignore) {
+        }
+        if (name.length() > 40) return name.substring(0, 38) + "...";
+        else return name;
     }
 }
 
