@@ -111,7 +111,7 @@ public class Make {
     private void logAction(WebElement webElement, String message, String... args) {
         int stringCutLength = 80;
 
-        String name = webElement.toString();
+        String name = null;
         if (webElement instanceof Named) {
             name = ((Named) webElement).getName();
         }
@@ -125,6 +125,7 @@ public class Make {
             if (elementText.length() > stringCutLength)
                 elementText = elementText.substring(0, stringCutLength) + "...";
             message += " (" + elementText + ")";
+            if (name == null || name.isEmpty()) name = elementText;
         }
 
         log.info(message, name, args);

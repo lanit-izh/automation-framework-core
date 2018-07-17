@@ -234,6 +234,7 @@ public class Wait {
             if (element instanceof Named) name = ((Named) element).getName();
         } catch (WebDriverException ignore) {
         }
+        if (name == null) return "webElement";
         if (name.length() > 40) return name.substring(0, 38) + "...";
         else return name;
     }
