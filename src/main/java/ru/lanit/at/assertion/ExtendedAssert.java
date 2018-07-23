@@ -47,7 +47,6 @@ public class ExtendedAssert extends SoftAssert {
         }
     }
 
-    @Flaky
     @Attachment(value = "Error message")
     private String attachErrorMsg(AssertionError assertionError) {
         return assertionError.getLocalizedMessage();
@@ -68,6 +67,7 @@ public class ExtendedAssert extends SoftAssert {
                 sb.append(ae.getKey().getMessage());
                 ae.getKey().printStackTrace();
             }
+            if (isCritical) sb.append(" [BLOCKER]");
             m_errors.clear();
             throw new AssertionError(sb.toString());
         }

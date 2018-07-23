@@ -280,6 +280,7 @@ public class DriverManager {
      * Closes all driver windows and destroys {@link WebDriver} instance.
      */
     public void shutdown() {
+        if (isAlertPresented()) closeAlert();
         log.info("Clearing all cookies.");
         driver.get().manage().deleteAllCookies();
         log.info("Shutting down driver.");
@@ -373,7 +374,7 @@ public class DriverManager {
         for (int i = 0; i < 10; i++) {
             try {
                 driver.get().switchTo().alert();
-                log.info("Алерт присутствует");
+                log.debug("Алерт присутствует");
                 return true;
             } catch (Exception ignore) {
             }
