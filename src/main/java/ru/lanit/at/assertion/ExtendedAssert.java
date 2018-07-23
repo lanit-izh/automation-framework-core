@@ -1,13 +1,13 @@
 package ru.lanit.at.assertion;
 
 import io.qameta.allure.Attachment;
+import io.qameta.allure.Flaky;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.asserts.IAssert;
 import org.testng.asserts.SoftAssert;
 import org.testng.collections.Maps;
 import ru.lanit.at.driver.DriverManager;
-import ru.lanit.at.util.ScreenshotUtils;
 
 import java.util.Map;
 
@@ -37,7 +37,7 @@ public class ExtendedAssert extends SoftAssert {
             onAssertFailure(a, ex);
             m_errors.put(ex, a);
             attachErrorMsg(ex);
-            ScreenshotUtils.takeScreenshot(driverManager.getDriver());
+            driverManager.takeScreenshot();
             if (isCritical) {
                 this.assertAll();
             }
@@ -47,6 +47,7 @@ public class ExtendedAssert extends SoftAssert {
         }
     }
 
+    @Flaky
     @Attachment(value = "Error message")
     private String attachErrorMsg(AssertionError assertionError) {
         return assertionError.getLocalizedMessage();

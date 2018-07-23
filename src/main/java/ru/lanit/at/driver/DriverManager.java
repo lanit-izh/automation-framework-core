@@ -1,5 +1,6 @@
 package ru.lanit.at.driver;
 
+import io.qameta.allure.Attachment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
@@ -16,7 +17,12 @@ import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.lanit.at.Config;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
+import ru.yandex.qatools.ashot.AShot;
+import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -313,5 +319,68 @@ public class DriverManager {
 
     public void setProxyHandler(ProxyHandler proxyHandler) {
         this.proxyHandler = proxyHandler;
+    }
+
+
+    @Attachment(value = "Page screenshot", type = "image/png")
+    public byte[] takeScreenshot() {
+        if (driver.get() == null) throw new FrameworkRuntimeException("Драйвер не запущен, невозможно делать скриншот!");
+
+        if (isAlertPresented()) {
+            String alertText = driver.get().switchTo().alert().getText();
+            saveTextLog(alertText, "Alert text");
+            closeAlert();
+        }
+
+        try {
+            BufferedImage bufferedImage = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10))
+                    .takeScreenshot(driver.get())
+                    .getImage();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+
+            byteArrayOutputStream.flush();
+            byte[] imageBytes = byteArrayOutputStream.toByteArray();
+            byteArrayOutputStream.close();
+            return imageBytes;
+
+        } catch (Exception e) {
+            log.error("Ошибка при снятии скриншота");
+            saveTextLog(e.toString(), "Ошибка при снятии скриншота");
+            return null;
+        }
+    }
+
+    public void closeAlert() {
+        int closeAlertRetries = 0;
+        while (isAlertPresented()) {
+            driver.get().switchTo().alert().dismiss();
+            if (closeAlertRetries++ > 10) {
+                throw new FrameworkRuntimeException("Не удалось закрыть алерт \"" + driver.get().switchTo().alert().getText() + "\"");
+            }
+        }
+    }
+
+
+    // 10 раз пытается переключиться на аллерт, так как не всегда срабатывает с 1 раза
+    public boolean isAlertPresented() {
+        if (driver.get() == null) return false;
+        log.trace("Проверяем наличие алерта");
+        for (int i = 0; i < 10; i++) {
+            try {
+                driver.get().switchTo().alert();
+                log.info("Алерт присутствует");
+                return true;
+            } catch (Exception ignore) {
+            }
+        }
+        log.trace("Алерт закрыт или отсутствует");
+        return false;
+    }
+
+    @Attachment(value = "{1}", type = "text/plain")
+    private String saveTextLog(String message, String caption) {
+        return message;
     }
 }
