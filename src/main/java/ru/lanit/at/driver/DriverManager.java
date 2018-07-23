@@ -325,31 +325,34 @@ public class DriverManager {
     @Attachment(value = "Page screenshot", type = "image/png")
     public byte[] takeScreenshot() {
         if (driver.get() == null) throw new FrameworkRuntimeException("Драйвер не запущен, невозможно делать скриншот!");
+        int screenShootRetries = 0;
+        while (screenShootRetries++ < 3) {
+            if (isAlertPresented()) {
+                String alertText = driver.get().switchTo().alert().getText();
+                saveTextLog(alertText, "Alert text");
+                closeAlert();
+            }
 
-        if (isAlertPresented()) {
-            String alertText = driver.get().switchTo().alert().getText();
-            saveTextLog(alertText, "Alert text");
-            closeAlert();
+            try {
+                BufferedImage bufferedImage = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10))
+                        .takeScreenshot(driver.get())
+                        .getImage();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+                ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+
+                byteArrayOutputStream.flush();
+                byte[] imageBytes = byteArrayOutputStream.toByteArray();
+                byteArrayOutputStream.close();
+                return imageBytes;
+
+            } catch (Exception e) {
+                if (screenShootRetries > 2) // при последней попытке прикрепляем стектрейс к аллюру
+                    saveTextLog(e.toString(), "Ошибка при снятии скриншота");
+            }
         }
-
-        try {
-            BufferedImage bufferedImage = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10))
-                    .takeScreenshot(driver.get())
-                    .getImage();
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-            ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
-
-            byteArrayOutputStream.flush();
-            byte[] imageBytes = byteArrayOutputStream.toByteArray();
-            byteArrayOutputStream.close();
-            return imageBytes;
-
-        } catch (Exception e) {
-            log.error("Ошибка при снятии скриншота");
-            saveTextLog(e.toString(), "Ошибка при снятии скриншота");
-            return null;
-        }
+        log.error("Ошибка при снятии скриншота");
+        return null;
     }
 
     public void closeAlert() {
