@@ -2,7 +2,6 @@ package ru.lanit.at.pages.block_elements;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriverException;
 import ru.lanit.at.context.Context;
 import ru.lanit.at.make.Make;
 import ru.lanit.at.make.Wait;
@@ -12,9 +11,9 @@ import ru.yandex.qatools.htmlelements.element.HtmlElement;
 
 public class AbstractBlockElement extends HtmlElement {
 
-    protected Logger log = LogManager.getLogger(getClass());
-    protected Wait wait;
-    protected Make make;
+    protected final Logger log = LogManager.getLogger(getClass());
+    protected final Wait wait;
+    protected final Make make;
 
     private PageCatalog pageCatalog;
 
@@ -27,9 +26,7 @@ public class AbstractBlockElement extends HtmlElement {
     @Override
     public boolean isDisplayed() {
         try {
-            boolean displayed = super.isDisplayed();
-            if (displayed) wait.untilElementNotAnimating(this); /// возможно актуально только для блоков!
-            return super.isDisplayed();
+            return getWrappedElement().isDisplayed();
         } catch (Exception e) {
             return false;
         }

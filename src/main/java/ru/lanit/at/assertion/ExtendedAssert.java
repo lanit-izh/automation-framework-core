@@ -1,7 +1,6 @@
 package ru.lanit.at.assertion;
 
 import io.qameta.allure.Attachment;
-import io.qameta.allure.Flaky;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.asserts.IAssert;

@@ -20,17 +20,19 @@ import java.util.List;
 import static ru.lanit.at.FrameworkConstants.DEFAULT_TIMEOUT;
 
 public abstract class AbstractPage implements Openable {
-    protected Logger log = LogManager.getLogger(getClass());
-    protected Wait wait;
-    protected Make make;
-    private WebDriver driver;
-    private PageCatalog pageCatalog;
+    protected final Logger log = LogManager.getLogger(getClass());
+    protected final Wait wait;
+    protected final Make make;
+    private final WebDriver driver;
+    private final PageCatalog pageCatalog;
 
     public AbstractPage() {
         this.driver = Context.getInstance().getBean(DriverManager.class).getDriver();
         log.info("Initializing elements of {}", this.getClass().getSimpleName().split("_")[0]);
-        PageFactory.initElements(new HtmlElementDecorator(new HtmlElementLocatorFactory(driver)), this);
-
+        synchronized (PageFactory.class) {
+            PageFactory.initElements(new HtmlElementDecorator(new HtmlElementLocatorFactory(driver)), this);
+        }
+        log.info("Elements initialization of {} done.", this.getClass().getSimpleName().split("_")[0]);
         pageCatalog = Context.getInstance().getBean(PageCatalog.class);
         wait = Context.getInstance().getBean(Wait.class);
         make = Context.getInstance().getBean(Make.class);

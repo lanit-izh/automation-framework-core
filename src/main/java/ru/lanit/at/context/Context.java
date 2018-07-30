@@ -4,7 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Context {
-    private static ThreadLocal<ApplicationContext> instance = new ThreadLocal<>();
+    private static final ThreadLocal<ApplicationContext> instance = new ThreadLocal<>();
 
     /**
      * Method to get double check locked, thread safe Spring classpath application context.
