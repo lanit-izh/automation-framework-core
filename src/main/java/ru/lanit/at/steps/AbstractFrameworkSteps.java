@@ -1,5 +1,6 @@
 package ru.lanit.at.steps;
 
+import io.qameta.allure.Attachment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -35,7 +36,7 @@ public abstract class AbstractFrameworkSteps {
         return driverManager.getDriver();
     }
 
-    protected void shutdownDriver(){
+    protected void shutdownDriver() {
         driverManager.shutdown();
     }
 
@@ -130,7 +131,14 @@ public abstract class AbstractFrameworkSteps {
      * @param value Any data that should be saved.
      */
     protected void saveTestData(String key, Object value) {
+        if (value instanceof CharSequence || value instanceof Number) logToAllure("Saved text data", "Key: \"" + key + "\", value: \"" + value + "\"");
         getDataKeeper().put(key, value);
+    }
+
+    @Attachment(value = "{0}", type = "text/plain")
+    protected String logToAllure(String messageType, String message) {
+        log.info("{}: {}", messageType, message);
+        return message;
     }
 
     /**

@@ -348,11 +348,15 @@ public class DriverManager {
                 return imageBytes;
 
             } catch (Exception e) {
+                log.error("Ошибка при снятии скриншота: {}", e.getMessage());
+                try {
+                    Thread.sleep(5000); // ждём стабилизации
+                } catch (InterruptedException ignore) { }
                 if (screenShootRetries > 2) // при последней попытке прикрепляем стектрейс к аллюру
                     saveTextLog(e.toString(), "Ошибка при снятии скриншота");
             }
         }
-        log.error("Ошибка при снятии скриншота");
+        log.error("Ошибка при снятии скриншота после {} попыток", screenShootRetries);
         return null;
     }
 
