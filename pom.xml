@@ -6,12 +6,11 @@
 
     <groupId>ru.lanit.at</groupId>
     <artifactId>automation-framework-core</artifactId>
-    <version>2.61.0</version>
+    <version>3.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <compiler.version>1.8</compiler.version>
-        <yandex.htmlelements.version>1.19</yandex.htmlelements.version>
         <yandex.allure.version>2.6.0</yandex.allure.version>
         <yandex.ashot.version>1.5.4</yandex.ashot.version>
         <selenium.chromedriver.version>3.141.0</selenium.chromedriver.version>
@@ -22,6 +21,8 @@
         <testng.version>6.10</testng.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
         <aspectj.version>1.9.1</aspectj.version>
+        <atlas.version>1.0.0</atlas.version>
+        <SnakeYAML.version>1.23</SnakeYAML.version>
     </properties>
 
     <build>
@@ -96,11 +97,15 @@
             <version>0.2.0-1</version>
         </dependency>
 
-
         <dependency>
-            <groupId>ru.yandex.qatools.htmlelements</groupId>
-            <artifactId>htmlelements-all</artifactId>
-            <version>${yandex.htmlelements.version}</version>
+            <groupId>io.qameta.atlas</groupId>
+            <artifactId>atlas-core</artifactId>
+            <version>${atlas.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.atlas</groupId>
+            <artifactId>atlas-webdriver</artifactId>
+            <version>${atlas.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -116,6 +121,11 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${SnakeYAML.version}</version>
         </dependency>
         <dependency>
             <groupId>io.qameta.allure</groupId>

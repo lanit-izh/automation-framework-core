@@ -1,5 +1,6 @@
 package ru.lanit.at.make;
 
+import com.fasterxml.jackson.databind.util.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -9,7 +10,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
-import ru.yandex.qatools.htmlelements.element.Named;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;

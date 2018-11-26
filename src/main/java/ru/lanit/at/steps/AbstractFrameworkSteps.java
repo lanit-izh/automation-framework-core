@@ -1,9 +1,11 @@
 package ru.lanit.at.steps;
 
 import io.qameta.allure.Attachment;
+import io.qameta.atlas.Atlas;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
+import org.springframework.context.ApplicationContext;
 import ru.lanit.at.assertion.AssertsManager;
 import ru.lanit.at.context.Context;
 import ru.lanit.at.driver.DriverManager;
@@ -22,11 +24,14 @@ public abstract class AbstractFrameworkSteps {
     protected AssertsManager assertsManager;
     private PageCatalog pageCatalog;
     private DriverManager driverManager;
+    private Atlas atlas;
 
     public AbstractFrameworkSteps() {
-        pageCatalog = Context.getInstance().getBean(PageCatalog.class);
-        assertsManager = Context.getInstance().getBean(AssertsManager.class);
-        driverManager = Context.getInstance().getBean(DriverManager.class);
+        ApplicationContext context = Context.getInstance();
+        pageCatalog = context.getBean(PageCatalog.class);
+        assertsManager = context.getBean(AssertsManager.class);
+        driverManager = context.getBean(DriverManager.class);
+        atlas = context.getBean(Atlas.class);
     }
 
     /**
@@ -163,15 +168,23 @@ public abstract class AbstractFrameworkSteps {
     }
 
     /**
-     * Attempts to cast {@link PageCatalog#currentPage} to optional interface.
+     * Attempts to cast {@link PageCatalog#getCurrentPage()} to optional interface.
      *
      * @param iClass On of the descendants of {@link OptionalPageInterface}. Which indicates that current page should have requested capabilities.
-     * @return {@link PageCatalog#currentPage} casted into given optional interface.
+     * @return {@link PageCatalog#getCurrentPage()} casted into given optional interface.
      * @throws ClassCastException In case when current page doesn't implement given interface.
      */
     @SuppressWarnings("unchecked")
     protected <I extends OptionalPageInterface> I transformCurrentPageTo(Class<I> iClass) {
         return (I) getCurrentPage();
+    }
+
+    /**
+     * Method to retrieve and interact with instance of {@link Atlas}.
+     * @return {@link Atlas} bean.
+     */
+    public Atlas getAtlas() {
+        return atlas;
     }
 
     /**

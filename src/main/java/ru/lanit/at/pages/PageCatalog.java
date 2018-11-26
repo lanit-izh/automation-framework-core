@@ -1,11 +1,9 @@
 package ru.lanit.at.pages;
 
+import io.qameta.atlas.Atlas;
 import org.openqa.selenium.WebDriver;
 import ru.lanit.at.driver.DriverManager;
-import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -17,6 +15,8 @@ public class PageCatalog {
     private List<AbstractPage> pageList = new LinkedList<>();
     private DriverManager driverManager;
     private WebDriver previousDriver;
+    private Atlas atlas;
+
     /**
      * Variable for tracking which page object is currently opened and in use.
      */
@@ -42,15 +42,10 @@ public class PageCatalog {
             setCurrentPage(requestedPage);
             return requestedPage;
         } else {
-            try {
-                Constructor<T> constructor = clazz.getConstructor();
-                T page = constructor.newInstance();
-                setCurrentPage(page);
-                pageList.add(page);
-                return page;
-            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                throw new FrameworkRuntimeException(e);
-            }
+            T page = atlas.create(actualDriver, clazz);
+            setCurrentPage(page);
+            pageList.add(page);
+            return page;
         }
     }
 
@@ -94,5 +89,13 @@ public class PageCatalog {
 
     public void setDriverManager(DriverManager driverManager) {
         this.driverManager = driverManager;
+    }
+
+    public Atlas getAtlas() {
+        return atlas;
+    }
+
+    public void setAtlas(Atlas atlas) {
+        this.atlas = atlas;
     }
 }

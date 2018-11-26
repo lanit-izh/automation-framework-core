@@ -1,16 +1,17 @@
 package ru.lanit.at.make;
 
 
+import com.fasterxml.jackson.databind.util.Named;
+import io.qameta.atlas.AtlasWebElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WrapsDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
 import ru.lanit.at.driver.DriverManager;
-import ru.yandex.qatools.htmlelements.element.Button;
-import ru.yandex.qatools.htmlelements.element.Named;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +46,9 @@ public class Make {
      * Scrolls to and makes click on provided {@link WebElement}. After click waits for page and JS loading complete.
      *
      * @param webElement that should be clicked.
+     * @deprecated Use {@link AtlasWebElement#click()}
      */
+    @Deprecated
     public void clickTo(WebElement webElement) {
         logAction(webElement, "Click on {}");
         wait.untilElementVisible(webElement);
@@ -61,7 +64,7 @@ public class Make {
         wait.untilJSComplete();
     }
 
-    public void submit(Button button) {
+    public void submit(AtlasWebElement button) {
         logAction(button, "Submit {}");
         button.submit();
     }
@@ -71,7 +74,9 @@ public class Make {
      *
      * @param input   The element of page with any kind of input.
      * @param message The message that should be send to an element.
+     * @deprecated Use {@link AtlasWebElement#sendKeys(CharSequence...)}
      */
+    @Deprecated
     public void sendKeysTo(WebElement input, String message, String... args) {
         List<String> params = Arrays.asList(args);
         if (params.isEmpty()) logAction(input, "Sending keys '" + message + "' to {}");
@@ -94,6 +99,11 @@ public class Make {
         }
     }
 
+    /**
+     *
+     * @deprecated Use {@link AtlasWebElement#click()}
+     */
+    @Deprecated
     private void clickToInput(WebElement webElement) {
         try {
             if (webElement.isDisplayed()) clickTo(webElement);
@@ -174,6 +184,10 @@ public class Make {
         new Actions(getDriver()).moveToElement(unwrapElement(webElement), -3, -3).click().build().perform();
     }
 
+    /**
+     * @deprecated Use {@link WrapsDriver#getWrappedDriver()}
+     */
+    @Deprecated
     public WebDriver getDriver() {
         return driverManager.getDriver();
     }
