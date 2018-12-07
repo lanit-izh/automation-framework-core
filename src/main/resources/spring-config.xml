@@ -4,7 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="proxyHandler" class="ru.lanit.at.driver.ProxyHandler"/>
-    <bean id="atlas" class="io.qameta.atlas.Atlas"/>
 
     <bean id="driverManager" class="ru.lanit.at.driver.DriverManager" destroy-method="shutdown">
         <property name="proxyHandler" ref="proxyHandler"/>
@@ -38,5 +37,15 @@
 
     <bean id="assertsManager" class="ru.lanit.at.assertion.AssertsManager">
         <property name="asserts" ref="extendedAssert"/>
+    </bean>
+
+    <bean id="atlas" class="io.qameta.atlas.Atlas">
+        <constructor-arg name="configuration" ref="webDriverConfig"/>
+    </bean>
+
+    <bean id="webDriverConfig" class="io.qameta.atlas.WebDriverConfiguration">
+        <constructor-arg name="webDriver">
+            <bean factory-bean="driverManager" factory-method="getDriver"/>
+        </constructor-arg>
     </bean>
 </beans>

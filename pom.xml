@@ -6,7 +6,7 @@
 
     <groupId>ru.lanit.at</groupId>
     <artifactId>automation-framework-core</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -73,17 +73,6 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>${selenium.java.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
-            <version>${selenium.chromedriver.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-firefox-driver</artifactId>
-            <version>${selenium.firefoxdriver.version}</version>
         </dependency>
         <!-- WINIUM -->
         <dependency>
