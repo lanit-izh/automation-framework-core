@@ -10,7 +10,7 @@ import java.util.List;
 
 import static ru.lanit.at.FrameworkConstants.DEFAULT_TIMEOUT;
 
-public interface AbstractPage extends WebPage, FrameworkElement {
+public interface AbstractPage extends WebPage, FrameworkBaseWebElement {
 
     /**
      * Waits for the specified time for {@link WebElement} to be visible, using {@link WebDriverWait} and {@link ExpectedConditions#visibilityOf(WebElement)}.

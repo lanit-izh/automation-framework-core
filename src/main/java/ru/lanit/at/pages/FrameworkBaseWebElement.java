@@ -7,7 +7,7 @@ import ru.lanit.at.context.Context;
 import ru.lanit.at.make.Make;
 import ru.lanit.at.make.Wait;
 
-public interface FrameworkElement {
+public interface FrameworkBaseWebElement {
 
     default Logger log() {
         return LogManager.getLogger(getClass());
@@ -29,9 +29,7 @@ public interface FrameworkElement {
      * Method to interract with makers.
      *
      * @return Instance of {@link Make}
-     * @deprecated There is no need to use {@link Make} because all funcrionality is implemented in {@link io.qameta.atlas.AtlasWebElement}
      */
-    @Deprecated
     default Make make() {
         return Context.getInstance().getBean(Make.class);
     }

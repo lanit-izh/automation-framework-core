@@ -74,15 +74,14 @@ public class Make {
      *
      * @param input   The element of page with any kind of input.
      * @param message The message that should be send to an element.
-     * @deprecated Use {@link AtlasWebElement#sendKeys(CharSequence...)}
+     * @param args Possible args: {@link Make#NO_CLEAR_BEFORE}, {@link Make#SLOW_INPUT}, {@link Make#LOSE_FOCUS}
      */
-    @Deprecated
-    public void sendKeysTo(WebElement input, String message, String... args) {
+    public void sendKeys(AtlasWebElement input, String message, String... args) {
         List<String> params = Arrays.asList(args);
         if (params.isEmpty()) logAction(input, "Sending keys '" + message + "' to {}");
         else logAction(input, "Sending keys '" + message + "' to {} with args {}", args);
 
-        clickToInput(input);
+        input.click();
 
         if (!params.contains(NO_CLEAR_BEFORE)) input.clear();
 
