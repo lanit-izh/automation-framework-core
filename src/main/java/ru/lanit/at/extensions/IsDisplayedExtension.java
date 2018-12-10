@@ -11,7 +11,7 @@ public class IsDisplayedExtension implements MethodExtension {
     @Override
     public Object invoke(Object o, MethodInfo methodInfo, Configuration configuration) throws Throwable {
         try {
-            return methodInfo.getMethod().invoke(o, configuration);
+            return methodInfo.getMethod().invoke(o);
         } catch (NoSuchElementException ignore) {
             return Boolean.FALSE;
         }
