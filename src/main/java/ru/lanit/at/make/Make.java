@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.util.Named;
 import io.qameta.atlas.AtlasWebElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WrapsDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsElement;
 import ru.lanit.at.driver.DriverManager;
@@ -74,7 +71,7 @@ public class Make {
      *
      * @param input   The element of page with any kind of input.
      * @param message The message that should be send to an element.
-     * @param args Possible args: {@link Make#NO_CLEAR_BEFORE}, {@link Make#SLOW_INPUT}, {@link Make#LOSE_FOCUS}
+     * @param args    Possible args: {@link Make#NO_CLEAR_BEFORE}, {@link Make#SLOW_INPUT}, {@link Make#LOSE_FOCUS}
      */
     public void sendKeys(AtlasWebElement input, String message, String... args) {
         List<String> params = Arrays.asList(args);
@@ -99,7 +96,6 @@ public class Make {
     }
 
     /**
-     *
      * @deprecated Use {@link AtlasWebElement#click()}
      */
     @Deprecated
@@ -195,5 +191,13 @@ public class Make {
         jsExecutor.executeScript(
                 "arguments[0].scrollIntoView(true);window.scrollBy(0, -400);",
                 webElement);
+    }
+
+    public boolean checkElementExist(WebElement webElement) {
+        try {
+            return webElement.isDisplayed();
+        } catch (NoSuchElementException nse) {
+            return false;
+        }
     }
 }
