@@ -192,7 +192,7 @@ public abstract class AbstractFrameworkSteps {
      *
      * @param clazz class of page that should be instantiated.
      * @return instance of clazz.
-     * @deprecated Use getPage(...) method.
+     * @deprecated Use {@link #getPage(Class)} method.
      */
     @Deprecated
     protected <T extends AbstractPage> T initPage(Class<T> clazz) {
