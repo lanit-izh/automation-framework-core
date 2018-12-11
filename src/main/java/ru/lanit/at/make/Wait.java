@@ -3,12 +3,11 @@ package ru.lanit.at.make;
 import com.fasterxml.jackson.databind.util.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
+import org.hamcrest.Matcher;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.util.function.Predicate;
@@ -23,7 +22,6 @@ public class Wait {
 
     private Logger log = LogManager.getLogger(Wait.class.getSimpleName());
 
-    private DriverManager driverManager;
     private JSExecutor jsExecutor;
 
     private void sleep(int ms) {
@@ -59,7 +57,9 @@ public class Wait {
      * Waits for given {@link WebElement} to be visible. Timeout = {@value DEFAULT_TIMEOUT_SEC} seconds.
      *
      * @param element WebElement that should be visible.
+     * @deprecated Use {@link #until(Object, Predicate)} or {@link io.qameta.atlas.AtlasWebElement#waitUntil(Matcher)}
      */
+    @Deprecated
     public void untilElementVisible(WebElement element) {
         log.trace("Ожидаем появления элемента '{}'", getName(element));
         until(element, this::isElementVisible);
@@ -79,22 +79,13 @@ public class Wait {
     }
 
     /**
-     * @return Instance of {@link WebDriver} which implements current waiters.
-     */
-    public WebDriver getDriver() {
-        return driverManager.getDriver();
-    }
-
-    public void setDriverManager(DriverManager driverManager) {
-        this.driverManager = driverManager;
-    }
-
-    /**
      * Simple waiter. Uses {@link WebDriverWait} and {@link ExpectedConditions}. Waits that all elements of given list will be clickable.
      *
      * @param timeout      Time to wait in seconds.
      * @param htmlElements List of elements that should be clickable.
+     * @deprecated Use {@link #until(Object, Predicate)} or {@link io.qameta.atlas.AtlasWebElement#waitUntil(Matcher)}
      */
+    @Deprecated
     public void untilElementClickable(int timeout, WebElement... htmlElements) {
         for (WebElement webElement : htmlElements) {
             untilElementVisible(webElement);
@@ -105,7 +96,9 @@ public class Wait {
      * Simple waiter. Uses {@link WebDriverWait} and {@link ExpectedConditions}. Waits that all elements of given list will be clickable.
      *
      * @param htmlElements List of elements that should be clickable.
+     * @deprecated Use {@link #until(Object, Predicate)} or {@link io.qameta.atlas.AtlasWebElement#waitUntil(Matcher)}
      */
+    @Deprecated
     public void untilElementClickable(WebElement... htmlElements) {
         untilElementClickable(DEFAULT_TIMEOUT_SEC, htmlElements);
     }

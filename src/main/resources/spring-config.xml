@@ -19,7 +19,6 @@
     </bean>
 
     <bean id="wait" class="ru.lanit.at.make.Wait">
-        <property name="driverManager" ref="driverManager"/>
         <property name="jsExecutor" ref="jsExecutor"/>
     </bean>
 

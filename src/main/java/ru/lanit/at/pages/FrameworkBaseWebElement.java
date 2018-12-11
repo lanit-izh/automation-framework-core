@@ -2,7 +2,6 @@ package ru.lanit.at.pages;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hamcrest.Matcher;
 import ru.lanit.at.context.Context;
 import ru.lanit.at.make.Make;
 import ru.lanit.at.make.Wait;
@@ -17,9 +16,7 @@ public interface FrameworkBaseWebElement {
      * Method to interact with waiters.
      *
      * @return Instance of {@link Wait}
-     * @deprecated Use method {@link io.qameta.atlas.AtlasWebElement#waitUntil(Matcher)}
      */
-    @Deprecated
     default Wait await() {
         return Context.getInstance().getBean(Wait.class);
     }
