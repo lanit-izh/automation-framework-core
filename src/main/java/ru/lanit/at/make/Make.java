@@ -107,10 +107,15 @@ public class Make {
         }
     }
 
+    /**
+     * @deprecated Doesn't work with Atlas
+     * @param webElement
+     */
     public void jsClickOn(WebElement webElement) {
         logAction(webElement, "Calling JavaScript click on {}");
         scrollIntoView(webElement);
-        jsExecutor.executeScript("arguments[0].click();", webElement);
+//        jsExecutor.executeScript("arguments[0].click();", webElement);
+        webElement.click();
     }
 
     private void logAction(WebElement webElement, String message, String... args) {
@@ -136,11 +141,6 @@ public class Make {
         log.info(message, name, args);
     }
 
-    private WebElement unwrapElement(WebElement webElement) {
-        if (webElement instanceof WrapsElement) return ((WrapsElement) webElement).getWrappedElement();
-        return webElement;
-    }
-
     /**
      * Emulates mouse focus on element.
      *
@@ -151,7 +151,7 @@ public class Make {
         try {
             scrollIntoView(webElement);
             new Actions(getDriver())
-                    .moveToElement(unwrapElement(webElement))
+                    .moveToElement(webElement)
                     .perform();
         } catch (Exception ignore) {
         }
@@ -164,8 +164,7 @@ public class Make {
      */
     public void defocus(WebElement webElement) {
         logAction(webElement, "Losing focus from {} by moving mouse away.");
-        WebElement unwrappedElement = unwrapElement(webElement);
-        new Actions(getDriver()).moveByOffset(unwrappedElement.getSize().width / 2 + 5, unwrappedElement.getSize().height / 2 + 5).perform();
+        new Actions(getDriver()).moveByOffset(webElement.getSize().width / 2 + 5, webElement.getSize().height / 2 + 5).perform();
     }
 
     /**
@@ -175,8 +174,8 @@ public class Make {
      */
     public void loseFocus(WebElement webElement) {
         logAction(webElement, "Losing focus from element {} by clicking");
-        jsExecutor.executeScript("arguments[0].blur();", webElement);
-        new Actions(getDriver()).moveToElement(unwrapElement(webElement), -3, -3).click().build().perform();
+//        jsExecutor.executeScript("arguments[0].blur();", webElement);
+        new Actions(getDriver()).moveToElement(webElement, -3, -3).click().build().perform();
     }
 
     /**
@@ -188,9 +187,9 @@ public class Make {
     }
 
     public void scrollIntoView(WebElement webElement) {
-        jsExecutor.executeScript(
-                "arguments[0].scrollIntoView(true);window.scrollBy(0, -400);",
-                webElement);
+//        jsExecutor.executeScript(
+//                "arguments[0].scrollIntoView(true);window.scrollBy(0, -400);",
+//                webElement);
     }
 
     public boolean checkElementExist(WebElement webElement) {
