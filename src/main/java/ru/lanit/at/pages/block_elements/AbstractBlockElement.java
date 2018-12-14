@@ -5,4 +5,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WrapsDriver;
 import ru.lanit.at.pages.FrameworkBaseWebElement;
 
-public interface AbstractBlockElement<T extends WebElement> extends AtlasWebElement<T>, FrameworkBaseWebElement, WrapsDriver {}
+public interface AbstractBlockElement<T extends WebElement> extends AtlasWebElement<T>, FrameworkBaseWebElement, WrapsDriver {
+
+    @Override
+    default WebElement getWrappedElement(){
+        return this;
+    }
+}
