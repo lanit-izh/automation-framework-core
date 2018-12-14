@@ -114,8 +114,7 @@ public class Make {
     public void jsClickOn(WebElement webElement) {
         logAction(webElement, "Calling JavaScript click on {}");
         scrollIntoView(webElement);
-//        jsExecutor.executeScript("arguments[0].click();", webElement);
-        webElement.click();
+        jsExecutor.executeScript("arguments[0].click();", webElement);
     }
 
     private void logAction(WebElement webElement, String message, String... args) {
