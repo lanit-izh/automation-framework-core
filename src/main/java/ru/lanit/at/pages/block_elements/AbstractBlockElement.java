@@ -1,6 +1,6 @@
 package ru.lanit.at.pages.block_elements;
 
-import io.qameta.atlas.AtlasWebElement;
+import io.qameta.atlas.webdriver.AtlasWebElement;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WrapsDriver;
 import ru.lanit.at.pages.FrameworkBaseWebElement;

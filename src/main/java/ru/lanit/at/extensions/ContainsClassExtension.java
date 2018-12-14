@@ -1,9 +1,10 @@
 package ru.lanit.at.extensions;
 
-import io.qameta.atlas.Atlas;
-import io.qameta.atlas.api.MethodExtension;
-import io.qameta.atlas.internal.Configuration;
-import io.qameta.atlas.util.MethodInfo;
+
+import io.qameta.atlas.core.Atlas;
+import io.qameta.atlas.core.api.MethodExtension;
+import io.qameta.atlas.core.internal.Configuration;
+import io.qameta.atlas.core.util.MethodInfo;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 

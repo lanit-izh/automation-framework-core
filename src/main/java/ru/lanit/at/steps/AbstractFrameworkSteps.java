@@ -1,7 +1,7 @@
 package ru.lanit.at.steps;
 
 import io.qameta.allure.Attachment;
-import io.qameta.atlas.Atlas;
+import io.qameta.atlas.core.Atlas;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;

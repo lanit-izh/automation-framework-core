@@ -1,6 +1,6 @@
 package ru.lanit.at.pages;
 
-import io.qameta.atlas.WebPage;
+import io.qameta.atlas.webdriver.WebPage;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -17,7 +17,7 @@ public interface AbstractPage extends WebPage, FrameworkBaseWebElement {
      *
      * @param htmlElement The element that should be visible.
      * @param timeout     Timeout in seconds.
-     * @deprecated {@link io.qameta.atlas.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
+     * @deprecated {@link io.qameta.atlas.webdriver.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
      */
     @Deprecated
     default void waitForElementVisible(WebElement htmlElement, int timeout) {
@@ -28,7 +28,7 @@ public interface AbstractPage extends WebPage, FrameworkBaseWebElement {
      * Waits for default timeout for {@link WebElement} to be visible, using {@link WebDriverWait} and {@link ExpectedConditions#visibilityOf(WebElement)}.
      *
      * @param htmlElement The element that should be visible.
-     * @deprecated {@link io.qameta.atlas.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
+     * @deprecated {@link io.qameta.atlas.webdriver.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
      */
     @Deprecated
     default void waitForElementVisible(WebElement htmlElement) {
@@ -40,7 +40,7 @@ public interface AbstractPage extends WebPage, FrameworkBaseWebElement {
      *
      * @param htmlElement The element that should be invisible.
      * @param timeout     Timeout in seconds.
-     * @deprecated {@link io.qameta.atlas.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
+     * @deprecated {@link io.qameta.atlas.webdriver.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
      */
     @Deprecated
     default void waitForElementInvisible(WebElement htmlElement, int timeout) {
@@ -51,7 +51,7 @@ public interface AbstractPage extends WebPage, FrameworkBaseWebElement {
      * Waits for default timeout for {@link WebElement} to be invisible, using {@link WebDriverWait} and {@link ExpectedConditions#visibilityOf(WebElement)}.
      *
      * @param htmlElement The element that should be invisible.
-     * @deprecated {@link io.qameta.atlas.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
+     * @deprecated {@link io.qameta.atlas.webdriver.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
      */
     @Deprecated
     default void waitForElementInvisible(WebElement htmlElement) {
@@ -63,7 +63,7 @@ public interface AbstractPage extends WebPage, FrameworkBaseWebElement {
      *
      * @param timeout      Timeout in seconds.
      * @param htmlElements List of elements that should be clickable.
-     * @deprecated {@link io.qameta.atlas.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
+     * @deprecated {@link io.qameta.atlas.webdriver.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
      */
     @Deprecated
     default void waitForElementClickable(int timeout, WebElement... htmlElements) {
@@ -77,7 +77,7 @@ public interface AbstractPage extends WebPage, FrameworkBaseWebElement {
      * Waits for the default timeout for list of {@link WebElement} to be clickable, using {@link WebDriverWait} and {@link ExpectedConditions#elementToBeClickable(WebElement)}.
      *
      * @param webElements List of elements that should be clickable.
-     * @deprecated {@link io.qameta.atlas.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
+     * @deprecated {@link io.qameta.atlas.webdriver.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
      */
     @Deprecated
     default void waitForElementClickable(WebElement... webElements) {
@@ -104,7 +104,7 @@ public interface AbstractPage extends WebPage, FrameworkBaseWebElement {
     /**
      * Click on element and wait until page loaded completely, including JS & animation finish.
      * @param element that chould be clicked
-     * @deprecated {@link io.qameta.atlas.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
+     * @deprecated {@link io.qameta.atlas.webdriver.AtlasWebElement} resolves all wait methods. Additional waitings are redundant.
      */
     @Deprecated
     default void clickAndWait(WebElement element) {

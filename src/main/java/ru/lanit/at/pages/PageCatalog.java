@@ -1,6 +1,6 @@
 package ru.lanit.at.pages;
 
-import io.qameta.atlas.Atlas;
+import io.qameta.atlas.core.Atlas;
 import org.openqa.selenium.WebDriver;
 import ru.lanit.at.driver.DriverManager;
 

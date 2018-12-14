@@ -2,7 +2,7 @@ package ru.lanit.at.make;
 
 
 import com.fasterxml.jackson.databind.util.Named;
-import io.qameta.atlas.AtlasWebElement;
+import io.qameta.atlas.webdriver.AtlasWebElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
