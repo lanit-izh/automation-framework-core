@@ -38,11 +38,11 @@
         <property name="asserts" ref="extendedAssert"/>
     </bean>
 
-    <bean id="atlas" class="io.qameta.atlas.Atlas">
+    <bean id="atlas" class="io.qameta.atlas.core.Atlas">
         <constructor-arg name="configuration" ref="webDriverConfig"/>
     </bean>
 
-    <bean id="webDriverConfig" class="io.qameta.atlas.WebDriverConfiguration">
+    <bean id="webDriverConfig" class="io.qameta.atlas.webdriver.WebDriverConfiguration">
         <constructor-arg name="webDriver">
             <bean factory-bean="driverManager" factory-method="getDriver"/>
         </constructor-arg>
