@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.internal.WrapsElement;
 import ru.lanit.at.driver.DriverManager;
 
 import java.util.Arrays;
@@ -108,13 +107,41 @@ public class Make {
     }
 
     /**
-     * @deprecated Doesn't work with Atlas
+     * Calls JavasCript method click() on given {@link WebElement}
+     *
      * @param webElement
      */
     public void jsClickOn(WebElement webElement) {
         logAction(webElement, "Calling JavaScript click on {}");
         scrollIntoView(webElement);
         jsExecutor.executeScript("arguments[0].click();", webElement);
+    }
+
+    /**
+     * Extracts xpath from {@link WebElement#toString()}
+     * @return XPath of {@link WebElement}
+     */
+    public String getElementXPath(WebElement webElement){
+        String elementToString = webElement.toString();
+        String[] xpathParts = elementToString.substring(1, elementToString.length() - 1).split("->");
+        StringBuilder xpath = new StringBuilder();
+
+        for (int i = 1; i < xpathParts.length; i++) {
+            xpath.append(fixXPath(xpathParts[i].replaceAll("xpath: ", "").trim()));
+        }
+
+        return xpath.toString();
+    }
+
+    private String fixXPath(String xpath){
+        int counter = 0;
+        for (int i = 0; i < xpath.length(); i++) {
+            char charAtI = xpath.charAt(i);
+            if(charAtI == '[') counter--;
+            else if(charAtI == ']') counter++;
+        }
+        if(xpath.startsWith(".")) xpath = "/" + xpath;
+        return xpath.substring(0, xpath.length() - counter);
     }
 
     private void logAction(WebElement webElement, String message, String... args) {
@@ -174,7 +201,7 @@ public class Make {
     public void loseFocus(WebElement webElement) {
         logAction(webElement, "Losing focus from element {} by clicking");
 //        jsExecutor.executeScript("arguments[0].blur();", webElement);
-        new Actions(getDriver()).moveToElement(webElement, -3, -3).click().build().perform();
+        new Actions(getDriver()).moveToElement(webElement, -webElement.getRect().x - 3, 0).click().build().perform();
     }
 
     /**

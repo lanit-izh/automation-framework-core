@@ -6,7 +6,7 @@ import ru.lanit.at.context.Context;
 import ru.lanit.at.make.Make;
 import ru.lanit.at.make.Wait;
 
-public interface FrameworkBaseWebElement {
+public interface FrameworkBaseElement {
 
     default Logger log() {
         return LogManager.getLogger(getClass());
