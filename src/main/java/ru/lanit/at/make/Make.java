@@ -213,9 +213,9 @@ public class Make {
     }
 
     public void scrollIntoView(WebElement webElement) {
-//        jsExecutor.executeScript(
-//                "arguments[0].scrollIntoView(true);window.scrollBy(0, -400);",
-//                webElement);
+        jsExecutor.executeScript(
+                "arguments[0].scrollIntoView(true);window.scrollBy(0, -400);",
+                webElement);
     }
 
     public boolean checkElementExist(WebElement webElement) {
