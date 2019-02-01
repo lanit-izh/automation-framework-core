@@ -175,10 +175,10 @@ public class Make {
     public void focusOnElement(WebElement webElement) {
         logAction(webElement, "Focus on '{}'");
         try {
-//            scrollIntoView(webElement);
-            new Actions(getDriver())
-                    .moveToElement(webElement)
-                    .perform();
+            scrollIntoView(webElement);
+//            new Actions(getDriver())
+//                    .moveToElement(webElement)
+//                    .perform();
         } catch (Exception ignore) {
         }
     }
