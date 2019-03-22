@@ -214,10 +214,8 @@ public class Make {
 
     public void scrollIntoView(WebElement webElement) {
         jsExecutor.executeScript(
-                "arguments[0].scrollIntoView(true);window.scrollBy(0, -400);",
+                "arguments[0].scrollIntoView({block: 'center'});",
                 webElement);
-        Actions builder = new Actions(getDriver());
-        builder.moveToElement(webElement).perform();
     }
 
     public boolean checkElementExist(WebElement webElement) {
