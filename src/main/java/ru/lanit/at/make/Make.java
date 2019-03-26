@@ -176,9 +176,9 @@ public class Make {
         logAction(webElement, "Focus on '{}'");
         try {
             scrollIntoView(webElement);
-//            new Actions(getDriver())
-//                    .moveToElement(webElement)
-//                    .perform();
+            new Actions(getDriver())
+                    .moveToElement(webElement)
+                    .perform();
         } catch (Exception ignore) {
         }
     }
