@@ -1,5 +1,6 @@
 package ru.lanit.at.driver;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Attachment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,10 +35,10 @@ import static ru.lanit.at.FrameworkConstants.*;
 
 public class DriverManager {
 
-    private final String BROWSER_NAME;
-    private final boolean PROXY_ENABLED;
-    private final String HUB_URL;
-    private final boolean REMOTE;
+    private String BROWSER_NAME;
+    private boolean PROXY_ENABLED;
+    private String HUB_URL;
+    private boolean REMOTE;
 
     private Config chromeDriverProperties;
     private Config geckoDriverProperties;
@@ -58,7 +59,8 @@ public class DriverManager {
         else this.HUB_URL = Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_HUB_URL);
 
         loadProperties();
-        defineWebDriversPath();
+//        to delete
+//        defineWebDriversPath();
     }
 
     private void defineWebDriversPath() {
@@ -84,7 +86,6 @@ public class DriverManager {
         geckoDriverProperties = new Config(DEFAULT_GECKO_CONFIG);
         driverTimeoutsProperties = new Config(DEFAULT_TIMEOUTS_CONFIG);
     }
-
     public WebDriver getDriver() {
         return getDriver(BROWSER_NAME);
     }
@@ -118,7 +119,7 @@ public class DriverManager {
                 throw new FrameworkRuntimeException("Unknown driver type: " + browserName);
         }
         driver.get().manage().window().maximize();
-        if (!System.getProperty("timeouts", "true").equalsIgnoreCase("false")) {
+        if (System.getProperty("timeouts", "true").equalsIgnoreCase("true")) {
             Integer implWait = driverTimeoutsProperties.getProperty(IMPLICITLY_WAIT, 30);
             System.setProperty("webdriver.timeouts.implicitlywait", implWait.toString());
             driver.get().manage().timeouts().implicitlyWait(implWait, TimeUnit.SECONDS);
@@ -138,6 +139,7 @@ public class DriverManager {
     }
 
     private ChromeOptions generateChromeOptions() {
+        WebDriverManager.chromedriver().setup();
         ChromeOptions chromeOptions = new ChromeOptions();
 
         chromeOptions.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
@@ -190,6 +192,7 @@ public class DriverManager {
 
 
     private FirefoxOptions generateFirefoxOptions() {
+        WebDriverManager.firefoxdriver().setup();
         FirefoxOptions firefoxOptions = new FirefoxOptions();
 
         firefoxOptions.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
@@ -325,7 +328,8 @@ public class DriverManager {
 
     @Attachment(value = "Page screenshot", type = "image/png")
     public byte[] takeScreenshot() {
-        if (driver.get() == null) throw new FrameworkRuntimeException("Драйвер не запущен, невозможно делать скриншот!");
+        if (driver.get() == null)
+            throw new FrameworkRuntimeException("Драйвер не запущен, невозможно делать скриншот!");
         int screenShootRetries = 0;
         while (screenShootRetries++ < 3) {
             if (isAlertPresented()) {
@@ -351,7 +355,8 @@ public class DriverManager {
                 log.error("Ошибка при снятии скриншота: {}", e.getMessage());
                 try {
                     Thread.sleep(5000); // ждём стабилизации
-                } catch (InterruptedException ignore) { }
+                } catch (InterruptedException ignore) {
+                }
                 if (screenShootRetries > 2) // при последней попытке прикрепляем стектрейс к аллюру
                     saveTextLog(e.toString(), "Ошибка при снятии скриншота");
             }

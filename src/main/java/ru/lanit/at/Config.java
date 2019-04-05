@@ -51,7 +51,9 @@ public class Config {
 
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String propertyName, boolean notNull) {
-        T property = (T) propertyMap.get(propertyName);
+        T property = null;
+        if (!isEmpty())
+            property = (T) propertyMap.get(propertyName);
         if (notNull && property == null)
             throw new FrameworkRuntimeException(propertyName + " is null or missing in the config '" + configName + "'");
         return property;
@@ -59,6 +61,7 @@ public class Config {
 
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String propertyName, T defaultValue) {
+        if (isEmpty()) return defaultValue;
         T property = (T) propertyMap.get(propertyName);
         if (defaultValue != null && property == null) property = defaultValue;
         return property;
