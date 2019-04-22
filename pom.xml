@@ -6,12 +6,12 @@
 
     <groupId>ru.lanit.at</groupId>
     <artifactId>automation-framework-core</artifactId>
-    <version>3.0.21</version>
+    <version>3.0.22</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <compiler.version>1.8</compiler.version>
-        <yandex.allure.version>2.6.0</yandex.allure.version>
+        <yandex.allure.version>2.10.0</yandex.allure.version>
         <yandex.ashot.version>1.5.4</yandex.ashot.version>
         <selenium.chromedriver.version>3.141.0</selenium.chromedriver.version>
         <selenium.firefoxdriver.version>3.141.0</selenium.firefoxdriver.version>
