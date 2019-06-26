@@ -5,12 +5,20 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import ru.lanit.at.context.Context;
+import ru.lanit.at.driver.DriverManager;
+import ru.lanit.at.make.Make;
 
 import java.util.List;
 
 import static ru.lanit.at.FrameworkConstants.DEFAULT_TIMEOUT;
 
 public interface AbstractPage extends WebPage, FrameworkBaseElement {
+
+    @Override
+    default WebDriver getWrappedDriver() {
+        return Context.getInstance().getBean(DriverManager.class).getDriver();
+    }
 
     /**
      * Waits for the specified time for {@link WebElement} to be visible, using {@link WebDriverWait} and {@link ExpectedConditions#visibilityOf(WebElement)}.
