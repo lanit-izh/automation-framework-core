@@ -53,14 +53,8 @@ public class DriverManager {
         this.BROWSER_NAME = Config.getStringSystemProperty(BROWSER_VARIABLE_NAME, DEFAULT_BROWSER);
         this.PROXY_ENABLED = Config.getBooleanSystemProperty(PROXY_VARIABLE_NAME);
         this.REMOTE = Config.getBooleanSystemProperty(REMOTE_DRIVER_VARIABLE_NAME);
-
-        if ("winium".equalsIgnoreCase(BROWSER_NAME))
-            this.HUB_URL = Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_WINIUM_HUB_URL);
-        else this.HUB_URL = Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_HUB_URL);
-
+        this.HUB_URL = Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_HUB_URL);
         loadProperties();
-//        to delete
-//        defineWebDriversPath();
     }
 
     private void defineWebDriversPath() {
