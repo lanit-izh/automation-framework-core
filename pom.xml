@@ -6,7 +6,7 @@
 
     <groupId>ru.lanit.at</groupId>
     <artifactId>automation-framework-core</artifactId>
-    <version>3.0.28</version>
+    <version>3.0.28_debug</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,7 +18,7 @@
         <log4j.version>2.11.2</log4j.version>
         <testng.version>6.14.3</testng.version>
         <maven.source.plugin.version>3.1.0</maven.source.plugin.version>
-        <atlas.version>1.6.0</atlas.version>
+        <atlas.version>1.5.0</atlas.version>
         <SnakeYAML.version>1.24</SnakeYAML.version>
     </properties>
 
@@ -74,11 +74,23 @@
             <groupId>io.qameta.atlas</groupId>
             <artifactId>atlas-core</artifactId>
             <version>${atlas.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-remote-driver</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.qameta.atlas</groupId>
             <artifactId>atlas-webdriver</artifactId>
             <version>${atlas.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-remote-driver</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
