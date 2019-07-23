@@ -16,6 +16,7 @@ import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.Assert;
 import ru.lanit.at.Config;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.yandex.qatools.ashot.AShot;
@@ -81,11 +82,15 @@ public class DriverManager {
         driverTimeoutsProperties = new Config(DEFAULT_TIMEOUTS_CONFIG);
     }
     public WebDriver getDriver() {
-        return getDriver(BROWSER_NAME);
+        if(driver.get()==null) {
+            log.error("Driver not found");
+            Assert.fail("Driver not found");
+        }
+        return driver.get();
     }
 
-    private WebDriver getDriver(String browserName) {
-        if (driver.get() == null) startBrowser(browserName);
+    public WebDriver initDriver() {
+        if (driver.get() == null) startBrowser(BROWSER_NAME);
         return driver.get();
     }
 
