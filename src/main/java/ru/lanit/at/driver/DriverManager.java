@@ -94,6 +94,10 @@ public class DriverManager {
         return driver.get();
     }
 
+    public boolean isDriverInit() {
+        return driver.get() != null;
+    }
+
     private void startBrowser(String browserName) {
         switch (browserName.toLowerCase().trim()) {
             case "chrome":
