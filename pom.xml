@@ -74,11 +74,23 @@
             <groupId>io.qameta.atlas</groupId>
             <artifactId>atlas-core</artifactId>
             <version>${atlas.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-remote-driver</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.qameta.atlas</groupId>
             <artifactId>atlas-webdriver</artifactId>
             <version>${atlas.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>selenium-remote-driver</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
