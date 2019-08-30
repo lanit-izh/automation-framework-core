@@ -18,6 +18,7 @@ import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import ru.lanit.at.Config;
+import ru.lanit.at.context.Context;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
@@ -82,20 +83,8 @@ public class DriverManager {
         driverTimeoutsProperties = new Config(DEFAULT_TIMEOUTS_CONFIG);
     }
     public WebDriver getDriver() {
-        if(driver.get()==null) {
-            log.error("Driver not found");
-            Assert.fail("Driver not found");
-        }
-        return driver.get();
-    }
-
-    public WebDriver initDriver() {
         if (driver.get() == null) startBrowser(BROWSER_NAME);
         return driver.get();
-    }
-
-    public boolean isDriverInit() {
-        return driver.get() != null;
     }
 
     private void startBrowser(String browserName) {
@@ -294,6 +283,7 @@ public class DriverManager {
         driver.get().quit();
         driver.remove();
         log.info("Driver is closed.");
+        Context.removeInstance();
     }
 
 

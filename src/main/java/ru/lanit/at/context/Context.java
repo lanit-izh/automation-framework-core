@@ -24,4 +24,8 @@ public class Context {
         }
         return localInstance;
     }
+
+    public static void removeInstance() {
+        instance.remove();
+    }
 }
