@@ -283,7 +283,7 @@ public class DriverManager {
         driver.get().quit();
         driver.remove();
         log.info("Driver is closed.");
-        Context.removeInstance();
+ //       Context.removeInstance(); закомментированно т.к ломается перезапуск браузера
     }
 
 
