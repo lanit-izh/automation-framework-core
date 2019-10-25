@@ -7,7 +7,7 @@ import cucumber.api.java.ru.То;
 import cucumber.api.java.ru.Тогда;
 import org.testng.Assert;
 import ru.lanit.at.pages.AbstractPage;
-import ru.lanit.at.pages.elements.UIElement;
+import ru.lanit.at.pages.element.UIElement;
 import ru.yandex.qatools.matchers.webdriver.EnabledMatcher;
 
 import java.util.Arrays;
@@ -178,7 +178,7 @@ public final class UIStepsLibrary extends AbstractFrameworkSteps {
                 expectedText, actualText);
     }
 
-//
+    //
 //    /**
 //     * Check the link address of the element
 //     *

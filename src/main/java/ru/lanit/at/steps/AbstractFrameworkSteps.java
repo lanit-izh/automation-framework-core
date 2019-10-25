@@ -11,8 +11,8 @@ import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.lanit.at.pages.AbstractPage;
 import ru.lanit.at.pages.PageCatalog;
-import ru.lanit.at.pages.block_elements.AbstractBlockElement;
-import ru.lanit.at.pages.elements.UIElement;
+import ru.lanit.at.pages.block.AbstractBlockElement;
+import ru.lanit.at.pages.element.UIElement;
 
 import java.util.Map;
 

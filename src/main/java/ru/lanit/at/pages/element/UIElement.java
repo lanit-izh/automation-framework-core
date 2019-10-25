@@ -1,4 +1,4 @@
-package ru.lanit.at.pages.elements;
+package ru.lanit.at.pages.element;
 
 import io.qameta.atlas.webdriver.AtlasWebElement;
 import org.apache.logging.log4j.LogManager;

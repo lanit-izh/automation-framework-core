@@ -1,4 +1,4 @@
-package ru.lanit.at.pages.block_elements;
+package ru.lanit.at.pages.block;
 
 import io.qameta.atlas.webdriver.AtlasWebElement;
 import ru.lanit.at.pages.annotations.Block;

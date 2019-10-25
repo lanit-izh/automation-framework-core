@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.lanit.at.pages.annotations.Title;
-import ru.lanit.at.pages.block_elements.AbstractBlockElement;
-import ru.lanit.at.pages.elements.UIElement;
+import ru.lanit.at.pages.block.AbstractBlockElement;
+import ru.lanit.at.pages.element.UIElement;
 
 import java.util.Collection;
 import java.util.LinkedList;
