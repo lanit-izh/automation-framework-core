@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
-default-lazy-init="true">
+       default-lazy-init="true">
 
     <bean id="proxyHandler" class="ru.lanit.at.driver.ProxyHandler"/>
 
@@ -19,12 +19,8 @@ default-lazy-init="true">
         <property name="driverManager" ref="driverManager"/>
     </bean>
 
-    <bean id="wait" class="ru.lanit.at.make.Wait">
-        <property name="jsExecutor" ref="jsExecutor"/>
-    </bean>
 
     <bean id="make" class="ru.lanit.at.make.Make">
-        <property name="wait" ref="wait"/>
         <property name="jsExecutor" ref="jsExecutor"/>
         <property name="driverManager" ref="driverManager"/>
     </bean>
@@ -39,13 +35,19 @@ default-lazy-init="true">
         <property name="asserts" ref="extendedAssert"/>
     </bean>
 
-    <bean id="atlas" class="io.qameta.atlas.core.Atlas">
-        <constructor-arg name="configuration" ref="webDriverConfig"/>
-    </bean>
-
-    <bean id="webDriverConfig" class="io.qameta.atlas.webdriver.WebDriverConfiguration">
+    <bean id="atlasConfig" class="ru.lanit.at.driver.AtlasConfig">
         <constructor-arg name="webDriver">
             <bean factory-bean="driverManager" factory-method="getDriver"/>
         </constructor-arg>
     </bean>
+
+    <bean id="atlas" class="io.qameta.atlas.core.Atlas">
+        <constructor-arg name="configuration" ref="atlasConfig"/>
+    </bean>
+
+    <!--    <bean id="webDriverConfig" class="io.qameta.atlas.webdriver.WebDriverConfiguration">-->
+    <!--        <constructor-arg name="webDriver">-->
+    <!--            <bean factory-bean="driverManager" factory-method="getDriver"/>-->
+    <!--        </constructor-arg>-->
+    <!--    </bean>-->
 </beans>

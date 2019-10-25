@@ -5,7 +5,11 @@ import com.fasterxml.jackson.databind.util.Named;
 import io.qameta.atlas.webdriver.AtlasWebElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.*;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WrapsDriver;
 import org.openqa.selenium.interactions.Actions;
 import ru.lanit.at.driver.DriverManager;
 
@@ -18,17 +22,12 @@ public class Make {
     public static final String LOSE_FOCUS = "lose focus";
     public static final String NO_CLEAR_BEFORE = "no clear before";
     private static final double SEND_KEY_DELAY = .01;
-    private Wait wait;
 
     private DriverManager driverManager;
 
     private JSExecutor jsExecutor;
 
     private Logger log = LogManager.getLogger(Make.class);
-
-    public void setWait(Wait wait) {
-        this.wait = wait;
-    }
 
     public void setJsExecutor(JSExecutor jsExecutor) {
         this.jsExecutor = jsExecutor;
@@ -38,27 +37,6 @@ public class Make {
         this.driverManager = driverManager;
     }
 
-    /**
-     * Scrolls to and makes click on provided {@link WebElement}. After click waits for page and JS loading complete.
-     *
-     * @param webElement that should be clicked.
-     * @deprecated Use {@link AtlasWebElement#click()}
-     */
-    @Deprecated
-    public void clickTo(WebElement webElement) {
-        logAction(webElement, "Click on {}");
-        wait.untilElementVisible(webElement);
-        Boolean iFrameFlag = (Boolean) jsExecutor.executeScript("return(window == top)");
-        if (iFrameFlag) {
-            scrollIntoView(webElement);
-        } else {
-            jsExecutor.executeScript("arguments[0].scrollIntoView(true);window.scrollBy(0, -400);", webElement);
-        }
-
-        webElement.click();
-        wait.untilPageLoaded();
-        wait.untilJSComplete();
-    }
 
     public void submit(AtlasWebElement button) {
         logAction(button, "Submit {}");
@@ -89,22 +67,16 @@ public class Make {
 
     private void sendKeysSpelling(WebElement webElement, String message) {
         for (char c : message.toCharArray()) {
-            wait.sec(SEND_KEY_DELAY);
+            try {
+                Thread.sleep(((int) SEND_KEY_DELAY * 1000));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Thread.currentThread().interrupt();
+            }
             webElement.sendKeys(String.valueOf(c));
         }
     }
 
-    /**
-     * @deprecated Use {@link AtlasWebElement#click()}
-     */
-    @Deprecated
-    private void clickToInput(WebElement webElement) {
-        try {
-            if (webElement.isDisplayed()) clickTo(webElement);
-        } catch (WebDriverException ignore) {
-            jsClickOn(webElement);
-        }
-    }
 
     /**
      * Calls JavasCript method click() on given {@link WebElement}
@@ -119,9 +91,10 @@ public class Make {
 
     /**
      * Extracts xpath from {@link WebElement#toString()}
+     *
      * @return XPath of {@link WebElement}
      */
-    public String getElementXPath(WebElement webElement){
+    public String getElementXPath(WebElement webElement) {
         String elementToString = webElement.toString();
         String[] xpathParts = elementToString.substring(1, elementToString.length() - 1).split("->");
         StringBuilder xpath = new StringBuilder();
@@ -133,14 +106,14 @@ public class Make {
         return xpath.toString();
     }
 
-    private String fixXPath(String xpath){
+    private String fixXPath(String xpath) {
         int counter = 0;
         for (int i = 0; i < xpath.length(); i++) {
             char charAtI = xpath.charAt(i);
-            if(charAtI == '[') counter--;
-            else if(charAtI == ']') counter++;
+            if (charAtI == '[') counter--;
+            else if (charAtI == ']') counter++;
         }
-        if(xpath.startsWith(".")) xpath = "/" + xpath;
+        if (xpath.startsWith(".")) xpath = "/" + xpath;
         return xpath.substring(0, xpath.length() - counter);
     }
 

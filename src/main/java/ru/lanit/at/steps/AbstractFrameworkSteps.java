@@ -1,6 +1,5 @@
 package ru.lanit.at.steps;
 
-import io.qameta.allure.Attachment;
 import io.qameta.atlas.core.Atlas;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,26 +11,26 @@ import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.lanit.at.pages.AbstractPage;
 import ru.lanit.at.pages.PageCatalog;
-import ru.lanit.at.pages.optionals.OptionalPageInterface;
+import ru.lanit.at.pages.block_elements.AbstractBlockElement;
+import ru.lanit.at.pages.elements.UIElement;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 public abstract class AbstractFrameworkSteps {
 
     protected Logger log = LogManager.getLogger(this.getClass());
     protected AssertsManager assertsManager;
-    private PageCatalog pageCatalog;
+    protected PageCatalog pageCatalog;
     private DriverManager driverManager;
     private Atlas atlas;
+
 
     public AbstractFrameworkSteps() {
         ApplicationContext context = Context.getInstance();
         pageCatalog = context.getBean(PageCatalog.class);
         assertsManager = context.getBean(AssertsManager.class);
         driverManager = context.getBean(DriverManager.class);
-        atlas = context.getBean(Atlas.class);
+        atlas = pageCatalog.getAtlas();
     }
 
     /**
@@ -59,67 +58,68 @@ public abstract class AbstractFrameworkSteps {
         return pageCatalog.getPage(clazz);
     }
 
-    @SuppressWarnings("unchecked")
-    protected <T extends AbstractPage> T openPage(Class<T> clazz) {
-        log.trace("Open page (" + clazz + ")");
-        if (pageCatalog.getCurrentPage() != null
-                && pageCatalog.getCurrentPage().getClass() == clazz) return (T) pageCatalog.getCurrentPage();
-        try {
-            log.info("Going to page " + clazz.getSimpleName());
-            return openPageFromCurrentPage(clazz);
-        } catch (RuntimeException ignore) {
-            log.warn("Relative transition to page failed. Going through the main page.");
-            return openPageByFullPath(clazz);
-        }
+    protected <T extends AbstractPage> T getPageByTitle(String title) {
+        return pageCatalog.getPageByTitle(title);
     }
-
-    /**
-     * Pseudo-smart method that tries to open requested page from current page.
-     * Searches method of current page' page object with method name satisfying regexp: {@code (?i)open.+page} (case insensitive) and also method should return instance of requested class.
-     *
-     * @param clazz Class of page object that should be initialized and returned.
-     * @return Instance of requested page object if page can be opened from current page.
-     * @throws FrameworkRuntimeException when there is no method to open requested page from current page.
-     */
-    @SuppressWarnings("unchecked")
-    protected <T extends AbstractPage> T openPageFromCurrentPage(Class<T> clazz) {
-        if (pageCatalog.getCurrentPage() != null) {
-            for (Method method : pageCatalog.getCurrentPage().getClass().getDeclaredMethods()) {
-                if (clazz.equals(method.getGenericReturnType())
-                        && method.getName().matches("(?i)open.+page")) {
-                    try {
-                        method.setAccessible(true);
-                        log.info("Выполняем " + method.getName() + " из " + clazz.getSimpleName());
-                        return (T) method.invoke(pageCatalog.getCurrentPage());
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        throw new FrameworkRuntimeException("Can't open page " + clazz.getSimpleName() + " from current page: " + pageCatalog.getCurrentPage().getClass().getSimpleName());
-    }
-
-    /**
-     * Method which guarantees that requested page will be opened and initialized.
-     *
-     * @param clazz Class of the page that should be opened and initialized.
-     * @return Instance of page object.
-     */
-    protected abstract <T extends AbstractPage> T openPageByFullPath(Class<T> clazz);
 
     protected AbstractPage getCurrentPage() {
         return pageCatalog.getCurrentPage();
     }
 
-    /**
-     * Method to force update of current page.
-     *
-     * @param abstractPage Page that should be set as current page.
-     */
-    protected void setCurrentPage(AbstractPage abstractPage) {
-        pageCatalog.setCurrentPage(abstractPage);
+    protected void setCurrentBlock(Class<? extends AbstractBlockElement> clazz, String... params) {
+        Object object = getSearchContext();
+        if (object == null) {
+            throw new FrameworkRuntimeException("Для установки блока, требуется установить текущую страницу," +
+                    " используя методы 'getPage/getPageByTitle'");
+        }
+        AbstractBlockElement abstractBlockElement;
+        if (!AbstractPage.class.isAssignableFrom(object.getClass())) {
+            abstractBlockElement = ((AbstractBlockElement) object).getBlockElement(clazz, params);
+        } else {
+            abstractBlockElement = ((AbstractPage) object).getBlockElement(clazz, params);
+        }
+
+
+        pageCatalog.setCurrentBlock(abstractBlockElement);
     }
+
+    protected void setCurrentBlockByName(String name, String... params) {
+        Class<? extends AbstractBlockElement> abstractBlockElement = pageCatalog.findBlockByName(name);
+        setCurrentBlock(abstractBlockElement, params);
+    }
+
+    protected AbstractBlockElement getCurrentBlock() {
+        return pageCatalog.getCurrentBlockElement();
+    }
+
+    protected <T extends UIElement> T getUIElement(Class<? extends UIElement> clazz, String... params) {
+        Object obj = getSearchContext();
+        if (obj == null) {
+            throw new FrameworkRuntimeException("Установите контекст поиска элемента на страницу/блок");
+        }
+        if (!AbstractPage.class.isAssignableFrom(obj.getClass())) {
+            return (T) ((AbstractBlockElement) obj).getElement(clazz, params);
+        }
+        return (T) ((AbstractPage) obj).getElement(clazz, params);
+    }
+
+    protected <T extends UIElement> T getUIElementByName(String nameElement, String... params) {
+        Class<? extends UIElement> clazz = pageCatalog.findUIElemByName(nameElement);
+        return getUIElement(clazz, params);
+    }
+
+
+    public Object getSearchContext() {
+        if (pageCatalog.getCurrentBlockElement() == null) {
+            return pageCatalog.getCurrentPage();
+        }
+        return pageCatalog.getCurrentBlockElement();
+    }
+
+    public void resetCurrentBlock() {
+        pageCatalog.setCurrentBlock(null);
+    }
+
 
     /**
      * @return Data keeper object as map.
@@ -136,15 +136,16 @@ public abstract class AbstractFrameworkSteps {
      * @param value Any data that should be saved.
      */
     protected void saveTestData(String key, Object value) {
-        if (value instanceof CharSequence || value instanceof Number) logToAllure("Saved text data", "Key: \"" + key + "\", value: \"" + value + "\"");
+//        if (value instanceof CharSequence || value instanceof Number) logToAllure("Saved text data", "Key: \"" + key + "\", value: \"" + value + "\"");
+        log.info("Saved text data {}: {}", key, value);
         getDataKeeper().put(key, value);
     }
 
-    @Attachment(value = "{0}", type = "text/plain")
-    protected String logToAllure(String messageType, String message) {
-        log.info("{}: {}", messageType, message);
-        return message;
-    }
+//    @Attachment(value = "{0}", type = "text/plain")
+//    protected String logToAllure(String messageType, String message) {
+//        log.info("{}: {}", messageType, message);
+//        return message;
+//    }
 
     /**
      * Returns saved test data by specified key. Automatically casts object into requested data type.
@@ -167,35 +168,17 @@ public abstract class AbstractFrameworkSteps {
         getDataKeeper().clear();
     }
 
-    /**
-     * Attempts to cast {@link PageCatalog#getCurrentPage()} to optional interface.
-     *
-     * @param iClass On of the descendants of {@link OptionalPageInterface}. Which indicates that current page should have requested capabilities.
-     * @return {@link PageCatalog#getCurrentPage()} casted into given optional interface.
-     * @throws ClassCastException In case when current page doesn't implement given interface.
-     */
-    @SuppressWarnings("unchecked")
-    protected <I extends OptionalPageInterface> I transformCurrentPageTo(Class<I> iClass) {
-        return (I) getCurrentPage();
-    }
 
     /**
      * Method to retrieve and interact with instance of {@link Atlas}.
+     *
      * @return {@link Atlas} bean.
      */
     public Atlas getAtlas() {
         return atlas;
     }
 
-    /**
-     * Method to get instance of page.
-     *
-     * @param clazz class of page that should be instantiated.
-     * @return instance of clazz.
-     * @deprecated Use {@link #getPage(Class)} method.
-     */
-    @Deprecated
-    protected <T extends AbstractPage> T initPage(Class<T> clazz) {
-        return getPage(clazz);
+    protected PageCatalog getPageCatalog() {
+        return pageCatalog;
     }
 }

@@ -12,13 +12,12 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.firefox.internal.ProfilesIni;
+
+import org.openqa.selenium.firefox.ProfilesIni;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.testng.Assert;
 import ru.lanit.at.Config;
-import ru.lanit.at.context.Context;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
@@ -82,6 +81,7 @@ public class DriverManager {
         geckoDriverProperties = new Config(DEFAULT_GECKO_CONFIG);
         driverTimeoutsProperties = new Config(DEFAULT_TIMEOUTS_CONFIG);
     }
+
     public WebDriver getDriver() {
         if (driver.get() == null) startBrowser(BROWSER_NAME);
         return driver.get();
@@ -283,7 +283,7 @@ public class DriverManager {
         driver.get().quit();
         driver.remove();
         log.info("Driver is closed.");
- //       Context.removeInstance(); закомментированно т.к ломается перезапуск браузера
+        //       Context.removeInstance(); закомментированно т.к ломается перезапуск браузера
     }
 
 
