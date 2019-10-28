@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+       default-lazy-init="true">
+
+    <bean id="proxyHandler" class="ru.lanit.at.driver.ProxyHandler"/>
+
+    <bean id="driverManager" class="ru.lanit.at.driver.DriverManager" destroy-method="shutdown">
+        <property name="proxyHandler" ref="proxyHandler"/>
+    </bean>
+
+    <bean id="pageCatalog" class="ru.lanit.at.pages.PageCatalog">
+        <property name="driverManager" ref="driverManager"/>
+        <property name="atlas" ref="atlas"/>
+    </bean>
+
+    <bean id="jsExecutor" class="ru.lanit.at.make.JSExecutor">
+        <property name="driverManager" ref="driverManager"/>
+    </bean>
+
+
+    <bean id="make" class="ru.lanit.at.make.Make">
+        <property name="jsExecutor" ref="jsExecutor"/>
+        <property name="driverManager" ref="driverManager"/>
+    </bean>
+
+    <util:map id="dataKeeper" map-class="java.util.HashMap" key-type="java.lang.String" value-type="java.lang.Object"/>
+
+    <bean id="extendedAssert" class="ru.lanit.at.assertion.ExtendedAssert">
+        <property name="driverManager" ref="driverManager"/>
+    </bean>
+
+    <bean id="assertsManager" class="ru.lanit.at.assertion.AssertsManager">
+        <property name="asserts" ref="extendedAssert"/>
+    </bean>
+
+    <bean id="atlasConfig" class="ru.lanit.at.driver.AtlasConfig">
+        <constructor-arg name="webDriver">
+            <bean factory-bean="driverManager" factory-method="getDriver"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="atlas" class="io.qameta.atlas.core.Atlas">
+        <constructor-arg name="configuration" ref="atlasConfig"/>
+    </bean>
+
+    <!--    <bean id="webDriverConfig" class="io.qameta.atlas.webdriver.WebDriverConfiguration">-->
+    <!--        <constructor-arg name="webDriver">-->
+    <!--            <bean factory-bean="driverManager" factory-method="getDriver"/>-->
+    <!--        </constructor-arg>-->
+    <!--    </bean>-->
+</beans>
