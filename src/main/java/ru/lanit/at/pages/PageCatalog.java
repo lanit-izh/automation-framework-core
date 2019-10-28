@@ -189,49 +189,6 @@ public class PageCatalog {
         return currentAbstractBlockElement;
     }
 
-//
-//    public <T extends AbstractBlockElement> void setCurrentBlock(Object ob, Class<T> blockClass, String... params) {
-//        LOGGER.info("В качестве текущего контекста поиска установлен блок '" + blockClass.getSimpleName() + "'");
-//        this.currentAbstractBlockElement = getBlockElement(ob, blockClass, params);
-//    }
-//
-//
-//
-//    public <T> T getBlockElement(Object ob, Class<T> blockClass, String... params) {
-//        Method method = findBlock(ob.getClass(), blockClass, params);
-//        if (method == null) {
-//            throw new FrameworkRuntimeException("Текущая страница/блок '" + ob.getClass().getInterfaces()[0].getSimpleName() +
-//                    ", не содержит блок/элемент + '" + blockClass.getSimpleName() + "'. Добавьте блок в искомую страниц/блок для работы с ним");
-//        }
-//        return init(method, ob, params);
-//    }
-//
-//
-//    private Method findBlock(Class currentClass, Class blockClass, String... params) {
-//        Method[] methods = currentClass.getInterfaces()[0].getMethods();
-//        List<Method> blocks = Stream.of(methods).filter(method -> blockClass.isAssignableFrom(method.getReturnType()) && method.getGenericParameterTypes().length == params.length).collect(Collectors.toList());
-//        if (blocks.isEmpty()) {
-//            return null;
-//        }
-//        if (blocks.size() != 1) {
-//            LOGGER.error("Блок/элемент '" + blockClass.getSimpleName() + "' подключен к текущей странице/блоку'" + currentClass.getInterfaces()[0].getSimpleName() + "' более 1 раза ");
-//        }
-//        return blocks.get(0);
-//    }
-//
-//    private <T> T init(Method method, Object object, String... params) {
-//        try {
-//            Type[] param = method.getGenericParameterTypes();
-//            if (param.length == params.length) {
-//                return (T) method.invoke(object, params);
-//            } else {
-//                throw new FrameworkRuntimeException("Для создания '" + method.getReturnType().getSimpleName() + " 'необходимое количество параметров: " + param.length + ", передано параметров: " + params.length);
-//            }
-//        } catch (IllegalAccessException | InvocationTargetException e) {
-//            throw new FrameworkRuntimeException("Не удалось создать блок/элемент: " + method.getReturnType().getSimpleName());
-//        }
-//    }
-
 
     private Collection<Class<? extends AbstractPage>> getAbstractPageDescendants() {
         return getDescendants(AbstractPage.class);

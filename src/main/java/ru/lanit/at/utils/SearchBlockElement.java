@@ -41,9 +41,6 @@ public interface SearchBlockElement {
         if (blocks.isEmpty()) {
             return null;
         }
-        if (blocks.size() != 1) {
-            LOGGER.info("Блок '" + blockClass.getSimpleName() + "' подключен к текущей странице/блоку'" + currentClass.getInterfaces()[0].getSimpleName() + "' более 1 раза ");
-        }
         return blocks.get(0);
     }
 
