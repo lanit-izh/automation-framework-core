@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 # Deploy maven artefact in current directory into Maven central repository
 # using maven-release-plugin goals
 
