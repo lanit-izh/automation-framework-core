@@ -5,7 +5,7 @@
 read -p "Really deploy to maven cetral repository  (yes/no)? "
 
 if ( [ "$REPLY" == "yes" ] ) then
-  ssh-add ~/.ssh/ramil.krnac
+  ssh-add ~/.ssh/id_rsa
   ssh-add -l
   mvn release:clean release:prepare release:perform -B -e | tee maven-central-deploy.log
   ssh-add -D
