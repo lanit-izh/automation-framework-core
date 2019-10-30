@@ -4,7 +4,7 @@
 
     <groupId>com.github.lanit-izh</groupId>
     <artifactId>automation-framework-core</artifactId>
-    <version>3.0.99</version>
+    <version>3.0.99-SNAPSHOT</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -204,11 +204,11 @@
     </dependencies>
 
     <scm>
-        <connection>scm:git:git://github.com/lanit-izh/automation-framework-core.git</connection>
-        <developerConnection>scm:git:ssh://github.com/lanit-izh/automation-framework-core.git</developerConnection>
-        <url>https://github.com/lanit-izh/automation-framework-core/tree/dev_3.0.99</url>
-      <tag>automation-framework-core-3.0.99</tag>
-  </scm>
+        <url>https://github.com/lanit-izh/automation-framework-core</url>
+        <connection>scm:git:git@github.com:lanit-izh/automation-framework-core.git</connection>
+        <developerConnection>scm:git:git@github.com:lanit-izh/automation-framework-core.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <licenses>
         <license>
