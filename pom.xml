@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ru.lanit.at</groupId>
+    <groupId>com.github.lanit-izh</groupId>
     <artifactId>automation-framework-core</artifactId>
     <version>3.0.99</version>
 
@@ -186,4 +186,11 @@
             </exclusions>
         </dependency>
     </dependencies>
+
+    <scm>
+        <connection>scm:git:git://github.com/lanit-izh/automation-framework-core.git</connection>
+        <developerConnection>scm:git:ssh://github.com/lanit-izh/automation-framework-core.git</developerConnection>
+        <url>https://github.com/lanit-izh/automation-framework-core/tree/dev_3.0.99</url>
+    </scm>
+
 </project>
