@@ -81,7 +81,6 @@ public class Make {
     /**
      * Calls JavasCript method click() on given {@link WebElement}
      *
-     * @param webElement
      */
     public void jsClickOn(WebElement webElement) {
         logAction(webElement, "Calling JavaScript click on {}");
@@ -90,7 +89,6 @@ public class Make {
     }
 
     /**
-     * Extracts xpath from {@link WebElement#toString()}
      *
      * @return XPath of {@link WebElement}
      */
