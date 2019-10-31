@@ -4,7 +4,7 @@
 
     <groupId>com.github.lanit-izh</groupId>
     <artifactId>automation-framework-core</artifactId>
-    <version>4.0.1-SNAPSHOOT</version>
+    <version>4.0.1-SNAPSHOT</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
