@@ -6,7 +6,7 @@ import ru.lanit.at.utils.SearchBlockElement;
 
 //
 //public interface AbstractBlockElement<T extends WebElement> extends AtlasWebElement<T>, WrapsDriver , SearchBlockElement {
-@Block()
+@Block
 public interface AbstractBlockElement extends AtlasWebElement, SearchBlockElement {
 //
 //    default String getBlockName() {

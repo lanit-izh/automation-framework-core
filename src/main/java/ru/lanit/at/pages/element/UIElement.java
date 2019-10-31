@@ -28,11 +28,4 @@ public interface UIElement extends AtlasWebElement {
     }
 
 
-    default String[] getElementName() {
-        Title elementName = this.getClass().getAnnotation(Title.class);
-        if (elementName == null)
-            throw new FrameworkRuntimeException(this.getClass().getSimpleName() + " element name is empty. Please ensure that @Title presents before calling getElementName method.");
-        return elementName.values();
-    }
-
 }

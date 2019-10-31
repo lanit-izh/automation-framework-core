@@ -2,8 +2,6 @@ package ru.lanit.at;
 
 public class FrameworkConstants {
 
-    public static final String ENABLE_VIDEO = "enableVideo";
-    public static final String ENABLE_VNC = "enableVNC";
     public static final String REMOTE_DRIVER_VARIABLE_NAME = "remote";
     public static final String HUB_URL_VARIABLE_NAME = "hub_url";
     public static final String BROWSER_VARIABLE_NAME = "browser";

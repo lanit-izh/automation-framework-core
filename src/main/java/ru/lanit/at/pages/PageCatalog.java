@@ -174,12 +174,7 @@ public class PageCatalog {
     private <T> boolean titleEquals(Class<T> pageClass, String name) {
         Title title = pageClass.getAnnotation(Title.class);
         if (title != null) {
-            String[] titles = title.values();
-            for (String t : titles) {
-                if (t.equalsIgnoreCase(name)) {
-                    return true;
-                }
-            }
+            return title.value().equalsIgnoreCase(name);
         }
         return false;
     }
