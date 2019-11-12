@@ -1,20 +1,20 @@
 package ru.lanit.at.pages.block;
 
 import io.qameta.atlas.webdriver.AtlasWebElement;
-import ru.lanit.at.pages.annotations.Block;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import ru.lanit.at.context.Context;
+import ru.lanit.at.make.Make;
 import ru.lanit.at.utils.SearchBlockElement;
 
-//
-//public interface AbstractBlockElement<T extends WebElement> extends AtlasWebElement<T>, WrapsDriver , SearchBlockElement {
-@Block
+
 public interface AbstractBlockElement extends AtlasWebElement, SearchBlockElement {
-//
-//    default String getBlockName() {
-//        Title elementName = this.getClass().getAnnotation(Title.class);
-//        if (elementName == null)
-//            throw new FrameworkRuntimeException(this.getClass().getSimpleName() + " block name is empty. Please ensure that @Title presents before calling getBlockName method.");
-//        return elementName.values();
-//    }
 
+    default Logger log() {
+        return LogManager.getLogger(getClass());
+    }
 
+    default Make make() {
+        return Context.getInstance().getBean(Make.class);
+    }
 }

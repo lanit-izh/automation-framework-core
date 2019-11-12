@@ -170,16 +170,6 @@
             <version>3.6.1</version>
         </dependency>
         <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-testng</artifactId>
-            <version>4.2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java8</artifactId>
-            <version>4.2.4</version>
-        </dependency>
-        <dependency>
             <groupId>ru.yandex.qatools.matchers</groupId>
             <artifactId>webdriver-matchers</artifactId>
             <version>1.4.1</version>
@@ -198,6 +188,11 @@
                     <artifactId>jcl-over-slf4j</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.11</version>
         </dependency>
     </dependencies>
 

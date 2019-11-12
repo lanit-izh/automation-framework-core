@@ -1,11 +1,10 @@
 package ru.lanit.at.pages;
 
-import cucumber.runtime.io.MultiLoader;
-import cucumber.runtime.io.ResourceLoaderClassFinder;
 import io.qameta.atlas.core.Atlas;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.reflections.Reflections;
 import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.lanit.at.pages.annotations.Title;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
  */
 
 public class PageCatalog {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PageCatalog.class);
+    private static final Logger LOGGER = LogManager.getLogger(PageCatalog.class.getName());
     private static final String PACKAGE = "pages";
     private List<AbstractPage> pageList = new LinkedList<>();
 
@@ -71,6 +70,104 @@ public class PageCatalog {
     }
 
     /**
+     * @return Page object that is currently opened.
+     */
+    public AbstractPage getCurrentPage() {
+        return currentPage;
+    }
+
+    /**
+     * Setup current page.
+     *
+     * @param abstractPage Page object that should be set as current page.
+     */
+    public void setCurrentPage(AbstractPage abstractPage) {
+        if (currentPage == null || currentPage != abstractPage) {
+            currentPage = abstractPage;
+            LOGGER.info("Текущая страница : '" + abstractPage.getClass().getInterfaces()[0].getSimpleName() + "'");
+        }
+    }
+
+    /**
+     * Setup current block.
+     *
+     * @param block Block object that should be set as current block.
+     */
+    public void setCurrentBlock(AbstractBlockElement block) {
+        this.currentAbstractBlockElement = block;
+    }
+
+    /**
+     * Returns current block.
+     *
+     * @return current block.
+     */
+    public AbstractBlockElement getCurrentBlockElement() {
+        return currentAbstractBlockElement;
+    }
+
+    /**
+     * Returns current driver.
+     *
+     * @return driver.
+     */
+    public WebDriver getDriver() {
+        return driverManager.getDriver();
+    }
+
+    public void setDriverManager(DriverManager driverManager) {
+        this.driverManager = driverManager;
+    }
+
+    /**
+     * Returns atlas.
+     *
+     * @return atlas.
+     */
+    public Atlas getAtlas() {
+        return atlas;
+    }
+
+    public void setAtlas(Atlas atlas) {
+        this.atlas = atlas;
+    }
+
+
+    /**
+     * Returns instance of requested page object class from catalog. If catalog doesn't have such instance - initializes it and saves in catalog.
+     *
+     * @param name Title {@link ru.lanit.at.pages.annotations.Title} or ClassName  of page object to find or initialize in catalog.
+     * @return Instance of clazz.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends AbstractPage> T getPageByTitle(String name) {
+        LOGGER.debug("Find page by name '" + name + "'");
+        Class<? extends AbstractPage> requiredPageClass = tryToFind(name, abstractPageChildCollection);
+        if (requiredPageClass == null) {
+            throw new FrameworkRuntimeException("Requested page with className or name '" + name
+                    + "' not found in package '" + PACKAGE + "'.");
+        }
+        return (T) getPage(requiredPageClass);
+    }
+
+    /**
+     * Returns block class
+     *
+     * @param name BlockName {@link ru.lanit.at.pages.annotations.Title} or ClassName of block object to find .
+     * @return clazz block.
+     */
+
+    public Class<? extends AbstractBlockElement> findBlockByName(String name) {
+        LOGGER.debug("Find block by name '" + name + "'");
+        Class<? extends AbstractBlockElement> requiredBlock = tryToFind(name, abstractBlockChildCollection);
+        if (requiredBlock == null) {
+            throw new FrameworkRuntimeException("Requested block with name '" + name
+                    + "' not found in package '" + PACKAGE + "'.");
+        }
+        return requiredBlock;
+    }
+
+    /**
      * Returns instance of class if catalog contains such instance or null if it doesn't.
      *
      * @param clazz Class of page object that should be found in catalog.
@@ -87,66 +184,11 @@ public class PageCatalog {
     }
 
     /**
-     * @return Page object that is currently opened.
-     */
-    public AbstractPage getCurrentPage() {
-        return currentPage;
-    }
-
-    /**
-     * Setup current page.
+     * Returns UiElement class
      *
-     * @param abstractPage Page object that should be set as current page.
+     * @param name BlockName {@link ru.lanit.at.pages.annotations.Title} or ClassName of block object to find .
+     * @return clazz UiElement.
      */
-    public void setCurrentPage(AbstractPage abstractPage) {
-        if (currentPage == null || currentPage != abstractPage) {
-            currentPage = abstractPage;
-        }
-    }
-
-    public void setCurrentBlock(AbstractBlockElement block) {
-        this.currentAbstractBlockElement = block;
-    }
-
-
-    public WebDriver getDriver() {
-        return driverManager.getDriver();
-    }
-
-    public void setDriverManager(DriverManager driverManager) {
-        this.driverManager = driverManager;
-    }
-
-    public Atlas getAtlas() {
-        return atlas;
-    }
-
-    public void setAtlas(Atlas atlas) {
-        this.atlas = atlas;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    public <T extends AbstractPage> T getPageByTitle(String name) {
-        LOGGER.debug("Find page by name '" + name + "'");
-        Class<? extends AbstractPage> requiredPageClass = tryToFind(name, abstractPageChildCollection);
-        if (requiredPageClass == null) {
-            throw new FrameworkRuntimeException("Requested page with className or title '" + name
-                    + "' not found in package '" + PACKAGE + "'.");
-        }
-        return (T) getPage(requiredPageClass);
-    }
-
-    public Class<? extends AbstractBlockElement> findBlockByName(String name) {
-        LOGGER.debug("Find block by name '" + name + "'");
-        Class<? extends AbstractBlockElement> requiredBlock = tryToFind(name, abstractBlockChildCollection);
-        if (requiredBlock == null) {
-            throw new FrameworkRuntimeException("Requested block with name '" + name
-                    + "' not found in package '" + PACKAGE + "'.");
-        }
-        return requiredBlock;
-    }
-
     public Class<? extends UIElement> findUIElemByName(String name) {
         LOGGER.debug("Find element by name '" + name + "'");
         Class<? extends UIElement> element = tryToFind(name, UIElementChildCollection);
@@ -159,7 +201,7 @@ public class PageCatalog {
 
     private <T> Class<? extends T> tryToFind(String name, Collection<Class<? extends T>> collection) {
         List<Class<? extends T>> pagesList = collection.stream()
-                .filter(pageClass -> titleEquals(pageClass, name)).collect(Collectors.toList());
+                .filter(pageClass -> titleOrClassNameEquals(pageClass, name)).collect(Collectors.toList());
         if (pagesList.isEmpty()) {
             return null;
         }
@@ -171,19 +213,13 @@ public class PageCatalog {
     }
 
 
-    private <T> boolean titleEquals(Class<T> pageClass, String name) {
+    private <T> boolean titleOrClassNameEquals(Class<T> pageClass, String name) {
         Title title = pageClass.getAnnotation(Title.class);
         if (title != null) {
-            return title.value().equalsIgnoreCase(name);
+            return title.value().equalsIgnoreCase(name.trim());
         }
-        return false;
+        return pageClass.getSimpleName().equalsIgnoreCase(name.trim());
     }
-
-
-    public AbstractBlockElement getCurrentBlockElement() {
-        return currentAbstractBlockElement;
-    }
-
 
     private Collection<Class<? extends AbstractPage>> getAbstractPageDescendants() {
         return getDescendants(AbstractPage.class);
@@ -197,16 +233,14 @@ public class PageCatalog {
 
 
     private Collection<Class<? extends UIElement>> getFrameworkBaseElementDescendants() {
-        Collection<Class<? extends UIElement>> blocks = getDescendants(UIElement.class);
-        blocks.removeAll(abstractPageChildCollection);
-        blocks.removeAll(abstractBlockChildCollection);
-        return blocks;
+        Collection<Class<? extends UIElement>> elements = getDescendants(UIElement.class);
+        elements.removeAll(abstractPageChildCollection);
+        elements.removeAll(abstractBlockChildCollection);
+        return elements;
     }
 
     private <T> Collection<Class<? extends T>> getDescendants(Class<T> blockClass) {
-        ClassLoader classLoader = getClass().getClassLoader();
-        ResourceLoaderClassFinder resourceLoaderClassFinder =
-                new ResourceLoaderClassFinder(new MultiLoader(classLoader), classLoader);
-        return resourceLoaderClassFinder.getDescendants(blockClass, PACKAGE);
+        Reflections reflections = new Reflections(PACKAGE);
+        return reflections.getSubTypesOf(blockClass);
     }
 }

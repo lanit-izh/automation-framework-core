@@ -14,6 +14,8 @@ import ru.lanit.at.pages.PageCatalog;
 import ru.lanit.at.pages.block.AbstractBlockElement;
 import ru.lanit.at.pages.element.UIElement;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 public abstract class AbstractFrameworkSteps {
@@ -40,16 +42,23 @@ public abstract class AbstractFrameworkSteps {
         return driverManager.getDriver();
     }
 
+    /** Closes all driver windows and destroys WebDriver instance */
     protected void shutdownDriver() {
         driverManager.shutdown();
     }
 
+    /**
+     * Determines weather current WebDriver is null or not
+     *
+     * @return true if driver is not null.
+     */
     protected boolean driverIsActive() {
         return driverManager.isActive();
     }
 
     /**
-     * Returns instance of page with given class from {@link PageCatalog}. If {@link PageCatalog} doesn't contain page with such page yet - it will be initialized and saved.
+     * Returns instance of page with given class from {@link PageCatalog}.
+     * If {@link PageCatalog} doesn't contain page with such page yet - it will be initialized and saved.
      *
      * @param clazz Class of page object that should be initialized and returned.
      * @return Instance of page object from {@link PageCatalog}.
@@ -58,14 +67,33 @@ public abstract class AbstractFrameworkSteps {
         return pageCatalog.getPage(clazz);
     }
 
+    /**
+     * Returns instance of page with given param from {@link PageCatalog}.
+     * If {@link PageCatalog} doesn't contain page with such page yet - it will be initialized and saved.
+     *
+     * @param title Title value {@link ru.lanit.at.pages.annotations.Title}
+     *              or className of page object that should be initialized and returned.
+     * @return Instance of page object from {@link PageCatalog}.
+     */
     protected <T extends AbstractPage> T getPageByTitle(String title) {
         return pageCatalog.getPageByTitle(title);
     }
 
+    /**
+     * Returns current active Page
+     *
+     * @return currentPage
+     */
     protected AbstractPage getCurrentPage() {
         return pageCatalog.getCurrentPage();
     }
 
+    /**
+     * Initialized and set current block
+     *
+     * @param clazz  Class of block object that should be initialized and set  as  current block
+     * @param params Parameters necessary for initialization
+     */
     protected void setCurrentBlock(Class<? extends AbstractBlockElement> clazz, String... params) {
         Object object = getSearchContext();
         if (object == null) {
@@ -78,20 +106,39 @@ public abstract class AbstractFrameworkSteps {
         } else {
             abstractBlockElement = ((AbstractPage) object).getBlockElement(clazz, params);
         }
-
-
         pageCatalog.setCurrentBlock(abstractBlockElement);
+        log.info("В качестве текущего блока установлен: '" + clazz.getSimpleName() + "'");
     }
 
-    protected void setCurrentBlockByName(String name, String... params) {
-        Class<? extends AbstractBlockElement> abstractBlockElement = pageCatalog.findBlockByName(name);
+    /**
+     * Initialized and set current block
+     *
+     * @param title  Title value {@link ru.lanit.at.pages.annotations.Title} or
+     *               className of block object that should be initialized and set  as  current block
+     * @param params Parameters necessary for initialization
+     */
+    protected void setCurrentBlockByName(String title, String... params) {
+        Class<? extends AbstractBlockElement> abstractBlockElement = pageCatalog.findBlockByName(title);
         setCurrentBlock(abstractBlockElement, params);
     }
 
+    /**
+     * Returns current active block
+     *
+     * @return current Block
+     */
     protected AbstractBlockElement getCurrentBlock() {
         return pageCatalog.getCurrentBlockElement();
     }
 
+
+    /**
+     * Returns instance of  UiElement
+     *
+     * @param clazz  Class of UiElement object that should be initialized
+     * @param params Parameters necessary for initialization
+     */
+    @SuppressWarnings("unchecked")
     protected <T extends UIElement> T getUIElement(Class<? extends UIElement> clazz, String... params) {
         Object obj = getSearchContext();
         if (obj == null) {
@@ -103,19 +150,54 @@ public abstract class AbstractFrameworkSteps {
         return (T) ((AbstractPage) obj).getElement(clazz, params);
     }
 
+
+    /**
+     * Returns instance of  UiElement
+     *
+     * @param nameElement Title value {@link ru.lanit.at.pages.annotations.Title} or
+     *                    *              className of uiElement object that should be initialized
+     * @param params      Parameters necessary for initialization
+     */
     protected <T extends UIElement> T getUIElementByName(String nameElement, String... params) {
         Class<? extends UIElement> clazz = pageCatalog.findUIElemByName(nameElement);
         return getUIElement(clazz, params);
     }
 
+    /**
+     * Execute methods by method name
+     *
+     * @param object     Object  whose methods will be executed
+     * @param methodName Method simple name
+     * @param params     Parameters necessary for execute
+     */
+    protected void executeMethodByName(Object object, String methodName, Object... params) {
+        Method[] methods = object.getClass().getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.getName().equalsIgnoreCase(methodName.trim())) {
+                try {
+                    method.invoke(object, params);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new FrameworkRuntimeException("Не удалось выполнить метод :'" + methodName + "'");
+                }
+                return;
+            }
+        }
+        throw new FrameworkRuntimeException("Не найден метод: '" + methodName + "', в объекте: '" + object + "'.");
+    }
 
-    public Object getSearchContext() {
+    /**
+     * Returns an instance of the current search context or page or block
+     *
+     * @return instance page or block
+     */
+    protected Object getSearchContext() {
         if (pageCatalog.getCurrentBlockElement() == null) {
             return pageCatalog.getCurrentPage();
         }
         return pageCatalog.getCurrentBlockElement();
     }
 
+    /** Reset Current Block */
     public void resetCurrentBlock() {
         pageCatalog.setCurrentBlock(null);
     }
@@ -136,16 +218,10 @@ public abstract class AbstractFrameworkSteps {
      * @param value Any data that should be saved.
      */
     protected void saveTestData(String key, Object value) {
-//        if (value instanceof CharSequence || value instanceof Number) logToAllure("Saved text data", "Key: \"" + key + "\", value: \"" + value + "\"");
         log.info("Saved text data {}: {}", key, value);
         getDataKeeper().put(key, value);
     }
 
-//    @Attachment(value = "{0}", type = "text/plain")
-//    protected String logToAllure(String messageType, String message) {
-//        log.info("{}: {}", messageType, message);
-//        return message;
-//    }
 
     /**
      * Returns saved test data by specified key. Automatically casts object into requested data type.
@@ -178,6 +254,11 @@ public abstract class AbstractFrameworkSteps {
         return atlas;
     }
 
+    /**
+     * Returns an instance of PageCatalog  {@link PageCatalog}
+     *
+     * @return instance PageCatalog
+     */
     protected PageCatalog getPageCatalog() {
         return pageCatalog;
     }

@@ -1,7 +1,8 @@
 package ru.lanit.at.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.lanit.at.pages.block.AbstractBlockElement;
 import ru.lanit.at.pages.element.UIElement;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public interface SearchBlockElement {
-    Logger LOGGER = LoggerFactory.getLogger(SearchBlockElement.class);
+    Logger LOGGER = LogManager.getLogger(SearchBlockElement.class);
 
     default <T extends AbstractBlockElement> T getBlockElement(Class<T> blockClass, String... params) {
         Method method = findBlock(this.getClass(), blockClass, params);
@@ -25,11 +26,11 @@ public interface SearchBlockElement {
         return init(method, this, params);
     }
 
-    default <T extends UIElement> T getElement(Class<T> blockClass, String... params) {
-        Method method = findBlock(this.getClass(), blockClass, params);
+    default <T extends UIElement> T getElement(Class<T> elementClass, String... params) {
+        Method method = findBlock(this.getClass(), elementClass, params);
         if (method == null) {
             throw new FrameworkRuntimeException("Текущая страница/блок '" + this.getClass().getInterfaces()[0].getSimpleName() +
-                    ", элемент + '" + blockClass.getSimpleName() + "'. Добавьте элемент в искомую страниц/блок для работы с ним");
+                    ", элемент + '" + elementClass.getSimpleName() + "'. Добавьте элемент в искомую страниц/блок для работы с ним");
         }
         return init(method, this, params);
     }

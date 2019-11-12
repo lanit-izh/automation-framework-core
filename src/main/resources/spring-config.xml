@@ -44,10 +44,4 @@
     <bean id="atlas" class="io.qameta.atlas.core.Atlas">
         <constructor-arg name="configuration" ref="atlasConfig"/>
     </bean>
-
-    <!--    <bean id="webDriverConfig" class="io.qameta.atlas.webdriver.WebDriverConfiguration">-->
-    <!--        <constructor-arg name="webDriver">-->
-    <!--            <bean factory-bean="driverManager" factory-method="getDriver"/>-->
-    <!--        </constructor-arg>-->
-    <!--    </bean>-->
 </beans>

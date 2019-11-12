@@ -6,15 +6,14 @@ import io.qameta.atlas.webdriver.AtlasWebElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WrapsDriver;
 import org.openqa.selenium.interactions.Actions;
 import ru.lanit.at.driver.DriverManager;
 
 import java.util.Arrays;
 import java.util.List;
+
 
 public class Make {
 
@@ -59,8 +58,11 @@ public class Make {
 
         if (!params.contains(NO_CLEAR_BEFORE)) input.clear();
 
-        if (params.contains(SLOW_INPUT)) sendKeysSpelling(input, message);
-        else input.sendKeys(message);
+        if (params.contains(SLOW_INPUT)) {
+            sendKeysSpelling(input, message);
+        } else {
+            input.sendKeys(message);
+        }
 
         if (params.contains(LOSE_FOCUS)) loseFocus(input);
     }
@@ -147,7 +149,7 @@ public class Make {
         logAction(webElement, "Focus on '{}'");
         try {
             scrollIntoView(webElement);
-            new Actions(getDriver())
+            new Actions(driverManager.getDriver())
                     .moveToElement(webElement)
                     .perform();
         } catch (Exception ignore) {
@@ -161,7 +163,7 @@ public class Make {
      */
     public void defocus(WebElement webElement) {
         logAction(webElement, "Losing focus from {} by moving mouse away.");
-        new Actions(getDriver()).moveByOffset(webElement.getSize().width / 2 + 5, webElement.getSize().height / 2 + 5).perform();
+        new Actions(driverManager.getDriver()).moveByOffset(webElement.getSize().width / 2 + 5, webElement.getSize().height / 2 + 5).perform();
     }
 
     /**
@@ -171,18 +173,14 @@ public class Make {
      */
     public void loseFocus(WebElement webElement) {
         logAction(webElement, "Losing focus from element {} by clicking");
-//        jsExecutor.executeScript("arguments[0].blur();", webElement);
-        new Actions(getDriver()).moveToElement(webElement, -webElement.getRect().x - 3, 0).click().build().perform();
+        new Actions(driverManager.getDriver()).moveToElement(webElement, -webElement.getRect().x - 3, 0).click().build().perform();
     }
 
     /**
-     * @deprecated Use {@link WrapsDriver#getWrappedDriver()}
+     * Scroll to WebElement.
+     *
+     * @param webElement element .
      */
-    @Deprecated
-    public WebDriver getDriver() {
-        return driverManager.getDriver();
-    }
-
     public void scrollIntoView(WebElement webElement) {
         jsExecutor.executeScript(
                 "arguments[0].scrollIntoView({block: 'center'});",
