@@ -27,14 +27,6 @@
 
     <util:map id="dataKeeper" map-class="java.util.HashMap" key-type="java.lang.String" value-type="java.lang.Object"/>
 
-    <bean id="extendedAssert" class="ru.lanit.at.assertion.ExtendedAssert">
-        <property name="driverManager" ref="driverManager"/>
-    </bean>
-
-    <bean id="assertsManager" class="ru.lanit.at.assertion.AssertsManager">
-        <property name="asserts" ref="extendedAssert"/>
-    </bean>
-
     <bean id="atlasConfig" class="ru.lanit.at.driver.AtlasConfig">
         <constructor-arg name="webDriver">
             <bean factory-bean="driverManager" factory-method="getDriver"/>
@@ -44,4 +36,11 @@
     <bean id="atlas" class="io.qameta.atlas.core.Atlas">
         <constructor-arg name="configuration" ref="atlasConfig"/>
     </bean>
+
+    <bean id="screenShooter" class="ru.lanit.at.utils.ScreenShooter">
+        <constructor-arg name="driver">
+            <bean factory-bean="driverManager" factory-method="getDriver"/>
+        </constructor-arg>
+    </bean>
+
 </beans>

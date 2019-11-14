@@ -5,7 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.springframework.context.ApplicationContext;
-import ru.lanit.at.assertion.AssertsManager;
 import ru.lanit.at.context.Context;
 import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
@@ -13,6 +12,7 @@ import ru.lanit.at.pages.AbstractPage;
 import ru.lanit.at.pages.PageCatalog;
 import ru.lanit.at.pages.block.AbstractBlockElement;
 import ru.lanit.at.pages.element.UIElement;
+import ru.lanit.at.utils.ScreenShooter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -21,8 +21,8 @@ import java.util.Map;
 public abstract class AbstractFrameworkSteps {
 
     protected Logger log = LogManager.getLogger(this.getClass());
-    protected AssertsManager assertsManager;
-    protected PageCatalog pageCatalog;
+    private PageCatalog pageCatalog;
+    private ScreenShooter screenShooter;
     private DriverManager driverManager;
     private Atlas atlas;
 
@@ -30,9 +30,9 @@ public abstract class AbstractFrameworkSteps {
     public AbstractFrameworkSteps() {
         ApplicationContext context = Context.getInstance();
         pageCatalog = context.getBean(PageCatalog.class);
-        assertsManager = context.getBean(AssertsManager.class);
         driverManager = context.getBean(DriverManager.class);
         atlas = pageCatalog.getAtlas();
+        screenShooter = context.getBean(ScreenShooter.class);
     }
 
     /**
@@ -226,7 +226,7 @@ public abstract class AbstractFrameworkSteps {
     /**
      * Returns saved test data by specified key. Automatically casts object into requested data type.
      *
-     * @param key
+     * @param key - key
      * @param <T> Automatically casts saved object to requested type.
      *            E.g. {@code Foo foo = getTestData("foo");}
      * @return Saved value by given key or {@code null} if there is no saved data with given key.
@@ -261,5 +261,9 @@ public abstract class AbstractFrameworkSteps {
      */
     protected PageCatalog getPageCatalog() {
         return pageCatalog;
+    }
+
+    public ScreenShooter getScreenShooter() {
+        return screenShooter;
     }
 }

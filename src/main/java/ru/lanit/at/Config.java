@@ -40,9 +40,8 @@ public class Config {
     private Map<String, Object> readProperties(String configName) {
         InputStream input = getClass().getClassLoader().getResourceAsStream(configName);
         if (input == null) {
-            log.warn("No " + configName + " config file detected." +
-                    " It's strongly recommended to create file '" + configName + "' with driver configuration in 'source' directory of your project." +
-                    " Creating driver with default properties.");
+            log.warn("No :'" + configName + "', config file detected." +
+                    " It's strongly recommended to create file '" + configName + "' with  configuration in 'source' directory of your project.");
             return null;
         }
         Yaml yaml = new Yaml();
