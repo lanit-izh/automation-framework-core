@@ -26,11 +26,13 @@ import static ru.lanit.at.FrameworkConstants.*;
 public class DriverManager {
 
     private String BROWSER_NAME;
+
     private String HUB_URL;
     private boolean REMOTE;
 
 
     private Config driverTimeoutsProperties;
+    private Config browserConfig;
 
     private Logger log = LogManager.getLogger(DriverManager.class);
 
@@ -41,18 +43,19 @@ public class DriverManager {
         this.BROWSER_NAME = Config.getStringSystemProperty(BROWSER_VARIABLE_NAME, DEFAULT_BROWSER);
         this.REMOTE = Config.getBooleanSystemProperty(REMOTE_DRIVER_VARIABLE_NAME);
         this.HUB_URL = Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_HUB_URL);
+        this.browserConfig = new Config(Config.getStringSystemProperty(BROWSER_CONFIG, DEFAULT_CHROME_CONFIG));
         driverTimeoutsProperties = new Config(DEFAULT_TIMEOUTS_CONFIG);
     }
 
     public WebDriver getDriver() {
-        if (driver.get() == null) startBrowser(BROWSER_NAME);
+        if (!isActive()) startBrowser(BROWSER_NAME);
         return driver.get();
     }
 
     private void startBrowser(String browserName) {
         switch (browserName.toLowerCase().trim()) {
             case "chrome":
-                ChromeOptions chromeOptions = DriverOptionsBuilder.generateChromeOptions(new Config(DEFAULT_CHROME_CONFIG));
+                ChromeOptions chromeOptions = DriverOptionsBuilder.generateChromeOptions(browserConfig);
                 logBrowserOptions("Chrome", chromeOptions);
                 if (REMOTE) {
                     driver.set(generateRemoteWebDriver(chromeOptions));
@@ -61,7 +64,7 @@ public class DriverManager {
                 driver.set(new ChromeDriver(chromeOptions));
                 break;
             case "firefox":
-                FirefoxOptions firefoxOptions = DriverOptionsBuilder.generateFirefoxOptions(new Config(DEFAULT_GECKO_CONFIG));
+                FirefoxOptions firefoxOptions = DriverOptionsBuilder.generateFirefoxOptions(browserConfig);
                 logBrowserOptions("Firefox", firefoxOptions);
                 if (REMOTE) {
                     driver.set(generateRemoteWebDriver(firefoxOptions));
@@ -70,7 +73,7 @@ public class DriverManager {
                 driver.set(new FirefoxDriver(firefoxOptions));
                 break;
             case "opera":
-                OperaOptions operaOptions = DriverOptionsBuilder.generateOperaOptions(new Config(DEFAULT_OPERA_CONFIG));
+                OperaOptions operaOptions = DriverOptionsBuilder.generateOperaOptions(browserConfig);
                 logBrowserOptions("Opera", operaOptions);
                 if (REMOTE) {
                     driver.set(generateRemoteWebDriver(operaOptions));
@@ -80,7 +83,7 @@ public class DriverManager {
                 break;
             case "edge":
                 EdgeOptions edgeOptions = new EdgeOptions();
-                edgeOptions.merge(DriverOptionsBuilder.getCapabilities(new Config(DEFAULT_EDGE_CONFIG)));
+                edgeOptions.merge(DriverOptionsBuilder.getCapabilities(browserConfig));
                 logBrowserOptions("Edge", edgeOptions);
                 if (REMOTE) {
                     driver.set(generateRemoteWebDriver(edgeOptions));
@@ -117,7 +120,7 @@ public class DriverManager {
      * @return true if driver is not null.
      */
     public boolean isActive() {
-        return driver.get() != null;
+        return driver.get() != null && ((RemoteWebDriver) driver.get()).getSessionId() != null;
     }
 
     /**
@@ -129,7 +132,6 @@ public class DriverManager {
         log.info("Shutting down driver.");
         proxyHandler.shutDownLocalServer();
         driver.get().quit();
-        driver.remove();
         log.info("Driver is closed.");
     }
 

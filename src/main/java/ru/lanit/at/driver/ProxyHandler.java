@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import static ru.lanit.at.FrameworkConstants.DEFAULT_PROXY_CONFIG;
+import static ru.lanit.at.FrameworkConstants.PROXY_CONFIG;
 import static ru.lanit.at.FrameworkConstants.REMOTE_DRIVER_VARIABLE_NAME;
 
 public class ProxyHandler {
@@ -22,10 +23,12 @@ public class ProxyHandler {
     private Config proxyProperties;
     private ThreadLocal<BrowserMobProxyServer> server = new ThreadLocal<>();
     private ThreadLocal<Integer> port = new ThreadLocal<>();
+    private String configName;
 
 
     public ProxyHandler() {
-        proxyProperties = new Config(DEFAULT_PROXY_CONFIG);
+        configName = Config.getStringSystemProperty(PROXY_CONFIG, DEFAULT_PROXY_CONFIG);
+        proxyProperties = new Config(configName);
     }
 
     public JsonObject getJsonProxy() {
@@ -36,7 +39,7 @@ public class ProxyHandler {
     private JsonObject startProxy() {
         if (proxyProperties == null || proxyProperties.isEmpty())
             throw new FrameworkRuntimeException("Proxy properties are not defined. Please initialize properties in "
-                    + DEFAULT_PROXY_CONFIG + " file.");
+                    + configName + " file.");
 
         JsonObject jsonProxySettings = new JsonObject();
 
@@ -75,9 +78,6 @@ public class ProxyHandler {
             jsonProxySettings.addProperty("proxyType", "manual");
             jsonProxySettings.addProperty("httpProxy", socket);
             jsonProxySettings.addProperty("sslProxy", socket);
-//            jsonProxySettings.addProperty("socksProxy", socksProxy);
-//            jsonProxySettings.addProperty("socksUsername", socksUsername);
-//            jsonProxySettings.addProperty("socksPassword", socksPassword);
         }
 
         log.info("Proxy settings: {}", jsonProxySettings);

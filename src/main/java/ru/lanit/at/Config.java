@@ -5,14 +5,46 @@ import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Properties;
+
 
 public class Config {
+    private static final Logger LOGGER = LogManager.getLogger(Config.class);
+
+    private static final String DEBUG_PROPERTIES = "/default.properties";
+
+
+    public static String loadProperty(String name) {
+        return loadProperty(name, System.getProperty("application.properties", DEBUG_PROPERTIES));
+    }
+
+    public static String loadProperty(String name, String fromResource) {
+        Properties props = new Properties();
+        try {
+            props.load(Config.class.getResourceAsStream(fromResource));
+        } catch (IOException e) {
+            throw new FrameworkRuntimeException("Ошибка получение значение'" + name + "' из конфиг файла'" + fromResource + "'.", e);
+        }
+        String value = props.getProperty(name);
+        if (value == null) {
+            return null;
+        }
+        if (value.trim().equalsIgnoreCase("${" + name + "}")) {
+            return null;
+        }
+        return value;
+    }
+
 
     public static String getStringSystemProperty(String variableName, String defaultValue) {
-        String variable = System.getProperty(variableName);
-        if (variable == null || variable.isEmpty()) return defaultValue;
+        String variable = loadProperty(variableName);
+        if (variable == null || variable.isEmpty()) {
+            LOGGER.warn("Не установлено значение параметра: '" + variableName + "', вместо него будет установлено дефолтное значение :'" + defaultValue + "'.");
+            return defaultValue;
+        }
         return variable.trim();
     }
 
@@ -23,12 +55,19 @@ public class Config {
      * @return {@code false} by default. True if system variable is set and {@code = true}
      */
     public static boolean getBooleanSystemProperty(String variableName) {
-        String variable = System.getProperty(variableName);
+//        String variable = System.getProperty(variableName);
+        String variable = loadProperty(variableName);
+
         return variable != null && !variable.isEmpty() && Boolean.parseBoolean(variable.trim());
     }
 
-    private final Logger log = LogManager.getLogger(this.getClass());
+
     private final Map<String, Object> propertyMap;
+
+    public String getConfigName() {
+        return configName;
+    }
+
     private String configName;
 
     public Config(String configName) {
@@ -40,7 +79,7 @@ public class Config {
     private Map<String, Object> readProperties(String configName) {
         InputStream input = getClass().getClassLoader().getResourceAsStream(configName);
         if (input == null) {
-            log.warn("No :'" + configName + "', config file detected." +
+            LOGGER.warn("No :'" + configName + "', config file detected." +
                     " It's strongly recommended to create file '" + configName + "' with  configuration in 'source' directory of your project.");
             return null;
         }

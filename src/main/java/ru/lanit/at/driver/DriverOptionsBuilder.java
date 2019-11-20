@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static ru.lanit.at.FrameworkConstants.DEFAULT_GECKO_CONFIG;
 import static ru.lanit.at.FrameworkConstants.PROXY_VARIABLE_NAME;
 
 
@@ -71,7 +70,7 @@ class DriverOptionsBuilder {
             if (firefoxProfileName != null && !firefoxProfileName.isEmpty()) {
                 FirefoxProfile firefoxProfile = new ProfilesIni().getProfile(firefoxProfileName.trim());
                 if (firefoxProfile == null) {
-                    throw new FrameworkRuntimeException("Could not find firefox profile with name: " + firefoxProfileName + ". Check " + DEFAULT_GECKO_CONFIG + " file.");
+                    throw new FrameworkRuntimeException("Could not find firefox profile with name: " + firefoxProfileName + ". Check config file.");
                 }
                 getExtensions(extensions).forEach(firefoxProfile::addExtension);
                 firefoxOptions.setProfile(firefoxProfile);
