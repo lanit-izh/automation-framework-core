@@ -28,9 +28,7 @@
     <util:map id="dataKeeper" map-class="java.util.HashMap" key-type="java.lang.String" value-type="java.lang.Object"/>
 
     <bean id="atlasConfig" class="ru.lanit.at.driver.AtlasConfig">
-        <constructor-arg name="webDriver">
-            <bean factory-bean="driverManager" factory-method="getDriver"/>
-        </constructor-arg>
+        <constructor-arg name="driverManager" ref="driverManager"/>
     </bean>
 
     <bean id="atlas" class="io.qameta.atlas.core.Atlas">
@@ -38,9 +36,6 @@
     </bean>
 
     <bean id="screenShooter" class="ru.lanit.at.utils.ScreenShooter">
-        <constructor-arg name="driver">
-            <bean factory-bean="driverManager" factory-method="getDriver"/>
-        </constructor-arg>
+        <property name="driverManager" ref="driverManager"/>
     </bean>
-
 </beans>

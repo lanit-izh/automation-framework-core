@@ -3,7 +3,7 @@ package ru.lanit.at.utils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
+import ru.lanit.at.driver.DriverManager;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategy;
@@ -15,11 +15,12 @@ import java.io.IOException;
 
 public class ScreenShooter {
     private static final Logger LOGGER = LogManager.getLogger(ScreenShooter.class.getName());
-    private WebDriver driver;
+    private DriverManager driverManager;
 
-    public ScreenShooter(WebDriver driver) {
-        this.driver = driver;
+    public void setDriverManager(DriverManager driverManager) {
+        this.driverManager = driverManager;
     }
+
 
     public byte[] takeScreenshot() {
         return takeScreenshot(ShootingStrategies.viewportPasting(10));
@@ -29,7 +30,7 @@ public class ScreenShooter {
         try {
             LOGGER.info("Выполнение скриншота");
             BufferedImage bufferedImage = new AShot().shootingStrategy(strategies)
-                    .takeScreenshot(driver)
+                    .takeScreenshot(driverManager.getDriver())
                     .getImage();
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
