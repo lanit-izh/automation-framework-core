@@ -40,7 +40,12 @@ public class Config {
 
 
     public static String getStringSystemProperty(String variableName, String defaultValue) {
-        String variable = loadProperty(variableName);
+
+        String variable = System.getProperty(variableName);
+        if (variable != null) {
+            return variable.trim();
+        }
+        variable = loadProperty(variableName);
         if (variable == null || variable.isEmpty()) {
             LOGGER.warn("Не установлено значение параметра: '" + variableName + "', вместо него будет установлено дефолтное значение :'" + defaultValue + "'.");
             return defaultValue;
