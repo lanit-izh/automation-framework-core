@@ -38,4 +38,13 @@
     <bean id="screenShooter" class="ru.lanit.at.utils.ScreenShooter">
         <property name="driverManager" ref="driverManager"/>
     </bean>
+
+    <bean id="citrus"
+          class="com.consol.citrus.Citrus"
+          factory-method="newInstance"/>
+
+    <bean id="citrus_runner" class="ru.lanit.at.citrus.CitrusRunner">
+        <constructor-arg name="citrus" ref="citrus"/>
+    </bean>
+
 </beans>
