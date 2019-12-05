@@ -27,21 +27,25 @@ public class ScreenShooter {
     }
 
     public byte[] takeScreenshot(ShootingStrategy strategies) {
-        try {
-            LOGGER.info("Выполнение скриншота");
-            BufferedImage bufferedImage = new AShot().shootingStrategy(strategies)
-                    .takeScreenshot(driverManager.getDriver())
-                    .getImage();
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
-            byteArrayOutputStream.flush();
-            byte[] imageBytes = byteArrayOutputStream.toByteArray();
-            byteArrayOutputStream.close();
-            return imageBytes;
-        } catch (IOException e) {
-            LOGGER.error("Ошибка при снятии скриншота");
-            return new byte[]{};
+        if (driverManager.isActive()) {
+            try {
+                LOGGER.info("Выполнение скриншота");
+                BufferedImage bufferedImage = new AShot().shootingStrategy(strategies)
+                        .takeScreenshot(driverManager.getDriver())
+                        .getImage();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+                byteArrayOutputStream.flush();
+                byte[] imageBytes = byteArrayOutputStream.toByteArray();
+                byteArrayOutputStream.close();
+                return imageBytes;
+            } catch (IOException e) {
+                LOGGER.error("Ошибка при снятии скриншота");
+                return new byte[]{};
+            }
         }
+        LOGGER.error("Драйвер не активен выполнение скриншота не возможно");
+        return new byte[]{};
     }
 
 
