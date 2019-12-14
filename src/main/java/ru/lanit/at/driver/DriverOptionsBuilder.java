@@ -118,8 +118,6 @@ class DriverOptionsBuilder {
 
     static MutableCapabilities getCapabilities(Config config) {
         MutableCapabilities mutableCapabilities = new MutableCapabilities();
-        mutableCapabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-        mutableCapabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
         if (Config.getBooleanSystemProperty(PROXY_VARIABLE_NAME)) {
             mutableCapabilities.setCapability(CapabilityType.PROXY, Context.getInstance().getBean(ProxyHandler.class).getJsonProxy());
         }

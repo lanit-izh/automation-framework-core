@@ -4,12 +4,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.opera.OperaOptions;
 import org.openqa.selenium.remote.LocalFileDetector;
@@ -91,10 +94,29 @@ public class DriverManager {
                 }
                 driver.set(new EdgeDriver(edgeOptions));
                 break;
+
+            case "internet explore":
+                InternetExplorerOptions ieOptions = new InternetExplorerOptions();
+                ieOptions.merge(DriverOptionsBuilder.getCapabilities(browserConfig));
+                logBrowserOptions("Internet explore", ieOptions);
+                if (REMOTE) {
+                    driver.set(generateRemoteWebDriver(ieOptions));
+                    break;
+                }
+                driver.set(new InternetExplorerDriver(ieOptions));
+                break;
+            case "remote":
+                MutableCapabilities mutableCapabilities= DriverOptionsBuilder.getCapabilities(browserConfig);
+                logBrowserOptions("Remote", mutableCapabilities);
+                driver.set(generateRemoteWebDriver(DriverOptionsBuilder.getCapabilities(browserConfig)));
+                break;
+
             default:
                 throw new FrameworkRuntimeException("Unknown driver type: " + browserName);
         }
-        driver.get().manage().window().maximize();
+        if (System.getProperty("windowSizeMaximize", "true").equalsIgnoreCase("true")){
+            driver.get().manage().window().maximize();
+        }
         if (System.getProperty("timeouts", "true").equalsIgnoreCase("true")) {
             Integer implWait = driverTimeoutsProperties.getProperty(IMPLICITLY_WAIT, 30);
             System.setProperty("webdriver.timeouts.implicitlywait", implWait.toString());
@@ -127,13 +149,29 @@ public class DriverManager {
      * Closes all driver windows and destroys {@link WebDriver} instance.
      */
     public void shutdown() {
-        log.info("Clearing all cookies.");
-        driver.get().manage().deleteAllCookies();
-        log.info("Shutting down driver.");
-        proxyHandler.shutDownLocalServer();
-        driver.get().quit();
-        log.info("Driver is closed.");
+        try {
+            log.info("Clearing all cookies.");
+            driver.get().manage().deleteAllCookies();
+            log.info("Shutting down driver.");
+            proxyHandler.shutDownLocalServer();
+            driver.get().quit();
+            log.info("Driver is closed.");
+        }catch (WebDriverException ex){
+            log.error("Ошибка при закрытии драйвер: "+ex.getMessage());
+            driver.remove();
+        }
     }
+
+
+    /**
+     * Set browser instance
+     */
+    public void setDriver(WebDriver value) {
+        log.info("Установлен драйвер: "+value);
+        driver.set(value);
+    }
+
+
 
 
     public void setProxyHandler(ProxyHandler proxyHandler) {
