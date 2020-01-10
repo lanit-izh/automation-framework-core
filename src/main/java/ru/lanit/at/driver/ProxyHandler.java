@@ -17,18 +17,17 @@ import static ru.lanit.at.FrameworkConstants.REMOTE_DRIVER_VARIABLE_NAME;
 
 public class ProxyHandler {
 
-    private Logger log = LogManager.getLogger(DriverManager.class);
+    private Logger log = LogManager.getLogger(ProxyHandler.class);
 
     private ThreadLocal<JsonObject> jsonProxy = new ThreadLocal<>();
     private Config proxyProperties;
     private ThreadLocal<BrowserMobProxyServer> server = new ThreadLocal<>();
     private ThreadLocal<Integer> port = new ThreadLocal<>();
     private String configName;
+    private boolean configLoaded;
 
 
     public ProxyHandler() {
-        configName = Config.getStringSystemProperty(PROXY_CONFIG, DEFAULT_PROXY_CONFIG);
-        proxyProperties = new Config(configName);
     }
 
     public JsonObject getJsonProxy() {
@@ -37,6 +36,7 @@ public class ProxyHandler {
     }
 
     private JsonObject startProxy() {
+        loadConfig();
         if (proxyProperties == null || proxyProperties.isEmpty())
             throw new FrameworkRuntimeException("Proxy properties are not defined. Please initialize properties in "
                     + configName + " file.");
@@ -112,4 +112,14 @@ public class ProxyHandler {
             log.info("Proxy server gracefully shut down.");
         }
     }
+
+    private void loadConfig() {
+        if (!configLoaded) {
+            configName = Config.getStringSystemProperty(PROXY_CONFIG, DEFAULT_PROXY_CONFIG);
+            proxyProperties = new Config(configName);
+            configLoaded = true;
+        }
+    }
+
+
 }

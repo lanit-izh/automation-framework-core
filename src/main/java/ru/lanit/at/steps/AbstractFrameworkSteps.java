@@ -40,6 +40,13 @@ public abstract class AbstractFrameworkSteps {
     }
 
     /**
+     * @return Instance of {@link DriverManager}
+     */
+    protected DriverManager getDriverManager() {
+        return driverManager;
+    }
+
+    /**
      * @return Instance of {@link WebDriver} which is active in current thread.
      */
     protected WebDriver getDriver() {

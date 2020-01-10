@@ -41,17 +41,18 @@ public class DriverManager {
 
     private ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     private ProxyHandler proxyHandler;
+    private boolean configLoaded;
+    private MutableCapabilities additionallyCapabilities;
+
 
     public DriverManager() {
-        this.BROWSER_NAME = Config.getStringSystemProperty(BROWSER_VARIABLE_NAME, DEFAULT_BROWSER);
-        this.REMOTE = Config.getBooleanSystemProperty(REMOTE_DRIVER_VARIABLE_NAME);
-        this.HUB_URL = Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_HUB_URL);
-        this.browserConfig = new Config(Config.getStringSystemProperty(BROWSER_CONFIG, DEFAULT_CHROME_CONFIG));
-        driverTimeoutsProperties = new Config(DEFAULT_TIMEOUTS_CONFIG);
     }
 
     public WebDriver getDriver() {
-        if (!isActive()) startBrowser(BROWSER_NAME);
+        if (!isActive()) {
+            loadConfig();
+            startBrowser(BROWSER_NAME);
+        }
         return driver.get();
     }
 
@@ -59,6 +60,7 @@ public class DriverManager {
         switch (browserName.toLowerCase().trim()) {
             case "chrome":
                 ChromeOptions chromeOptions = DriverOptionsBuilder.generateChromeOptions(browserConfig);
+                chromeOptions.merge(additionallyCapabilities);
                 logBrowserOptions("Chrome", chromeOptions);
                 if (REMOTE) {
                     driver.set(generateRemoteWebDriver(chromeOptions));
@@ -68,6 +70,7 @@ public class DriverManager {
                 break;
             case "firefox":
                 FirefoxOptions firefoxOptions = DriverOptionsBuilder.generateFirefoxOptions(browserConfig);
+                firefoxOptions.merge(additionallyCapabilities);
                 logBrowserOptions("Firefox", firefoxOptions);
                 if (REMOTE) {
                     driver.set(generateRemoteWebDriver(firefoxOptions));
@@ -87,6 +90,7 @@ public class DriverManager {
             case "edge":
                 EdgeOptions edgeOptions = new EdgeOptions();
                 edgeOptions.merge(DriverOptionsBuilder.getCapabilities(browserConfig));
+                edgeOptions.merge(additionallyCapabilities);
                 logBrowserOptions("Edge", edgeOptions);
                 if (REMOTE) {
                     driver.set(generateRemoteWebDriver(edgeOptions));
@@ -98,6 +102,7 @@ public class DriverManager {
             case "internet explore":
                 InternetExplorerOptions ieOptions = new InternetExplorerOptions();
                 ieOptions.merge(DriverOptionsBuilder.getCapabilities(browserConfig));
+                ieOptions.merge(additionallyCapabilities);
                 logBrowserOptions("Internet explore", ieOptions);
                 if (REMOTE) {
                     driver.set(generateRemoteWebDriver(ieOptions));
@@ -106,8 +111,9 @@ public class DriverManager {
                 driver.set(new InternetExplorerDriver(ieOptions));
                 break;
             case "remote":
-                MutableCapabilities mutableCapabilities= DriverOptionsBuilder.getCapabilities(browserConfig);
+                MutableCapabilities mutableCapabilities = DriverOptionsBuilder.getCapabilities(browserConfig);
                 logBrowserOptions("Remote", mutableCapabilities);
+                mutableCapabilities.merge(additionallyCapabilities);
                 driver.set(generateRemoteWebDriver(DriverOptionsBuilder.getCapabilities(browserConfig)));
                 break;
 
@@ -156,8 +162,8 @@ public class DriverManager {
             proxyHandler.shutDownLocalServer();
             driver.get().quit();
             log.info("Driver is closed.");
-        }catch (WebDriverException ex){
-            log.error("Ошибка при закрытии драйвер: "+ex.getMessage());
+        } catch (WebDriverException ex) {
+            log.error("Ошибка при закрытии драйвер: " + ex.getMessage());
             driver.remove();
         }
     }
@@ -167,11 +173,22 @@ public class DriverManager {
      * Set browser instance
      */
     public void setDriver(WebDriver value) {
-        log.info("Установлен драйвер: "+value);
+        log.info("Установлен драйвер: " + value);
         driver.set(value);
     }
 
 
+    /**
+     * Add  additional browser capabilities, the method must be called before the browser starts
+     */
+    public void addCapabilities(MutableCapabilities capabilities) {
+        if (isActive()) {
+            log.info("Additional capabilities cannot be installed because the browser is active");
+        } else {
+            log.info("Additional will be installed  : " + capabilities.toString());
+            additionallyCapabilities = capabilities;
+        }
+    }
 
 
     public void setProxyHandler(ProxyHandler proxyHandler) {
@@ -188,4 +205,17 @@ public class DriverManager {
         log.info("Hub url: {}", Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, HUB_URL));
         log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
+
+
+    private void loadConfig() {
+        if (!configLoaded) {
+            this.BROWSER_NAME = Config.getStringSystemProperty(BROWSER_VARIABLE_NAME, DEFAULT_BROWSER);
+            this.REMOTE = Config.getBooleanSystemProperty(REMOTE_DRIVER_VARIABLE_NAME);
+            this.HUB_URL = Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_HUB_URL);
+            this.browserConfig = new Config(Config.getStringSystemProperty(BROWSER_CONFIG, DEFAULT_CHROME_CONFIG));
+            this.driverTimeoutsProperties = new Config(DEFAULT_TIMEOUTS_CONFIG);
+            configLoaded = true;
+        }
+    }
+
 }
