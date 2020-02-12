@@ -24,6 +24,7 @@ public class Config {
     public static String loadProperty(String name, String fromResource) {
         Properties props = new Properties();
         try {
+            if(!fromResource.startsWith("/")) fromResource="/"+fromResource;
             props.load(Config.class.getResourceAsStream(fromResource));
         } catch (IOException e) {
             throw new FrameworkRuntimeException("Ошибка получение значение'" + name + "' из конфиг файла'" + fromResource + "'.", e);
@@ -60,8 +61,10 @@ public class Config {
      * @return {@code false} by default. True if system variable is set and {@code = true}
      */
     public static boolean getBooleanSystemProperty(String variableName) {
-//        String variable = System.getProperty(variableName);
-        String variable = loadProperty(variableName);
+        String variable = System.getProperty(variableName);
+        if(variable==null){
+            variable = loadProperty(variableName);
+        }
 
         return variable != null && !variable.isEmpty() && Boolean.parseBoolean(variable.trim());
     }

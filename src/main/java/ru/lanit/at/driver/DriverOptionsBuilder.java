@@ -74,7 +74,13 @@ class DriverOptionsBuilder {
                 }
                 getExtensions(extensions).forEach(firefoxProfile::addExtension);
                 firefoxOptions.setProfile(firefoxProfile);
+            } else {
+                FirefoxProfile firefoxProfile = new FirefoxProfile();
+                getExtensions(extensions).forEach(firefoxProfile::addExtension);
+                firefoxOptions.setProfile(firefoxProfile);
             }
+
+
 
 //          Setting preferences if they are defined in config
             if (preferences != null && !preferences.isEmpty())
