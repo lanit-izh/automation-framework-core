@@ -12,7 +12,7 @@ public class JSExecutor {
         if (driverManager.getDriver() != null) {
             return (JavascriptExecutor) driverManager.getDriver();
         } else {
-            throw new FrameworkRuntimeException("Драйвер не запущен! Сначала инициализируйте драйвер");
+            throw new FrameworkRuntimeException("Driver not started. You should start driver before operation");
         }
     }
 
