@@ -24,7 +24,7 @@ public class Config {
     public static String loadProperty(String name, String fromResource) {
         Properties props = new Properties();
         try {
-            if(!fromResource.startsWith("/")) fromResource="/"+fromResource;
+            if (!fromResource.startsWith("/")) fromResource = "/" + fromResource;
             props.load(Config.class.getResourceAsStream(fromResource));
         } catch (IOException e) {
             throw new FrameworkRuntimeException("Ошибка получение значение'" + name + "' из конфиг файла'" + fromResource + "'.", e);
@@ -41,13 +41,8 @@ public class Config {
 
 
     public static String getStringSystemProperty(String variableName, String defaultValue) {
-
-        String variable = System.getProperty(variableName);
-        if (variable != null) {
-            return variable.trim();
-        }
-        variable = loadProperty(variableName);
-        if (variable == null || variable.isEmpty()) {
+        String variable = System.getProperty(variableName, loadProperty(variableName));
+        if (variable == null || variable.trim().isEmpty()) {
             LOGGER.warn("Не установлено значение параметра: '" + variableName + "', вместо него будет установлено дефолтное значение :'" + defaultValue + "'.");
             return defaultValue;
         }
@@ -61,11 +56,7 @@ public class Config {
      * @return {@code false} by default. True if system variable is set and {@code = true}
      */
     public static boolean getBooleanSystemProperty(String variableName) {
-        String variable = System.getProperty(variableName);
-        if(variable==null){
-            variable = loadProperty(variableName);
-        }
-
+        String variable = System.getProperty(variableName, loadProperty(variableName));
         return variable != null && !variable.isEmpty() && Boolean.parseBoolean(variable.trim());
     }
 
