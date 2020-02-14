@@ -27,7 +27,7 @@ public class Config {
             if (!fromResource.startsWith("/")) fromResource = "/" + fromResource;
             props.load(Config.class.getResourceAsStream(fromResource));
         } catch (IOException e) {
-            throw new FrameworkRuntimeException("Ошибка получение значение'" + name + "' из конфиг файла'" + fromResource + "'.", e);
+            throw new FrameworkRuntimeException("Error while getting parameter '" + name + "' from file '" + fromResource + "'.", e);
         }
         String value = props.getProperty(name);
         if (value == null) {
@@ -43,7 +43,7 @@ public class Config {
     public static String getStringSystemProperty(String variableName, String defaultValue) {
         String variable = System.getProperty(variableName, loadProperty(variableName));
         if (variable == null || variable.trim().isEmpty()) {
-            LOGGER.warn("Не установлено значение параметра: '" + variableName + "', вместо него будет установлено дефолтное значение :'" + defaultValue + "'.");
+            LOGGER.warn("Variable not set: '" + variableName + "', will be used default value: '" + defaultValue + "'.");
             return defaultValue;
         }
         return variable.trim();
