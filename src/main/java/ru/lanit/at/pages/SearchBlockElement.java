@@ -1,9 +1,11 @@
 package ru.lanit.at.pages;
 
 
+import io.qameta.atlas.webdriver.AtlasWebElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
+import ru.lanit.at.pages.annotations.WithName;
 import ru.lanit.at.pages.block.AbstractBlockElement;
 import ru.lanit.at.pages.element.UIElement;
 
@@ -51,6 +53,51 @@ public interface SearchBlockElement {
                     ", not contains element '" + elementClass.getSimpleName() + "'. Please, add that element into page/block");
         }
         return init(method, this, params);
+    }
+
+    /**
+     * Searches and creates end-point page element by {@link ru.lanit.at.pages.annotations.WithName} annotation.
+     * Can be used either elements or blockedElements
+     *
+     * @param elementName  case-insensitive name of element, used in method annotation
+     * @param elementClass desired type of element
+     * @param params       vararg of desired element method creation
+     * @return created element
+     * @throws FrameworkRuntimeException in cases when no such method found or in cases problems with method invocation
+     */
+    default <T extends AtlasWebElement<?>> T getElement(String elementName, Class<T> elementClass, String... params) {
+        Method method = findElement(elementName, this.getClass(), elementClass, params);
+        return init(method, this, params);
+    }
+
+
+    /**
+     * Searches method by given elementName, then checks that one of them returns desirable type and returns first of it or
+     * throws FrameworkRuntimeException if nothing appropriate found
+     *
+     * @param parentClass  parent Class of object, where searching appropriate method
+     * @param elementClass searched element Class
+     * @param params       varargs params of desired method
+     * @return first suitable method or FrameworkRuntimeException
+     * @throws FrameworkRuntimeException when no one method with given name, return type and parameters count
+     */
+    default Method findElement(String elementName, Class<?> parentClass, Class<?> elementClass, String... params) {
+        Method[] methods = parentClass.getInterfaces()[0].getMethods();
+        return Stream.of(methods)
+                .filter(method -> {
+                    if (method.isAnnotationPresent(WithName.class)) {
+                        for (String name : method.getAnnotation(WithName.class).value()) {
+                            if (name.equalsIgnoreCase(elementName)) return true;
+                        }
+                    }
+                    return false;
+                })
+                .filter(method -> elementClass.isAssignableFrom(method.getReturnType())
+                        && method.getGenericParameterTypes().length == params.length)
+                .findFirst()
+                .orElseThrow(() -> new FrameworkRuntimeException("No method with return type '" + elementClass.getCanonicalName() + "' " +
+                        "or appropriate parameters count '" + params.length + "' " +
+                        "or with name '" + elementName + "'"));
     }
 
 
