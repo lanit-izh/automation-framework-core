@@ -163,7 +163,7 @@ public class DriverManager {
             driver.get().quit();
             log.info("Driver is closed.");
         } catch (WebDriverException ex) {
-            log.error("Ошибка при закрытии драйвер: " + ex.getMessage());
+            log.error("Error while stopping driver: " + ex.getMessage());
             driver.remove();
         }
     }
@@ -173,7 +173,7 @@ public class DriverManager {
      * Set browser instance
      */
     public void setDriver(WebDriver value) {
-        log.info("Установлен драйвер: " + value);
+        log.info("Driver was set: " + value);
         driver.set(value);
     }
 

@@ -134,7 +134,8 @@ public class PageCatalog {
 
 
     /**
-     * Returns instance of requested page object class from catalog. If catalog doesn't have such instance - initializes it and saves in catalog.
+     * Returns instance of requested page object class from catalog.
+     * If catalog doesn't have such instance - initializes it and saves in catalog.
      *
      * @param name Title {@link ru.lanit.at.pages.annotations.Title} or ClassName  of page object to find or initialize in catalog.
      * @return Instance of clazz.

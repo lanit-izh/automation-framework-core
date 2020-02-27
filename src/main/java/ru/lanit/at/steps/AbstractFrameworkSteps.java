@@ -2,6 +2,7 @@ package ru.lanit.at.steps;
 
 import com.consol.citrus.message.Message;
 import io.qameta.atlas.core.Atlas;
+import io.qameta.atlas.webdriver.AtlasWebElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -12,6 +13,7 @@ import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.lanit.at.pages.AbstractPage;
 import ru.lanit.at.pages.PageCatalog;
+import ru.lanit.at.pages.SearchBlockElement;
 import ru.lanit.at.pages.block.AbstractBlockElement;
 import ru.lanit.at.pages.element.UIElement;
 import ru.lanit.at.utils.ScreenShooter;
@@ -161,6 +163,13 @@ public abstract class AbstractFrameworkSteps {
         return (T) ((AbstractPage) obj).getElement(clazz, params);
     }
 
+    @SuppressWarnings("unchecked")
+    protected <T extends AtlasWebElement> T getElementByName(String elementName, Class<? extends AtlasWebElement> elementType, String... params) {
+        Object context = getSearchContext();
+        if (context == null)
+            throw new FrameworkRuntimeException("You must select current block or page before using this method");
+        return (T) ((SearchBlockElement) context).getElement(elementName, elementType, params);
+    }
 
     /**
      * Returns instance of  UiElement
@@ -180,6 +189,7 @@ public abstract class AbstractFrameworkSteps {
      * @param object     Object  whose methods will be executed
      * @param methodName Method simple name
      * @param params     Parameters necessary for execute
+     * @deprecated will be deleted soon. Use concrete steps for each type of elements
      */
     protected void executeMethodByName(Object object, String methodName, Object... params) {
         Method[] methods = object.getClass().getDeclaredMethods();
