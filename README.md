@@ -144,6 +144,6 @@ public interface GoogleStartPage extends AbstractPage {
 ### Запуск тестов
 Для запуска тестов нужно использовать maven. В зависимости от тестового фреймворка и версии Cucumber, команда запуска может отличаться. В нашем случае с зависимостью от TestNG и CucumberTestNG запуск будет происходить через кукумберовский раннер:
 ```bash
-mvn test -Dcucumber.options='--tags @Google'
+mvn test -Dcucumber.options='--tags @GoogleCalc'
 ```
 Соответствующим образом конфигурируется запуск в Jenkins или другой CI/CD.
