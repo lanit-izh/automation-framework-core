@@ -64,6 +64,7 @@ public interface SearchBlockElement {
      * @param params       vararg of desired element method creation
      * @return created element
      * @throws FrameworkRuntimeException in cases when no such method found or in cases problems with method invocation
+     * @since 4.0.10
      */
     default <T extends AtlasWebElement<?>> T getElement(String elementName, Class<T> elementClass, String... params) {
         Method method = findElement(elementName, this.getClass(), elementClass, params);
@@ -80,6 +81,7 @@ public interface SearchBlockElement {
      * @param params       varargs params of desired method
      * @return first suitable method or FrameworkRuntimeException
      * @throws FrameworkRuntimeException when no one method with given name, return type and parameters count
+     * @sinse 4.0.10
      */
     default Method findElement(String elementName, Class<?> parentClass, Class<?> elementClass, String... params) {
         Method[] methods = parentClass.getInterfaces()[0].getMethods();
