@@ -26,7 +26,6 @@ class DriverOptionsBuilder {
     private static final Logger LOG = LogManager.getLogger(DriverOptionsBuilder.class);
 
     static ChromeOptions generateChromeOptions(Config chromeDriverProperties) {
-        WebDriverManager.chromedriver().setup();
         ChromeOptions chromeOptions = new ChromeOptions();
         if (!chromeDriverProperties.isEmpty()) {
             List<String> arguments = chromeDriverProperties.getProperty("arguments", false);
@@ -51,7 +50,6 @@ class DriverOptionsBuilder {
     }
 
     static FirefoxOptions generateFirefoxOptions(Config geckoDriverProperties) {
-        WebDriverManager.firefoxdriver().setup();
         FirefoxOptions firefoxOptions = new FirefoxOptions();
         if (!geckoDriverProperties.isEmpty()) {
 
@@ -100,7 +98,6 @@ class DriverOptionsBuilder {
 
 
     static OperaOptions generateOperaOptions(Config operaDriverProperties) {
-        WebDriverManager.operadriver().setup();
         OperaOptions operaOptions = new OperaOptions();
         if (!operaDriverProperties.isEmpty()) {
 //          Setting  binary if it's defined in config

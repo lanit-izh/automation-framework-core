@@ -1,5 +1,6 @@
 package ru.lanit.at.driver;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.MutableCapabilities;
@@ -66,6 +67,7 @@ public class DriverManager {
                     driver.set(generateRemoteWebDriver(chromeOptions));
                     break;
                 }
+                WebDriverManager.chromedriver().setup();
                 driver.set(new ChromeDriver(chromeOptions));
                 break;
             case "firefox":
@@ -76,6 +78,7 @@ public class DriverManager {
                     driver.set(generateRemoteWebDriver(firefoxOptions));
                     break;
                 }
+                WebDriverManager.firefoxdriver().setup();
                 driver.set(new FirefoxDriver(firefoxOptions));
                 break;
             case "opera":
@@ -85,6 +88,7 @@ public class DriverManager {
                     driver.set(generateRemoteWebDriver(operaOptions));
                     break;
                 }
+                WebDriverManager.operadriver().setup();
                 driver.set(new OperaDriver(operaOptions));
                 break;
             case "edge":
