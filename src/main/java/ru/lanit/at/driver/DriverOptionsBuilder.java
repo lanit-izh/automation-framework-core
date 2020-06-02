@@ -29,6 +29,7 @@ class DriverOptionsBuilder {
         ChromeOptions chromeOptions = new ChromeOptions();
         if (!chromeDriverProperties.isEmpty()) {
             List<String> arguments = chromeDriverProperties.getProperty("arguments", false);
+            List<String> preferences = chromeDriverProperties.getProperty("preferences", false);
             List<String> extensions = chromeDriverProperties.getProperty("extensions", false);
             List<String> encodedExtensions = chromeDriverProperties.getProperty("encodedExtensions", false);
             boolean headless = chromeDriverProperties.getProperty("headless", Boolean.FALSE);
@@ -36,6 +37,10 @@ class DriverOptionsBuilder {
 
             if (arguments != null && !arguments.isEmpty()) {
                 chromeOptions.addArguments(arguments.stream().map(String::trim).toArray(String[]::new));
+            }
+
+            if (preferences != null && !preferences.isEmpty()) {
+                chromeOptions.setExperimentalOption("prefs",preferences);
             }
 
             getExtensions(extensions).forEach(chromeOptions::addExtensions);
