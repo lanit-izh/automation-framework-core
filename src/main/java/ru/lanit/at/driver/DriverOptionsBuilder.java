@@ -16,6 +16,7 @@ import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ class DriverOptionsBuilder {
         ChromeOptions chromeOptions = new ChromeOptions();
         if (!chromeDriverProperties.isEmpty()) {
             List<String> arguments = chromeDriverProperties.getProperty("arguments", false);
-            List<String> preferences = chromeDriverProperties.getProperty("preferences", false);
+            HashMap<String, Object> preferences = chromeDriverProperties.getProperty("preferences", false);
             List<String> extensions = chromeDriverProperties.getProperty("extensions", false);
             List<String> encodedExtensions = chromeDriverProperties.getProperty("encodedExtensions", false);
             boolean headless = chromeDriverProperties.getProperty("headless", Boolean.FALSE);
