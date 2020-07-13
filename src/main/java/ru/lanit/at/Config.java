@@ -18,7 +18,7 @@ public class Config {
 
 
     public static String loadProperty(String name) {
-        return loadProperty(name, System.getProperty("application.properties", DEBUG_PROPERTIES));
+        return loadProperty(name, System.getProperty("test.properties", DEBUG_PROPERTIES));
     }
 
     public static String loadProperty(String name, String fromResource) {
