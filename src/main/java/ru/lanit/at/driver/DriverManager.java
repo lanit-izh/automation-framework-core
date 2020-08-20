@@ -23,6 +23,8 @@ import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static ru.lanit.at.FrameworkConstants.*;
@@ -41,6 +43,7 @@ public class DriverManager {
     private Logger log = LogManager.getLogger(DriverManager.class);
 
     private ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    private static ThreadLocal<Map<String, String>> propertiesMap = new ThreadLocal<>();
     private ProxyHandler proxyHandler;
     private boolean configLoaded;
     private MutableCapabilities additionallyCapabilities;
@@ -213,13 +216,23 @@ public class DriverManager {
 
     private void loadConfig() {
         if (!configLoaded) {
-            this.BROWSER_NAME = Config.getStringSystemProperty(BROWSER_VARIABLE_NAME, DEFAULT_BROWSER);
-            this.REMOTE = Config.getBooleanSystemProperty(REMOTE_DRIVER_VARIABLE_NAME);
-            this.HUB_URL = Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_HUB_URL);
-            this.browserConfig = new Config(Config.getStringSystemProperty(BROWSER_CONFIG, DEFAULT_CHROME_CONFIG));
+            if(propertiesMap.get().isEmpty()) {
+                this.BROWSER_NAME = Config.getStringSystemProperty(BROWSER_VARIABLE_NAME, DEFAULT_BROWSER);
+                this.REMOTE = Config.getBooleanSystemProperty(REMOTE_DRIVER_VARIABLE_NAME);
+                this.HUB_URL = Config.getStringSystemProperty(HUB_URL_VARIABLE_NAME, DEFAULT_HUB_URL);
+                this.browserConfig = new Config(Config.getStringSystemProperty(BROWSER_CONFIG, DEFAULT_CHROME_CONFIG));
+            } else {
+                this.BROWSER_NAME = propertiesMap.get().get("browser");
+                this.REMOTE = Boolean.parseBoolean(propertiesMap.get().get("remote"));
+                this.HUB_URL = propertiesMap.get().get("hub_url");
+                this.browserConfig = new Config(propertiesMap.get().get("hub_url"));
+            }
             this.driverTimeoutsProperties = new Config(DEFAULT_TIMEOUTS_CONFIG);
             configLoaded = true;
         }
     }
 
+    public static void setPropertiesMap(Map<String, String> map) {
+        propertiesMap.set(map);
+    }
 }
