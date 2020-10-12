@@ -1,11 +1,19 @@
 package ru.lanit.at.driver;
 
+
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.IOSElement;
+import io.appium.java_client.windows.WindowsDriver;
+import io.appium.java_client.windows.WindowsElement;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebDriverException;;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -55,6 +63,10 @@ public class DriverManager {
             startBrowser(BROWSER_NAME);
         }
         return driver.get();
+    }
+
+    public Config getDriverTimeouts() {
+        return driverTimeoutsProperties;
     }
 
     private void startBrowser(String browserName) {
@@ -120,31 +132,82 @@ public class DriverManager {
                 mutableCapabilities.merge(additionallyCapabilities);
                 driver.set(generateRemoteWebDriver(DriverOptionsBuilder.getCapabilities(browserConfig)));
                 break;
+            case "winapp":
+                MutableCapabilities winappCapabilities = DriverOptionsBuilder.getCapabilities(browserConfig);
+                logBrowserOptions("Winapp", winappCapabilities);
+                winappCapabilities.merge(additionallyCapabilities);
+                driver.set(generateRemoteWebDriver(DriverOptionsBuilder.getCapabilities(browserConfig), "winapp"));
+                System.setProperty("windowSizeMaximize", "false");
+                break;
+            case "android":
+                MutableCapabilities androidCapabilities = DriverOptionsBuilder.getCapabilities(browserConfig);
+                logBrowserOptions("Android", androidCapabilities);
+                androidCapabilities.merge(additionallyCapabilities);
+                driver.set(generateRemoteWebDriver(DriverOptionsBuilder.getCapabilities(browserConfig), "android"));
+                System.setProperty("windowSizeMaximize", "false");
+                break;
+            case "ios":
+                MutableCapabilities iosCapabilities = DriverOptionsBuilder.getCapabilities(browserConfig);
+                logBrowserOptions("ios", iosCapabilities);
+                iosCapabilities.merge(additionallyCapabilities);
+                driver.set(generateRemoteWebDriver(DriverOptionsBuilder.getCapabilities(browserConfig), "ios"));
+                System.setProperty("windowSizeMaximize", "false");
+                break;
 
             default:
                 throw new FrameworkRuntimeException("Unknown driver type: " + browserName);
         }
-        if (System.getProperty("windowSizeMaximize", "true").equalsIgnoreCase("true")){
+        if (System.getProperty("windowSizeMaximize", "true").equalsIgnoreCase("true")) {
             driver.get().manage().window().maximize();
         }
         if (System.getProperty("timeouts", "true").equalsIgnoreCase("true")) {
             Integer implWait = driverTimeoutsProperties.getProperty(IMPLICITLY_WAIT, 30);
             System.setProperty("webdriver.timeouts.implicitlywait", implWait.toString());
             driver.get().manage().timeouts().implicitlyWait(implWait, TimeUnit.SECONDS);
-            driver.get().manage().timeouts().pageLoadTimeout(driverTimeoutsProperties.getProperty(PAGE_LOAD_TIMEOUT, 60), TimeUnit.SECONDS);
-            driver.get().manage().timeouts().setScriptTimeout(driverTimeoutsProperties.getProperty(SCRIPT_TIMEOUT, 30), TimeUnit.SECONDS);
+            switch (browserName.toLowerCase().trim()) {
+                case "winapp":
+                case "android":
+                case "ios":
+                    break;
+                default:
+                    driver.get().manage().timeouts().pageLoadTimeout(driverTimeoutsProperties.getProperty(PAGE_LOAD_TIMEOUT, 60), TimeUnit.SECONDS);
+                    driver.get().manage().timeouts().setScriptTimeout(driverTimeoutsProperties.getProperty(SCRIPT_TIMEOUT, 30), TimeUnit.SECONDS);
+            }
         }
     }
 
+    @Deprecated
     private RemoteWebDriver generateRemoteWebDriver(MutableCapabilities mutableCapabilities) {
+        return generateRemoteWebDriver(mutableCapabilities, "remote");
+    }
+
+    private RemoteWebDriver generateRemoteWebDriver(MutableCapabilities mutableCapabilities, String browserName) {
         try {
-            RemoteWebDriver remoteWebDriver = new RemoteWebDriver(new URL(HUB_URL), mutableCapabilities);
+            RemoteWebDriver remoteWebDriver;
+            switch (browserName.toLowerCase().trim()) {
+                case "winapp":
+                    remoteWebDriver = new WindowsDriver<WindowsElement>(new URL(HUB_URL), mutableCapabilities);
+                    break;
+                case "android":
+                    remoteWebDriver = new AndroidDriver<AndroidElement>(new URL(HUB_URL), mutableCapabilities);
+                    break;
+                case "ios":
+                    remoteWebDriver = new IOSDriver<IOSElement>(new URL(HUB_URL), mutableCapabilities);
+                    break;
+                case "remote":
+                    remoteWebDriver = new RemoteWebDriver(new URL(HUB_URL), mutableCapabilities);
+                    break;
+
+                default:
+                    throw new FrameworkRuntimeException("Unknown driver type: " + browserName);
+            }
             remoteWebDriver.setFileDetector(new LocalFileDetector());
             return remoteWebDriver;
         } catch (MalformedURLException e) {
             throw new FrameworkRuntimeException("Exception while creating remote webdriver. Check hub url: " + HUB_URL, e);
         }
     }
+
 
     /**
      * Determines weather current {@link WebDriver} is null or not.

@@ -22,6 +22,7 @@ public class FrameworkConstants {
     public static final String IMPLICITLY_WAIT = "implicitlyWait";
     public static final String PAGE_LOAD_TIMEOUT = "pageLoadTimeout";
     public static final String SCRIPT_TIMEOUT = "scriptTimeout";
+    public static final String SCROLL_TIMES = "scrollTimes";
 
 
 }

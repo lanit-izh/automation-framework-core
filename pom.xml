@@ -4,7 +4,7 @@
 
     <groupId>com.github.lanit-izh</groupId>
     <artifactId>automation-framework-core</artifactId>
-    <version>4.0.14-SNAPSHOT</version>
+    <version>4.0.16-SNAPSHOT</version>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -23,6 +23,9 @@
         <atlas.version>1.6.0</atlas.version>
         <SnakeYAML.version>1.24</SnakeYAML.version>
         <citrus.version>2.8.0</citrus.version>
+        <atlas-appium.version>1.8.0</atlas-appium.version>
+        <appium.version>7.3.0</appium.version>
+
     </properties>
 
     <build>
@@ -198,6 +201,17 @@
             <artifactId>citrus-java-dsl</artifactId>
             <version>${citrus.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.atlas</groupId>
+            <artifactId>atlas-appium</artifactId>
+            <version>${atlas-appium.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>${appium.version}</version>
         </dependency>
     </dependencies>
 
