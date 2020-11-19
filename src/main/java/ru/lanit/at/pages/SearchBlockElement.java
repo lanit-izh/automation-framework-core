@@ -81,7 +81,6 @@ public interface SearchBlockElement {
      * @param params       varargs params of desired method
      * @return first suitable method or FrameworkRuntimeException
      * @throws FrameworkRuntimeException when no one method with given name, return type and parameters count
-     * @sinse 4.0.10
      */
     default Method findElement(String elementName, Class<?> parentClass, Class<?> elementClass, String... params) {
         Method[] methods = parentClass.getInterfaces()[0].getMethods();
