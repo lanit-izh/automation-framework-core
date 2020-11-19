@@ -75,6 +75,56 @@ public class AbstractFrameworkAndroidSteps extends AbstractFrameworkSteps {
     }
 
 
+    public MobileUIElement swipeToElement(Class<? extends UIElement> type, int numberOfTimes, String... params) {
+        MobileUIElement element = null;
+        getDriver().manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+        for (int i = 0; i < numberOfTimes; i++) {
+            try {
+                swipe(true);
+                element = getUIElement(type, params);
+                element.getLocation();
+                i = numberOfTimes;
+            } catch (NoSuchElementException ex) {
+                System.out.println(String.format("Element not available. Scrolling (%s) times...", i + 1));
+            }
+        }
+        getDriver().manage().timeouts().implicitlyWait(getImplicitlyTimeout(), TimeUnit.SECONDS);
+        return element;
+
+
+    }
+
+    public MobileUIElement swipeToElement(Class<? extends UIElement> type, String... params) {
+        return swipeToElement(type, getNumberOfScrolls(), params);
+
+    }
+
+    public MobileUIElement swipeToElementByName(Class<? extends UIElement> type, String elementName, int numberOfTimes) {
+        MobileUIElement element = null;
+
+        getDriver().manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+        for (int i = 0; i < numberOfTimes; i++) {
+            try {
+                swipe(true);
+                element = getElementByName(elementName, type);
+                element.getLocation();
+                i = numberOfTimes;
+            } catch (NoSuchElementException ex) {
+                System.out.println(String.format("Element not available. Scrolling (%s) times...", i + 1));
+            }
+        }
+        getDriver().manage().timeouts().implicitlyWait(getImplicitlyTimeout(), TimeUnit.SECONDS);
+        return element;
+
+
+    }
+
+    public MobileUIElement swipeToElementByName(Class<? extends UIElement> type, String elementName) {
+        return swipeToElementByName(type, elementName, getNumberOfScrolls());
+
+    }
+
+
     public void swipeIntoElement(boolean isRight, WebElement element) {
         int startX;
         int endX;
