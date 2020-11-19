@@ -8,10 +8,15 @@ import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.lanit.at.pages.annotations.WithName;
 import ru.lanit.at.pages.block.AbstractBlockElement;
 import ru.lanit.at.pages.element.UIElement;
+import ru.lanit.at.plugins.proxyelements.ProxyClassLoader;
+import ru.lanit.at.plugins.proxyelements.ProxyElement;
+import ru.lanit.at.plugins.proxyelements.ProxyElementUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -68,6 +73,13 @@ public interface SearchBlockElement {
      */
     default <T extends AtlasWebElement<?>> T getElement(String elementName, Class<T> elementClass, String... params) {
         Method method = findElement(elementName, this.getClass(), elementClass, params);
+        if (method.isAnnotationPresent(ProxyElement.class)) {
+            try {
+                return (T) ProxyElementUtil.WrapElement(init(method, this, params), ProxyClassLoader.GetClass(method.getAnnotation(ProxyElement.class).value()), elementClass);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                throw new IllegalStateException("Не получилось проксировать елемент " + elementName, e);
+            }
+        }
         return init(method, this, params);
     }
 
