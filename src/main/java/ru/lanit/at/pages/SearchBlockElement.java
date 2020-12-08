@@ -4,19 +4,18 @@ package ru.lanit.at.pages;
 import io.qameta.atlas.webdriver.AtlasWebElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.lanit.at.context.Context;
+import ru.lanit.at.driver.DriverManager;
 import ru.lanit.at.exceptions.FrameworkRuntimeException;
 import ru.lanit.at.pages.annotations.WithName;
 import ru.lanit.at.pages.block.AbstractBlockElement;
 import ru.lanit.at.pages.element.UIElement;
-import ru.lanit.at.plugins.proxyelements.ProxyClassLoader;
 import ru.lanit.at.plugins.proxyelements.ProxyElement;
 import ru.lanit.at.plugins.proxyelements.ProxyElementUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -57,11 +56,15 @@ public interface SearchBlockElement {
             throw new FrameworkRuntimeException("Current page/block '" + this.getClass().getInterfaces()[0].getSimpleName() +
                     ", not contains element '" + elementClass.getSimpleName() + "'. Please, add that element into page/block");
         }
+        if (method.isAnnotationPresent(ProxyElement.class) || method.getAnnotatedReturnType().isAnnotationPresent(ProxyElement.class)) {
+            ProxyElement pe = method.isAnnotationPresent(ProxyElement.class) ? method.getAnnotation(ProxyElement.class) : method.getAnnotatedReturnType().getAnnotation(ProxyElement.class);
+            return (T) ProxyElementUtil.processAnotation(pe, init(method, this, params), Context.getInstance().getBean(DriverManager.class), elementClass);
+        }
         return init(method, this, params);
     }
 
     /**
-     * Searches and creates end-point page element by {@link ru.lanit.at.pages.annotations.WithName} annotation.
+     * Searches and creates end-point page element by {@link WithName} annotation.
      * Can be used either elements or blockedElements
      *
      * @param elementName  case-insensitive name of element, used in method annotation
@@ -73,12 +76,9 @@ public interface SearchBlockElement {
      */
     default <T extends AtlasWebElement<?>> T getElement(String elementName, Class<T> elementClass, String... params) {
         Method method = findElement(elementName, this.getClass(), elementClass, params);
-        if (method.isAnnotationPresent(ProxyElement.class)) {
-            try {
-                return (T) ProxyElementUtil.WrapElement(init(method, this, params), ProxyClassLoader.GetClass(method.getAnnotation(ProxyElement.class).value()), elementClass);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                throw new IllegalStateException("Не получилось проксировать елемент " + elementName, e);
-            }
+        if (method.isAnnotationPresent(ProxyElement.class) || method.getAnnotatedReturnType().isAnnotationPresent(ProxyElement.class)) {
+            ProxyElement pe = method.isAnnotationPresent(ProxyElement.class) ? method.getAnnotation(ProxyElement.class) : method.getAnnotatedReturnType().getAnnotation(ProxyElement.class);
+            return (T) ProxyElementUtil.processAnotation(pe, init(method, this, params), Context.getInstance().getBean(DriverManager.class), elementClass);
         }
         return init(method, this, params);
     }
