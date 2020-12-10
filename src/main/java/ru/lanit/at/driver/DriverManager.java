@@ -224,7 +224,9 @@ public class DriverManager {
     public void shutdown() {
         try {
             log.info("Clearing all cookies.");
-            driver.get().manage().deleteAllCookies();
+            if(!(driver.get() instanceof AppiumDriver)) {
+                driver.get().manage().deleteAllCookies();
+            }
             log.info("Shutting down driver.");
             proxyHandler.shutDownLocalServer();
             driver.get().quit();
