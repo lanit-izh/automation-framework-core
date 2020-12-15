@@ -130,27 +130,27 @@ public class DriverManager {
                 MutableCapabilities mutableCapabilities = DriverOptionsBuilder.getCapabilities(browserConfig);
                 logBrowserOptions("Remote", mutableCapabilities);
                 mutableCapabilities.merge(additionallyCapabilities);
-                driver.set(generateRemoteWebDriver(DriverOptionsBuilder.getCapabilities(browserConfig)));
+                driver.set(generateRemoteWebDriver(mutableCapabilities));
                 break;
             case "winapp":
                 MutableCapabilities winappCapabilities = DriverOptionsBuilder.getCapabilities(browserConfig);
                 logBrowserOptions("Winapp", winappCapabilities);
                 winappCapabilities.merge(additionallyCapabilities);
-                driver.set(generateRemoteWebDriver(DriverOptionsBuilder.getCapabilities(browserConfig), "winapp"));
+                driver.set(generateRemoteWebDriver(winappCapabilities, "winapp"));
                 System.setProperty("windowSizeMaximize", "false");
                 break;
             case "android":
                 MutableCapabilities androidCapabilities = DriverOptionsBuilder.getCapabilities(browserConfig);
                 logBrowserOptions("Android", androidCapabilities);
                 androidCapabilities.merge(additionallyCapabilities);
-                driver.set(generateRemoteWebDriver(DriverOptionsBuilder.getCapabilities(browserConfig), "android"));
+                driver.set(generateRemoteWebDriver(androidCapabilities, "android"));
                 System.setProperty("windowSizeMaximize", "false");
                 break;
             case "ios":
                 MutableCapabilities iosCapabilities = DriverOptionsBuilder.getCapabilities(browserConfig);
                 logBrowserOptions("ios", iosCapabilities);
                 iosCapabilities.merge(additionallyCapabilities);
-                driver.set(generateRemoteWebDriver(DriverOptionsBuilder.getCapabilities(browserConfig), "ios"));
+                driver.set(generateRemoteWebDriver(iosCapabilities, "ios"));
                 System.setProperty("windowSizeMaximize", "false");
                 break;
 
