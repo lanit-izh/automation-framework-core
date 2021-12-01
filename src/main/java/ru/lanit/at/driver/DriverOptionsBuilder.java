@@ -26,7 +26,7 @@ import static ru.lanit.at.FrameworkConstants.PROXY_VARIABLE_NAME;
 class DriverOptionsBuilder {
     private static final Logger LOG = LogManager.getLogger(DriverOptionsBuilder.class);
 
-    static ChromeOptions generateChromeOptions(Config chromeDriverProperties) {
+    static ChromeOptions generateChromeOptions(Config chromeDriverProperties, Map<String, Object> experimentalChromeFeatures) {
         ChromeOptions chromeOptions = new ChromeOptions();
         if (!chromeDriverProperties.isEmpty()) {
             List<String> arguments = chromeDriverProperties.getProperty("arguments", false);
@@ -41,7 +41,10 @@ class DriverOptionsBuilder {
             }
 
             if (preferences != null && !preferences.isEmpty()) {
-                chromeOptions.setExperimentalOption("prefs",preferences);
+                chromeOptions.setExperimentalOption("prefs", preferences);
+            }
+            if(!experimentalChromeFeatures.isEmpty()) {
+                experimentalChromeFeatures.forEach(chromeOptions::setExperimentalOption);
             }
 
             getExtensions(extensions).forEach(chromeOptions::addExtensions);
@@ -83,7 +86,6 @@ class DriverOptionsBuilder {
                 getExtensions(extensions).forEach(firefoxProfile::addExtension);
                 firefoxOptions.setProfile(firefoxProfile);
             }
-
 
 
 //          Setting preferences if they are defined in config

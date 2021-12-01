@@ -31,6 +31,9 @@ import ru.lanit.at.exceptions.FrameworkRuntimeException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static ru.lanit.at.FrameworkConstants.*;
@@ -52,6 +55,7 @@ public class DriverManager {
     private ProxyHandler proxyHandler;
     private boolean configLoaded;
     private MutableCapabilities additionallyCapabilities;
+    private Map<String, Object> experimentalChromeFeatures = new HashMap<String, Object>();
 
 
     public DriverManager() {
@@ -72,7 +76,7 @@ public class DriverManager {
     private void startBrowser(String browserName) {
         switch (browserName.toLowerCase().trim()) {
             case "chrome":
-                ChromeOptions chromeOptions = DriverOptionsBuilder.generateChromeOptions(browserConfig);
+                ChromeOptions chromeOptions = DriverOptionsBuilder.generateChromeOptions(browserConfig, experimentalChromeFeatures);
                 chromeOptions.merge(additionallyCapabilities);
                 logBrowserOptions("Chrome", chromeOptions);
                 if (REMOTE) {
@@ -254,6 +258,18 @@ public class DriverManager {
         } else {
             log.info("Additional will be installed  : " + capabilities.toString());
             additionallyCapabilities = capabilities;
+        }
+    }
+
+    /**
+     * Add  additional browser capabilities, the method must be called before the browser starts
+     */
+    public void addExperimentalOptions(Map<String, Object> options) {
+        if (isActive()) {
+            log.info("Additional capabilities cannot be installed because the browser is active");
+        } else {
+            log.info("Experimental features will be enabled  : " + Arrays.toString(options.keySet().toArray()));
+            experimentalChromeFeatures = options;
         }
     }
 
