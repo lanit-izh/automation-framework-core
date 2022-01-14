@@ -18,7 +18,7 @@
         <yandex.ashot.version>1.5.4</yandex.ashot.version>
         <selenium.java.version>3.141.59</selenium.java.version>
         <spring.version>5.1.8.RELEASE</spring.version>
-        <log4j.version>2.11.2</log4j.version>
+        <log4j.version>2.17.1</log4j.version>
         <maven.source.plugin.version>3.1.0</maven.source.plugin.version>
         <atlas.version>1.6.0</atlas.version>
         <SnakeYAML.version>1.24</SnakeYAML.version>
