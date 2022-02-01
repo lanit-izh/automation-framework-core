@@ -1,7 +1,7 @@
 package ru.lanit.at.datagenerator.helpers;
 
 
-import com.github.javafaker.Faker;
+import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomUtils;
 import ru.lanit.at.datagenerator.utils.InnGenerator;
 

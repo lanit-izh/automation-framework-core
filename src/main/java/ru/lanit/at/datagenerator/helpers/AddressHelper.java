@@ -1,7 +1,7 @@
 package ru.lanit.at.datagenerator.helpers;
 
 
-import com.github.javafaker.Faker;
+import net.datafaker.Faker;
 
 
 public class AddressHelper {
