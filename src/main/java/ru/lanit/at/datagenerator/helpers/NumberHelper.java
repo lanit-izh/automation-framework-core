@@ -1,8 +1,8 @@
 package ru.lanit.at.datagenerator.helpers;
 
 
-import com.github.javafaker.Faker;
-import com.github.javafaker.Number;
+import net.datafaker.Faker;
+import net.datafaker.Number;
 
 import java.util.Locale;
 

@@ -1,7 +1,7 @@
 package ru.lanit.at.datagenerator;
 
 
-import com.github.javafaker.Faker;
+import net.datafaker.Faker;
 import ru.lanit.at.datagenerator.helpers.AddressHelper;
 import ru.lanit.at.datagenerator.helpers.DateHelper;
 import ru.lanit.at.datagenerator.helpers.FileHelper;
