@@ -21,7 +21,7 @@
         <log4j.version>2.17.1</log4j.version>
         <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
         <atlas.version>1.6.0</atlas.version>
-        <SnakeYAML.version>1.30</SnakeYAML.version>
+        <SnakeYAML.version>1.31</SnakeYAML.version>
         <citrus.version>2.8.0</citrus.version>
         <atlas-appium.version>1.8.0</atlas-appium.version>
         <appium.version>7.3.0</appium.version>
